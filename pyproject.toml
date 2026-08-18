@@ -1,0 +1,57 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "worker-worlds"
+version = "0.1.0"
+description = "Deterministic simulation and regression testing for AI workers"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {file = "LICENSE"}
+authors = [{name = "Metaworkers AI"}]
+dependencies = ["asyncpg>=0.30,<1", "pydantic>=2.10,<3", "PyYAML>=6.0.2,<7"]
+
+[project.optional-dependencies]
+dev = [
+  "build>=1.2.2,<2",
+  "mypy>=1.14,<2",
+  "pytest>=8.3,<9",
+  "pytest-asyncio>=0.25,<2",
+  "ruff>=0.9,<1",
+  "types-PyYAML>=6.0.12,<7",
+  "asyncpg-stubs>=0.31,<0.32",
+]
+langgraph = ["langgraph>=0.6,<1"]
+openai-agents = ["openai-agents>=0.2,<1"]
+
+[project.scripts]
+worker-worlds = "worker_worlds.cli:main"
+worker-worlds-schema = "worker_worlds.schema_cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/worker_worlds"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["ASYNC", "B", "D", "E", "F", "I", "SIM", "UP"]
+ignore = ["COM812", "D203", "D213"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D"]
+"src/worker_worlds/postgres_world.py" = ["E501"]
+"src/worker_worlds/reporting.py" = ["E501"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["worker_worlds"]
+mypy_path = "src"
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

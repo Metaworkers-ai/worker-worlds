@@ -1,0 +1,350 @@
+{
+  "$defs": {
+    "AssertionSeverity": {
+      "description": "Bounded assertion severity.",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "info"
+      ],
+      "title": "AssertionSeverity",
+      "type": "string"
+    },
+    "AssertionSpec": {
+      "additionalProperties": false,
+      "description": "Declarative deterministic assertion.",
+      "properties": {
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        },
+        "event": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event"
+        },
+        "evidence_config": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Evidence Config",
+          "type": "object"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "parameters": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Parameters",
+          "type": "object"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/AssertionSeverity"
+        },
+        "source_file": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source File"
+        },
+        "source_index": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Index"
+        },
+        "tags": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AssertionType"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Type"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "severity"
+      ],
+      "title": "AssertionSpec",
+      "type": "object"
+    },
+    "AssertionType": {
+      "description": "Supported deterministic assertion primitives.",
+      "enum": [
+        "state_equals",
+        "state_matches",
+        "value_within",
+        "action_exists",
+        "no_action",
+        "action_count",
+        "sequence_before",
+        "changed_entities_subset",
+        "resource_within",
+        "policy"
+      ],
+      "title": "AssertionType",
+      "type": "string"
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "Limits": {
+      "additionalProperties": false,
+      "description": "Execution budgets for a scenario.",
+      "properties": {
+        "cost_minor": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Cost Minor",
+          "type": "integer"
+        },
+        "model_tokens": {
+          "default": 12000,
+          "minimum": 0,
+          "title": "Model Tokens",
+          "type": "integer"
+        },
+        "mutations": {
+          "default": 20,
+          "minimum": 0,
+          "title": "Mutations",
+          "type": "integer"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "tool_calls": {
+          "default": 20,
+          "minimum": 0,
+          "title": "Tool Calls",
+          "type": "integer"
+        },
+        "tool_timeout_s": {
+          "default": 10,
+          "exclusiveMinimum": 0,
+          "title": "Tool Timeout S",
+          "type": "number"
+        },
+        "wall_time_s": {
+          "default": 30,
+          "exclusiveMinimum": 0,
+          "title": "Wall Time S",
+          "type": "number"
+        },
+        "worker_turns": {
+          "default": 50,
+          "exclusiveMinimum": 0,
+          "title": "Worker Turns",
+          "type": "integer"
+        }
+      },
+      "title": "Limits",
+      "type": "object"
+    },
+    "Trigger": {
+      "additionalProperties": false,
+      "description": "Initial input delivered to a worker.",
+      "properties": {
+        "actor": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Actor",
+          "type": "object"
+        },
+        "content": {
+          "title": "Content",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "content"
+      ],
+      "title": "Trigger",
+      "type": "object"
+    },
+    "WorldRef": {
+      "additionalProperties": false,
+      "description": "World implementation selected by a scenario.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "seed": {
+          "title": "Seed",
+          "type": "integer"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "seed"
+      ],
+      "title": "WorldRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "A versioned scenario definition.",
+  "properties": {
+    "assertions": {
+      "items": {
+        "$ref": "#/$defs/AssertionSpec"
+      },
+      "title": "Assertions",
+      "type": "array"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "limits": {
+      "$ref": "#/$defs/Limits"
+    },
+    "metadata": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Metadata",
+      "type": "object"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "tags": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Tags",
+      "type": "array"
+    },
+    "trigger": {
+      "$ref": "#/$defs/Trigger"
+    },
+    "world": {
+      "$ref": "#/$defs/WorldRef"
+    }
+  },
+  "required": [
+    "id",
+    "world",
+    "trigger",
+    "assertions"
+  ],
+  "title": "Scenario",
+  "type": "object"
+}

@@ -1,0 +1,7 @@
+schema_version: "1.0"
+id: ticket.escalation.required
+world: {schema_version: "1.0", name: postgres-commerce, version: "1.0", seed: 4}
+trigger: {schema_version: "1.0", type: customer_message, actor: {customer_id: cus_102}, content: Escalate this damaged-item case.}
+assertions:
+  - {schema_version: "1.0", id: escalation.exists, type: action_exists, event: ticket.escalated, severity: high, description: A material damaged-item case requires escalation.}
+metadata: {risk: missing escalation}

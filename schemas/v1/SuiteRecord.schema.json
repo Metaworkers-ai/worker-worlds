@@ -1,0 +1,1271 @@
+{
+  "$defs": {
+    "AssertionSeverity": {
+      "description": "Bounded assertion severity.",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "info"
+      ],
+      "title": "AssertionSeverity",
+      "type": "string"
+    },
+    "AuthorizationContext": {
+      "additionalProperties": false,
+      "description": "Trusted authority supplied by the harness, never world prose.",
+      "properties": {
+        "actor_id": {
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "scopes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Scopes",
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "actor_id"
+      ],
+      "title": "AuthorizationContext",
+      "type": "object"
+    },
+    "EntityRef": {
+      "additionalProperties": false,
+      "description": "Stable reference to a world entity.",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "id"
+      ],
+      "title": "EntityRef",
+      "type": "object"
+    },
+    "EvidenceKind": {
+      "description": "Kinds of bounded evidence references.",
+      "enum": [
+        "initial_snapshot",
+        "final_snapshot",
+        "event",
+        "tool_call",
+        "worker_turn",
+        "authorization",
+        "changed_entity",
+        "resource",
+        "policy"
+      ],
+      "title": "EvidenceKind",
+      "type": "string"
+    },
+    "EvidenceReference": {
+      "additionalProperties": false,
+      "description": "Resolvable bounded reference into RunRecord evidence.",
+      "properties": {
+        "facts": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Facts",
+          "type": "object"
+        },
+        "kind": {
+          "$ref": "#/$defs/EvidenceKind"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "reference": {
+          "title": "Reference",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "sequence": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sequence"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        }
+      },
+      "required": [
+        "kind",
+        "reference"
+      ],
+      "title": "EvidenceReference",
+      "type": "object"
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "RunRecord": {
+      "additionalProperties": false,
+      "description": "Complete normalized evidence for one worker run.",
+      "properties": {
+        "adapter": {
+          "title": "Adapter",
+          "type": "string"
+        },
+        "cleanup_succeeded": {
+          "default": true,
+          "title": "Cleanup Succeeded",
+          "type": "boolean"
+        },
+        "cost_minor": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cost Minor"
+        },
+        "dependency_versions": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Dependency Versions",
+          "type": "object"
+        },
+        "ended_at": {
+          "description": "Timezone-aware UTC timestamp",
+          "format": "date-time",
+          "title": "Ended At",
+          "type": "string"
+        },
+        "environment": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Environment",
+          "type": "object"
+        },
+        "error_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Message"
+        },
+        "error_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Type"
+        },
+        "events": {
+          "items": {
+            "$ref": "#/$defs/WorldEvent"
+          },
+          "title": "Events",
+          "type": "array"
+        },
+        "final_snapshot": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WorldSnapshot"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "final_snapshot_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Final Snapshot Hash"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "incomplete_evidence": {
+          "title": "Incomplete Evidence",
+          "type": "boolean"
+        },
+        "initial_snapshot": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WorldSnapshot"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "initial_snapshot_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Initial Snapshot Hash"
+        },
+        "migration_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Migration Version"
+        },
+        "model_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Tokens"
+        },
+        "mutation_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Mutation Count",
+          "type": "integer"
+        },
+        "repetition": {
+          "minimum": 0,
+          "title": "Repetition",
+          "type": "integer"
+        },
+        "scenario_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scenario Hash"
+        },
+        "scenario_id": {
+          "title": "Scenario Id",
+          "type": "string"
+        },
+        "scenario_tags": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Scenario Tags",
+          "type": "array"
+        },
+        "scenario_trigger": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Scenario Trigger",
+          "type": "object"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "seed": {
+          "title": "Seed",
+          "type": "integer"
+        },
+        "started_at": {
+          "description": "Timezone-aware UTC timestamp",
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "terminal_reason": {
+          "$ref": "#/$defs/TerminalReason"
+        },
+        "tool_call_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Tool Call Count",
+          "type": "integer"
+        },
+        "tool_duration_ms": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Tool Duration Ms",
+          "type": "integer"
+        },
+        "total_duration_ms": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Total Duration Ms",
+          "type": "integer"
+        },
+        "turns": {
+          "items": {
+            "$ref": "#/$defs/WorkerTurn"
+          },
+          "title": "Turns",
+          "type": "array"
+        },
+        "verdicts": {
+          "items": {
+            "$ref": "#/$defs/Verdict"
+          },
+          "title": "Verdicts",
+          "type": "array"
+        },
+        "worker": {
+          "title": "Worker",
+          "type": "string"
+        },
+        "worker_version": {
+          "title": "Worker Version",
+          "type": "string"
+        },
+        "world_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "World Version"
+        }
+      },
+      "required": [
+        "id",
+        "scenario_id",
+        "worker",
+        "worker_version",
+        "adapter",
+        "repetition",
+        "seed",
+        "started_at",
+        "ended_at",
+        "terminal_reason",
+        "initial_snapshot",
+        "final_snapshot",
+        "turns",
+        "events",
+        "verdicts",
+        "incomplete_evidence"
+      ],
+      "title": "RunRecord",
+      "type": "object"
+    },
+    "ScenarioAggregate": {
+      "additionalProperties": false,
+      "description": "Deterministic summary that retains references to every repetition.",
+      "properties": {
+        "completed_repetitions": {
+          "minimum": 0,
+          "title": "Completed Repetitions",
+          "type": "integer"
+        },
+        "cost_minor": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cost Minor"
+        },
+        "duration_ms": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Duration Ms",
+          "type": "array"
+        },
+        "errors": {
+          "title": "Errors",
+          "type": "integer"
+        },
+        "failed": {
+          "title": "Failed",
+          "type": "integer"
+        },
+        "failure_reasons": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Failure Reasons",
+          "type": "object"
+        },
+        "infrastructure_errors": {
+          "default": 0,
+          "title": "Infrastructure Errors",
+          "type": "integer"
+        },
+        "insufficient_sample": {
+          "default": true,
+          "title": "Insufficient Sample",
+          "type": "boolean"
+        },
+        "model_tokens": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Tokens"
+        },
+        "pass_rate": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Pass Rate",
+          "type": "number"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "integer"
+        },
+        "requested_repetitions": {
+          "exclusiveMinimum": 0,
+          "title": "Requested Repetitions",
+          "type": "integer"
+        },
+        "run_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Run Ids",
+          "type": "array"
+        },
+        "scenario_id": {
+          "title": "Scenario Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "terminal_reasons": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Terminal Reasons",
+          "type": "object"
+        },
+        "verdict_counts": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Verdict Counts",
+          "type": "object"
+        },
+        "worker": {
+          "title": "Worker",
+          "type": "string"
+        },
+        "worker_version": {
+          "title": "Worker Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scenario_id",
+        "worker",
+        "worker_version",
+        "requested_repetitions",
+        "completed_repetitions",
+        "run_ids",
+        "passed",
+        "failed",
+        "errors",
+        "pass_rate",
+        "verdict_counts",
+        "failure_reasons",
+        "terminal_reasons",
+        "duration_ms"
+      ],
+      "title": "ScenarioAggregate",
+      "type": "object"
+    },
+    "TerminalReason": {
+      "description": "Why worker execution ended.",
+      "enum": [
+        "completed",
+        "timeout",
+        "tool_error",
+        "worker_error",
+        "infrastructure_error",
+        "cancelled",
+        "budget_exceeded",
+        "adapter_error",
+        "provider_error",
+        "scenario_error",
+        "tool_timeout",
+        "tool_validation_error",
+        "tool_execution_error",
+        "authorization_rejection"
+      ],
+      "title": "TerminalReason",
+      "type": "string"
+    },
+    "ToolCall": {
+      "additionalProperties": false,
+      "description": "Normalized worker request to invoke a world tool.",
+      "properties": {
+        "arguments": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Arguments",
+          "type": "object"
+        },
+        "authorization": {
+          "$ref": "#/$defs/AuthorizationContext"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotency Key"
+        },
+        "requested_at": {
+          "description": "Timezone-aware UTC timestamp",
+          "format": "date-time",
+          "title": "Requested At",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "tool_name": {
+          "title": "Tool Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "run_id",
+        "tool_name",
+        "arguments",
+        "authorization",
+        "requested_at"
+      ],
+      "title": "ToolCall",
+      "type": "object"
+    },
+    "ToolResult": {
+      "additionalProperties": false,
+      "description": "Normalized result, including typed failure provenance.",
+      "properties": {
+        "audit_metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Audit Metadata",
+          "type": "object"
+        },
+        "call_id": {
+          "title": "Call Id",
+          "type": "string"
+        },
+        "duration_ms": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "ended_at": {
+          "description": "Timezone-aware UTC timestamp",
+          "format": "date-time",
+          "title": "Ended At",
+          "type": "string"
+        },
+        "error_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Message"
+        },
+        "error_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Type"
+        },
+        "output": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        },
+        "retry_of": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retry Of"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "started_at": {
+          "description": "Timezone-aware UTC timestamp",
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/ToolResultStatus"
+        }
+      },
+      "required": [
+        "call_id",
+        "status",
+        "started_at",
+        "ended_at"
+      ],
+      "title": "ToolResult",
+      "type": "object"
+    },
+    "ToolResultStatus": {
+      "description": "Normalized tool result status.",
+      "enum": [
+        "success",
+        "error"
+      ],
+      "title": "ToolResultStatus",
+      "type": "string"
+    },
+    "Verdict": {
+      "additionalProperties": false,
+      "description": "Evidence-backed deterministic assertion verdict.",
+      "properties": {
+        "assertion_id": {
+          "title": "Assertion Id",
+          "type": "string"
+        },
+        "assertion_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assertion Type"
+        },
+        "evaluator_version": {
+          "default": "1.0",
+          "title": "Evaluator Version",
+          "type": "string"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "evidence_refs": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "expected": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "observed": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        },
+        "policy_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Policy Name"
+        },
+        "reason_code": {
+          "default": "unspecified",
+          "title": "Reason Code",
+          "type": "string"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/AssertionSeverity"
+        },
+        "status": {
+          "$ref": "#/$defs/VerdictStatus"
+        }
+      },
+      "required": [
+        "id",
+        "assertion_id",
+        "status",
+        "severity",
+        "message"
+      ],
+      "title": "Verdict",
+      "type": "object"
+    },
+    "VerdictStatus": {
+      "description": "Outcome of deterministic grading.",
+      "enum": [
+        "pass",
+        "fail",
+        "error"
+      ],
+      "title": "VerdictStatus",
+      "type": "string"
+    },
+    "WorkerTurn": {
+      "additionalProperties": false,
+      "description": "One normalized worker decision and its observed result.",
+      "properties": {
+        "cost_minor": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cost Minor"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "index": {
+          "minimum": 0,
+          "title": "Index",
+          "type": "integer"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        },
+        "model_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Tokens"
+        },
+        "occurred_at": {
+          "description": "Timezone-aware UTC timestamp",
+          "format": "date-time",
+          "title": "Occurred At",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "terminal": {
+          "default": false,
+          "title": "Terminal",
+          "type": "boolean"
+        },
+        "tool_call": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToolCall"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "tool_result": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToolResult"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "index",
+        "occurred_at"
+      ],
+      "title": "WorkerTurn",
+      "type": "object"
+    },
+    "WorldEvent": {
+      "additionalProperties": false,
+      "description": "Append-only world mutation evidence.",
+      "properties": {
+        "actor_id": {
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "authorization": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AuthorizationContext"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "before": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before"
+        },
+        "entity": {
+          "$ref": "#/$defs/EntityRef"
+        },
+        "event_type": {
+          "title": "Event Type",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "occurred_at": {
+          "description": "Timezone-aware UTC timestamp",
+          "format": "date-time",
+          "title": "Occurred At",
+          "type": "string"
+        },
+        "policy_context": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Policy Context",
+          "type": "object"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Request Id"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "scenario_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scenario Id"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "sequence": {
+          "exclusiveMinimum": 0,
+          "title": "Sequence",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "run_id",
+        "sequence",
+        "occurred_at",
+        "event_type",
+        "entity",
+        "actor_id"
+      ],
+      "title": "WorldEvent",
+      "type": "object"
+    },
+    "WorldSnapshot": {
+      "additionalProperties": false,
+      "description": "Canonical world state at a controlled instant.",
+      "properties": {
+        "captured_at": {
+          "description": "Timezone-aware UTC timestamp",
+          "format": "date-time",
+          "title": "Captured At",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "sequence": {
+          "minimum": 0,
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "state": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "State",
+          "type": "object"
+        },
+        "world_name": {
+          "title": "World Name",
+          "type": "string"
+        },
+        "world_version": {
+          "title": "World Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "world_name",
+        "world_version",
+        "run_id",
+        "captured_at",
+        "sequence",
+        "state"
+      ],
+      "title": "WorldSnapshot",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "One suite artifact containing aggregates and immutable source runs.",
+  "properties": {
+    "aggregates": {
+      "items": {
+        "$ref": "#/$defs/ScenarioAggregate"
+      },
+      "title": "Aggregates",
+      "type": "array"
+    },
+    "artifact_references": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Artifact References",
+      "type": "object"
+    },
+    "configuration_hash": {
+      "title": "Configuration Hash",
+      "type": "string"
+    },
+    "ended_at": {
+      "description": "Timezone-aware UTC timestamp",
+      "format": "date-time",
+      "title": "Ended At",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "runs": {
+      "items": {
+        "$ref": "#/$defs/RunRecord"
+      },
+      "title": "Runs",
+      "type": "array"
+    },
+    "scenarios": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Scenarios",
+      "type": "array"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "started_at": {
+      "description": "Timezone-aware UTC timestamp",
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "worker": {
+      "title": "Worker",
+      "type": "string"
+    },
+    "worker_version": {
+      "title": "Worker Version",
+      "type": "string"
+    },
+    "world": {
+      "title": "World",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "worker",
+    "worker_version",
+    "world",
+    "started_at",
+    "ended_at",
+    "scenarios",
+    "aggregates",
+    "runs",
+    "configuration_hash"
+  ],
+  "title": "SuiteRecord",
+  "type": "object"
+}

@@ -1,0 +1,81 @@
+{
+  "$defs": {
+    "JsonValue": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "description": "Canonical world state at a controlled instant.",
+  "properties": {
+    "captured_at": {
+      "description": "Timezone-aware UTC timestamp",
+      "format": "date-time",
+      "title": "Captured At",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sequence": {
+      "minimum": 0,
+      "title": "Sequence",
+      "type": "integer"
+    },
+    "state": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "State",
+      "type": "object"
+    },
+    "world_name": {
+      "title": "World Name",
+      "type": "string"
+    },
+    "world_version": {
+      "title": "World Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "world_name",
+    "world_version",
+    "run_id",
+    "captured_at",
+    "sequence",
+    "state"
+  ],
+  "title": "WorldSnapshot",
+  "type": "object"
+}

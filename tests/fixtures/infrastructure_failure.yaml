@@ -1,0 +1,8 @@
+schema_version: "1.0"
+id: fixture.infrastructure.failure
+world: {schema_version: "1.0", name: stub-commerce, version: "1.0", seed: 10}
+trigger: {schema_version: "1.0", type: customer_message, actor: {customer_id: cus_102}, content: Infrastructure failure.}
+limits: {schema_version: "1.0", wall_time_s: 1, tool_calls: 3, model_tokens: 100}
+assertions:
+  - {schema_version: "1.0", id: refund.amount, type: state_equals, path: refunds.0.amount_minor, value: 2499, severity: critical}
+metadata: {stub_behavior: success, world_behavior: fail_snapshot}

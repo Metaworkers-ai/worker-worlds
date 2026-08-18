@@ -1,0 +1,227 @@
+{
+  "$defs": {
+    "AssertionSeverity": {
+      "description": "Bounded assertion severity.",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "info"
+      ],
+      "title": "AssertionSeverity",
+      "type": "string"
+    },
+    "EvidenceKind": {
+      "description": "Kinds of bounded evidence references.",
+      "enum": [
+        "initial_snapshot",
+        "final_snapshot",
+        "event",
+        "tool_call",
+        "worker_turn",
+        "authorization",
+        "changed_entity",
+        "resource",
+        "policy"
+      ],
+      "title": "EvidenceKind",
+      "type": "string"
+    },
+    "EvidenceReference": {
+      "additionalProperties": false,
+      "description": "Resolvable bounded reference into RunRecord evidence.",
+      "properties": {
+        "facts": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Facts",
+          "type": "object"
+        },
+        "kind": {
+          "$ref": "#/$defs/EvidenceKind"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "reference": {
+          "title": "Reference",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "sequence": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sequence"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        }
+      },
+      "required": [
+        "kind",
+        "reference"
+      ],
+      "title": "EvidenceReference",
+      "type": "object"
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "VerdictStatus": {
+      "description": "Outcome of deterministic grading.",
+      "enum": [
+        "pass",
+        "fail",
+        "error"
+      ],
+      "title": "VerdictStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Evidence-backed deterministic assertion verdict.",
+  "properties": {
+    "assertion_id": {
+      "title": "Assertion Id",
+      "type": "string"
+    },
+    "assertion_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Assertion Type"
+    },
+    "evaluator_version": {
+      "default": "1.0",
+      "title": "Evaluator Version",
+      "type": "string"
+    },
+    "evidence": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "evidence_refs": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/EvidenceReference"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "expected": {
+      "$ref": "#/$defs/JsonValue",
+      "default": null
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "observed": {
+      "$ref": "#/$defs/JsonValue",
+      "default": null
+    },
+    "policy_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Policy Name"
+    },
+    "reason_code": {
+      "default": "unspecified",
+      "title": "Reason Code",
+      "type": "string"
+    },
+    "required": {
+      "default": true,
+      "title": "Required",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "severity": {
+      "$ref": "#/$defs/AssertionSeverity"
+    },
+    "status": {
+      "$ref": "#/$defs/VerdictStatus"
+    }
+  },
+  "required": [
+    "id",
+    "assertion_id",
+    "status",
+    "severity",
+    "message"
+  ],
+  "title": "Verdict",
+  "type": "object"
+}

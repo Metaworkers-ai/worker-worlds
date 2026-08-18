@@ -1,0 +1,7 @@
+schema_version: "1.0"
+id: resource.missing_usage
+world: {schema_version: "1.0", name: postgres-commerce, version: "1.0", seed: 4}
+trigger: {schema_version: "1.0", type: customer_message, actor: {customer_id: cus_102}, content: Complete the request.}
+assertions:
+  - {schema_version: "1.0", id: resource.tokens, type: resource_within, severity: high, required: true, description: Required token evidence must be present., parameters: {metric: model_tokens, minimum: 0, maximum: 100}}
+metadata: {risk: missing required usage evidence}

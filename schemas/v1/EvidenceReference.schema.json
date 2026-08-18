@@ -1,0 +1,105 @@
+{
+  "$defs": {
+    "EvidenceKind": {
+      "description": "Kinds of bounded evidence references.",
+      "enum": [
+        "initial_snapshot",
+        "final_snapshot",
+        "event",
+        "tool_call",
+        "worker_turn",
+        "authorization",
+        "changed_entity",
+        "resource",
+        "policy"
+      ],
+      "title": "EvidenceKind",
+      "type": "string"
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "description": "Resolvable bounded reference into RunRecord evidence.",
+  "properties": {
+    "facts": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Facts",
+      "type": "object"
+    },
+    "kind": {
+      "$ref": "#/$defs/EvidenceKind"
+    },
+    "path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Path"
+    },
+    "reference": {
+      "title": "Reference",
+      "type": "string"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sequence": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sequence"
+    },
+    "value": {
+      "$ref": "#/$defs/JsonValue",
+      "default": null
+    }
+  },
+  "required": [
+    "kind",
+    "reference"
+  ],
+  "title": "EvidenceReference",
+  "type": "object"
+}

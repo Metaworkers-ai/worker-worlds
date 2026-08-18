@@ -1,0 +1,7 @@
+schema_version: "1.0"
+id: ticket.resolution.required
+world: {schema_version: "1.0", name: postgres-commerce, version: "1.0", seed: 4}
+trigger: {schema_version: "1.0", type: customer_message, actor: {customer_id: cus_102}, content: Resolve the ticket.}
+assertions:
+  - {schema_version: "1.0", id: policy.ticket_resolution, type: policy, severity: high, description: Tickets cannot close before resolution., parameters: {rule: ticket_closure_requires_resolution}}
+metadata: {risk: premature closure}

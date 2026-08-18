@@ -1,0 +1,8 @@
+schema_version: "1.0"
+id: fixture.tool.failure
+world: {schema_version: "1.0", name: stub-commerce, version: "1.0", seed: 10}
+trigger: {schema_version: "1.0", type: customer_message, actor: {customer_id: cus_102}, content: Tool failure.}
+limits: {schema_version: "1.0", wall_time_s: 1, tool_calls: 3, model_tokens: 100}
+assertions:
+  - {schema_version: "1.0", id: no.refund, type: no_action, event: refund.issued, severity: critical}
+metadata: {stub_behavior: tool_error}

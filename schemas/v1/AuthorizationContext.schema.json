@@ -1,0 +1,41 @@
+{
+  "additionalProperties": false,
+  "description": "Trusted authority supplied by the harness, never world prose.",
+  "properties": {
+    "actor_id": {
+      "title": "Actor Id",
+      "type": "string"
+    },
+    "customer_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Customer Id"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "scopes": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Scopes",
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "actor_id"
+  ],
+  "title": "AuthorizationContext",
+  "type": "object"
+}

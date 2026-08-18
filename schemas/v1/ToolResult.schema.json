@@ -1,0 +1,130 @@
+{
+  "$defs": {
+    "JsonValue": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ToolResultStatus": {
+      "description": "Normalized tool result status.",
+      "enum": [
+        "success",
+        "error"
+      ],
+      "title": "ToolResultStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Normalized result, including typed failure provenance.",
+  "properties": {
+    "audit_metadata": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Audit Metadata",
+      "type": "object"
+    },
+    "call_id": {
+      "title": "Call Id",
+      "type": "string"
+    },
+    "duration_ms": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Duration Ms",
+      "type": "integer"
+    },
+    "ended_at": {
+      "description": "Timezone-aware UTC timestamp",
+      "format": "date-time",
+      "title": "Ended At",
+      "type": "string"
+    },
+    "error_message": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error Message"
+    },
+    "error_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error Type"
+    },
+    "output": {
+      "$ref": "#/$defs/JsonValue",
+      "default": null
+    },
+    "retry_of": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Retry Of"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "started_at": {
+      "description": "Timezone-aware UTC timestamp",
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/ToolResultStatus"
+    }
+  },
+  "required": [
+    "call_id",
+    "status",
+    "started_at",
+    "ended_at"
+  ],
+  "title": "ToolResult",
+  "type": "object"
+}
