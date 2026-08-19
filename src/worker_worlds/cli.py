@@ -4,21 +4,32 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import json
 import sys
 from pathlib import Path
+
+import yaml
 
 from worker_worlds.adapters import (
     LangGraphAdapter,
     OpenAIAgentsAdapter,
     refund_fake_runtime,
 )
-from worker_worlds.contracts import Scenario
+from worker_worlds.baselines import create_baseline, inspect_baseline, load_baseline, load_suite
+from worker_worlds.comparison import compare_suites
+from worker_worlds.contracts import ComparisonConfig, Scenario
 from worker_worlds.database import DatabaseSettings, database_health, migrate
 from worker_worlds.errors import WorkerWorldsError
 from worker_worlds.grading import DeterministicGrader
 from worker_worlds.postgres_world import PostgresWorld
 from worker_worlds.protocols import WorkerAdapter, World
-from worker_worlds.reporting import HtmlReporter, JsonReporter, JUnitReporter, SuiteJsonReporter
+from worker_worlds.reporting import (
+    ComparisonReporter,
+    HtmlReporter,
+    JsonReporter,
+    JUnitReporter,
+    SuiteJsonReporter,
+)
 from worker_worlds.runner import Runner
 from worker_worlds.scenarios import load_scenario
 from worker_worlds.stubs import StubWorkerAdapter, StubWorld
@@ -48,6 +59,22 @@ def _parser() -> argparse.ArgumentParser:
     suite.add_argument("--concurrency", type=int, default=4)
     suite.add_argument("--provider-concurrency", type=int, default=2)
     suite.add_argument("--output", type=Path, default=Path(".worker-worlds/runs"))
+    baseline = subparsers.add_parser("baseline", help="manage immutable local baselines")
+    baseline_commands = baseline.add_subparsers(dest="baseline_command", required=True)
+    baseline_create = baseline_commands.add_parser("create")
+    baseline_create.add_argument("--from", dest="source", type=Path, required=True)
+    baseline_create.add_argument("--name", required=True)
+    baseline_create.add_argument("--output", type=Path, required=True)
+    baseline_list = baseline_commands.add_parser("list")
+    baseline_list.add_argument("--directory", type=Path, required=True)
+    baseline_inspect = baseline_commands.add_parser("inspect")
+    baseline_inspect.add_argument("--baseline", type=Path, required=True)
+    compare = subparsers.add_parser("compare", help="compare baseline and candidate suites")
+    compare.add_argument("--baseline", type=Path, required=True)
+    compare.add_argument("--candidate", type=Path, required=True)
+    compare.add_argument("--config", type=Path)
+    compare.add_argument("--output", type=Path, required=True)
+    compare.add_argument("--split-threshold-bytes", type=int, default=500_000)
     return parser
 
 
@@ -145,6 +172,49 @@ async def _migrate(args: argparse.Namespace) -> int:
     return 0
 
 
+def _baseline(args: argparse.Namespace) -> int:
+    if args.baseline_command == "create":
+        path = create_baseline(args.source, args.name, args.output)
+        print(f"baseline={path}")
+        return 0
+    if args.baseline_command == "list":
+        for path in sorted(args.directory.glob("*.json")):
+            print(path)
+        return 0
+    data = inspect_baseline(args.baseline)
+    print(json.dumps(data, sort_keys=True, indent=2))
+    return 0
+
+
+async def _compare(args: argparse.Namespace) -> int:
+    baseline = load_baseline(args.baseline)
+    candidate = load_suite(args.candidate)
+    config = ComparisonConfig()
+    if args.config:
+        raw = yaml.safe_load(args.config.read_text(encoding="utf-8")) or {}
+        config_data = raw.get("comparison", raw) if isinstance(raw, dict) else raw
+        config = ComparisonConfig.model_validate(config_data)
+    report = compare_suites(
+        baseline.suite,
+        candidate,
+        config,
+        baseline_source=str(args.baseline),
+        candidate_source=str(args.candidate),
+    )
+    paths = await ComparisonReporter(split_threshold_bytes=args.split_threshold_bytes).report(
+        report, args.output
+    )
+    print(f"comparison_id={report.id}")
+    print(f"gate={'pass' if report.verdict.passed else 'fail'}")
+    print(f"new_critical={report.verdict.new_critical}")
+    print(f"new_high={report.verdict.new_high}")
+    print(f"pass_rate_delta={sum(item.pass_rate_delta for item in report.scenarios):.6f}")
+    print(f"json={paths[0]}")
+    print(f"junit={paths[1]}")
+    print(f"html={paths[2]}")
+    return 0 if report.verdict.passed else 1
+
+
 def platform_version() -> str:
     """Return the executing Python version for doctor output."""
     return ".".join(str(part) for part in sys.version_info[:3])
@@ -162,6 +232,10 @@ def main(argv: list[str] | None = None) -> int:
             return asyncio.run(_migrate(args))
         if args.command == "suite":
             return asyncio.run(_suite(args))
+        if args.command == "baseline":
+            return _baseline(args)
+        if args.command == "compare":
+            return asyncio.run(_compare(args))
         return 2
     except WorkerWorldsError as exc:
         print(f"error: {exc}", file=sys.stderr)

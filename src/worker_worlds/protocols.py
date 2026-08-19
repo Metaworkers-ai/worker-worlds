@@ -7,6 +7,7 @@ from typing import Protocol, runtime_checkable
 
 from worker_worlds.contracts import (
     AuthorizationContext,
+    JsonValue,
     RunRecord,
     Scenario,
     ToolCall,
@@ -47,6 +48,10 @@ class World(Protocol):
 
     async def advance_time(self, delta: timedelta) -> list[WorldEvent]:
         """Advance controlled time and return resulting events."""
+        ...
+
+    async def inject(self, event_type: str, payload: dict[str, JsonValue]) -> WorldEvent:
+        """Atomically apply one trusted scheduled world event."""
         ...
 
     async def close(self) -> None:

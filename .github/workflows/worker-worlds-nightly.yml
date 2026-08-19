@@ -1,0 +1,24 @@
+name: Worker Worlds nightly
+on:
+  schedule:
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  comprehensive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: docker compose up -d --wait postgres
+      - run: pip install -e '.[dev]'
+      - run: make verify
+        env:
+          WORKER_WORLDS_TEST_DATABASE_URL: postgresql://worker_worlds:worker_worlds_local@127.0.0.1:55432/worker_worlds_test
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: worker-worlds-nightly
+          path: .worker-worlds

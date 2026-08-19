@@ -79,6 +79,8 @@ CREATE TABLE {schema}.emails (
  subject text NOT NULL, body text NOT NULL, created_at timestamptz NOT NULL);
 CREATE TABLE {schema}.escalations (
  id text PRIMARY KEY, ticket_id text NOT NULL REFERENCES {schema}.tickets(id), reason text NOT NULL, created_at timestamptz NOT NULL);
+CREATE TABLE {schema}.commerce_facts (
+ key text PRIMARY KEY, value jsonb NOT NULL, trust text NOT NULL);
 CREATE TABLE {schema}.idempotency (
  key text PRIMARY KEY, tool_name text NOT NULL, input_hash text NOT NULL, result jsonb NOT NULL);
 CREATE TABLE {schema}.world_events (
@@ -114,7 +116,7 @@ class PostgresWorld:
     """Per-run isolated commerce world backed by Postgres transactions."""
 
     version = WORLD_VERSION
-    migration_version = "002"
+    migration_version = "003"
 
     def __init__(self, settings: DatabaseSettings, scenario_id: str) -> None:
         """Configure an uninitialized world without opening a connection."""
@@ -188,74 +190,81 @@ class PostgresWorld:
 
     async def _insert_fixture(self, fixture: dict[str, list[dict[str, Any]]]) -> None:
         connection, schema = self._ready()
-        customer = fixture["customers"][0]
-        product = fixture["products"][0]
-        inventory = fixture["inventory"][0]
-        order = fixture["orders"][0]
-        line = fixture["line_items"][0]
-        shipment = fixture["shipments"][0]
-        ticket = fixture["tickets"][0]
-        await connection.execute(
-            f"INSERT INTO {schema}.customers VALUES($1,$2,$3,$4)",
-            customer["id"],
-            customer["email"],
-            customer["name"],
-            self._as_datetime(customer["created_at"]),
-        )
-        await connection.execute(
-            f"INSERT INTO {schema}.products VALUES($1,$2,$3,$4,$5,$6)",
-            product["id"],
-            product["sku"],
-            product["title"],
-            product["price"]["amount_minor"],
-            product["price"]["currency"],
-            product["active"],
-        )
-        await connection.execute(
-            f"INSERT INTO {schema}.inventory VALUES($1,$2,$3,$4,$5,$6)",
-            inventory["id"],
-            inventory["product_id"],
-            inventory["location"],
-            inventory["available"],
-            inventory["reserved"],
-            inventory["backorder_allowed"],
-        )
-        await connection.execute(
-            f"INSERT INTO {schema}.orders VALUES($1,$2,$3,$4,$5,$6,$7)",
-            order["id"],
-            order["customer_id"],
-            order["status"],
-            order["captured"]["amount_minor"],
-            order["refunded"]["amount_minor"],
-            order["captured"]["currency"],
-            self._as_datetime(order["created_at"]),
-        )
-        await connection.execute(
-            f"INSERT INTO {schema}.line_items VALUES($1,$2,$3,$4,$5,$6)",
-            line["id"],
-            line["order_id"],
-            line["product_id"],
-            line["quantity"],
-            line["unit_price"]["amount_minor"],
-            line["unit_price"]["currency"],
-        )
-        await connection.execute(
-            f"INSERT INTO {schema}.shipments VALUES($1,$2,$3,$4,$5)",
-            shipment["id"],
-            shipment["order_id"],
-            shipment["status"],
-            shipment["quantity"],
-            self._as_datetime(shipment["created_at"]),
-        )
-        await connection.execute(
-            f"INSERT INTO {schema}.tickets VALUES($1,$2,$3,$4,$5,$6)",
-            ticket["id"],
-            ticket["customer_id"],
-            ticket["order_id"],
-            ticket["subject"],
-            ticket["status"],
-            self._as_datetime(ticket["created_at"]),
-        )
+        for customer in fixture["customers"]:
+            await connection.execute(
+                f"INSERT INTO {schema}.customers VALUES($1,$2,$3,$4)",
+                customer["id"],
+                customer["email"],
+                customer["name"],
+                self._as_datetime(customer["created_at"]),
+            )
+        for product in fixture["products"]:
+            await connection.execute(
+                f"INSERT INTO {schema}.products VALUES($1,$2,$3,$4,$5,$6)",
+                product["id"],
+                product["sku"],
+                product["title"],
+                product["price"]["amount_minor"],
+                product["price"]["currency"],
+                product["active"],
+            )
+        for inventory in fixture["inventory"]:
+            await connection.execute(
+                f"INSERT INTO {schema}.inventory VALUES($1,$2,$3,$4,$5,$6)",
+                inventory["id"],
+                inventory["product_id"],
+                inventory["location"],
+                inventory["available"],
+                inventory["reserved"],
+                inventory["backorder_allowed"],
+            )
+        for order in fixture["orders"]:
+            await connection.execute(
+                f"INSERT INTO {schema}.orders VALUES($1,$2,$3,$4,$5,$6,$7)",
+                order["id"],
+                order["customer_id"],
+                order["status"],
+                order["captured"]["amount_minor"],
+                order["refunded"]["amount_minor"],
+                order["captured"]["currency"],
+                self._as_datetime(order["created_at"]),
+            )
+        for line in fixture["line_items"]:
+            await connection.execute(
+                f"INSERT INTO {schema}.line_items VALUES($1,$2,$3,$4,$5,$6)",
+                line["id"],
+                line["order_id"],
+                line["product_id"],
+                line["quantity"],
+                line["unit_price"]["amount_minor"],
+                line["unit_price"]["currency"],
+            )
+        for shipment in fixture["shipments"]:
+            await connection.execute(
+                f"INSERT INTO {schema}.shipments VALUES($1,$2,$3,$4,$5)",
+                shipment["id"],
+                shipment["order_id"],
+                shipment["status"],
+                shipment["quantity"],
+                self._as_datetime(shipment["created_at"]),
+            )
+        for ticket in fixture["tickets"]:
+            await connection.execute(
+                f"INSERT INTO {schema}.tickets VALUES($1,$2,$3,$4,$5,$6)",
+                ticket["id"],
+                ticket["customer_id"],
+                ticket["order_id"],
+                ticket["subject"],
+                ticket["status"],
+                self._as_datetime(ticket["created_at"]),
+            )
+        for fact in fixture["facts"]:
+            await connection.execute(
+                f"INSERT INTO {schema}.commerce_facts VALUES($1,$2::jsonb,$3)",
+                fact["key"],
+                json.dumps(fact["value"]),
+                fact["trust"],
+            )
 
     @staticmethod
     def _as_datetime(value: Any) -> datetime:
@@ -801,6 +810,7 @@ class PostgresWorld:
             "tickets": f"SELECT id,customer_id,order_id,subject,status,created_at FROM {schema}.tickets ORDER BY id",
             "emails": f"SELECT id,customer_id,subject,body,created_at FROM {schema}.emails ORDER BY id",
             "escalations": f"SELECT id,ticket_id,reason,created_at FROM {schema}.escalations ORDER BY id",
+            "facts": f"SELECT key,value,trust FROM {schema}.commerce_facts ORDER BY key",
         }
         for name, query in queries.items():
             rows = await connection.fetch(query)
@@ -830,6 +840,9 @@ class PostgresWorld:
     def _record_json(row: asyncpg.Record) -> dict[str, JsonValue]:
         output: dict[str, JsonValue] = {}
         for key, value in row.items():
+            if key == "value" and isinstance(value, str):
+                output[key] = cast(JsonValue, json.loads(value))
+                continue
             output[key] = (
                 value.isoformat().replace("+00:00", "Z")
                 if isinstance(value, datetime)
@@ -876,6 +889,54 @@ class PostgresWorld:
             raise ValueError("world time cannot move backwards")
         self._clock += delta
         return []
+
+    async def inject(self, event_type: str, payload: dict[str, JsonValue]) -> WorldEvent:
+        """Atomically apply and record one trusted scheduled world event."""
+        connection, schema = self._ready()
+        entity_type = str(payload.get("entity_type", event_type.split(".", 1)[0]))
+        entity_id = str(payload.get("entity_id", "scheduled"))
+        async with self._invoke_lock, connection.transaction():
+            before: dict[str, JsonValue] | None = None
+            after = dict(payload)
+            if event_type == "inventory.stockout" and entity_id != "scheduled":
+                row = await connection.fetchrow(
+                    f"SELECT available FROM {schema}.inventory WHERE id=$1 FOR UPDATE", entity_id
+                )
+                if row is None:
+                    raise InfrastructureError(f"injection target inventory {entity_id} not found")
+                before = {"available": int(row["available"])}
+                await connection.execute(
+                    f"UPDATE {schema}.inventory SET available=0 WHERE id=$1", entity_id
+                )
+                after["available"] = 0
+            sequence = await self._next_sequence(connection, schema)
+            event_id = self._entity_id("evt", sequence)
+            occurred_at = self._clock + timedelta(milliseconds=1)
+            authorization = AuthorizationContext(
+                actor_id="world-scheduler", scopes=frozenset({"world:inject"})
+            ).model_dump(mode="json")
+            await connection.execute(
+                f"INSERT INTO {schema}.world_events VALUES"
+                "($1,$2,$3,$4,$5,$6,$7,$8,$9,$10::jsonb,$11,$12::jsonb,$13::jsonb,"
+                "$14::jsonb,$15::jsonb)",
+                event_id,
+                self._run_id,
+                self._scenario_id,
+                sequence,
+                occurred_at,
+                event_type,
+                entity_type,
+                entity_id,
+                "world-scheduler",
+                json.dumps(authorization),
+                None,
+                json.dumps(before) if before is not None else None,
+                json.dumps(after),
+                json.dumps({"source": "scenario_schedule"}),
+                json.dumps({"injected": True, "trust": "trusted_runtime"}),
+            )
+        self._clock = occurred_at
+        return (await self.events(after_sequence=sequence - 1))[0]
 
     async def close(self) -> None:
         """Drop only this validated namespace and release its lease."""

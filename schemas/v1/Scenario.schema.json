@@ -187,6 +187,12 @@
           "title": "Cost Minor",
           "type": "integer"
         },
+        "injections": {
+          "default": 20,
+          "minimum": 0,
+          "title": "Injections",
+          "type": "integer"
+        },
         "model_tokens": {
           "default": 12000,
           "minimum": 0,

@@ -14,13 +14,14 @@ from worker_worlds.contracts import (
     RunId,
     RunRecord,
     Scenario,
+    ScheduledInjection,
     TerminalReason,
     ToolResult,
     ToolResultStatus,
     WorkerTurn,
     WorldSnapshot,
 )
-from worker_worlds.errors import AdapterError, ProviderError, ScenarioAuthoringError
+from worker_worlds.errors import AdapterError, InjectionError, ProviderError, ScenarioAuthoringError
 from worker_worlds.ids import prefixed_ulid
 from worker_worlds.protocols import Grader, WorkerAdapter, World
 
@@ -54,6 +55,11 @@ class Runner:
         cleanup_succeeded = False
         try:
             initial = await world.reset(seed=scenario.world.seed, run_id=run_id)
+            injections = self._scheduled_injections(scenario)
+            delivered: set[str] = set()
+            await self._deliver_injections(world, injections, delivered, "before_worker")
+            if len(delivered) > scenario.limits.injections:
+                raise InjectionError("injection budget exceeded")
             context = AuthorizationContext(
                 actor_id=worker.name,
                 customer_id=str(scenario.trigger.actor.get("customer_id", "")) or None,
@@ -69,6 +75,8 @@ class Runner:
                     worker,
                     turns,
                     {tool.name for tool in tools if tool.mutation},
+                    injections,
+                    delivered,
                 ),
                 timeout=scenario.limits.wall_time_s,
             )
@@ -89,6 +97,19 @@ class Runner:
             terminal = TerminalReason.CANCELLED
             error_type, error_message = type(exc).__name__, "run was cancelled"
             await worker.cancel()
+            try:
+                final = await world.snapshot()
+                events = await world.events()
+            except Exception as evidence_exc:
+                incomplete = True
+                error_type, error_message = type(evidence_exc).__name__, str(evidence_exc)
+        except InjectionError as exc:
+            terminal = (
+                TerminalReason.INJECTION_BUDGET_EXCEEDED
+                if "budget" in str(exc)
+                else TerminalReason.INJECTION_ERROR
+            )
+            error_type, error_message = type(exc).__name__, str(exc)
             try:
                 final = await world.snapshot()
                 events = await world.events()
@@ -174,6 +195,8 @@ class Runner:
         worker: WorkerAdapter,
         turns: list[WorkerTurn],
         mutation_tools: set[str],
+        injections: tuple[ScheduledInjection, ...],
+        delivered: set[str],
     ) -> TerminalReason:
         tool_result: ToolResult | None = None
         tool_calls = 0
@@ -195,6 +218,9 @@ class Runner:
                 turn = turn.model_copy(update={"tool_call": call})
             turns.append(turn)
             if worker.is_terminal(turn):
+                await Runner._deliver_injections(world, injections, delivered, "before_terminal")
+                if len(delivered) > scenario.limits.injections:
+                    raise InjectionError("injection budget exceeded")
                 return TerminalReason.COMPLETED
             if turn.tool_call is None:
                 return TerminalReason.WORKER_ERROR
@@ -232,5 +258,74 @@ class Runner:
                 if production_tool and tool_result.error_type == "ToolExecutionError":
                     return TerminalReason.TOOL_EXECUTION_ERROR
                 return TerminalReason.TOOL_ERROR
+            event_types = {event.event_type for event in await world.events()}
+            await Runner._deliver_injections(
+                world,
+                injections,
+                delivered,
+                "after_tool",
+                tool_name=turn.tool_call.tool_name,
+                tool_count=tool_calls,
+                event_types=event_types,
+            )
+            if len(delivered) > scenario.limits.injections:
+                raise InjectionError("injection budget exceeded")
         await worker.cancel()
         return TerminalReason.BUDGET_EXCEEDED
+
+    @staticmethod
+    def _scheduled_injections(scenario: Scenario) -> tuple[ScheduledInjection, ...]:
+        raw = scenario.metadata.get("injections", [])
+        if not isinstance(raw, list):
+            raise InjectionError("scenario metadata injections must be a list")
+        try:
+            return tuple(ScheduledInjection.model_validate(item) for item in raw)
+        except ValueError as exc:
+            raise InjectionError(f"invalid injection schedule: {exc}") from exc
+
+    @staticmethod
+    async def _deliver_injections(
+        world: World,
+        injections: tuple[ScheduledInjection, ...],
+        delivered: set[str],
+        point: str,
+        *,
+        tool_name: str | None = None,
+        tool_count: int = 0,
+        event_types: set[str] | None = None,
+    ) -> None:
+        for injection in injections:
+            if injection.id in delivered:
+                continue
+            matches = (
+                injection.trigger == point
+                or (
+                    point == "after_tool"
+                    and injection.trigger == "after_tool"
+                    and injection.after_tool == tool_name
+                )
+                or (
+                    point == "after_tool"
+                    and injection.trigger == "after_nth_tool"
+                    and injection.after_nth_tool == tool_count
+                )
+                or (
+                    point == "after_tool"
+                    and injection.trigger == "after_event"
+                    and injection.after_event in (event_types or set())
+                )
+                or (point == "before_worker" and injection.trigger == "at_time")
+            )
+            if not matches:
+                continue
+            payload = dict(injection.payload)
+            payload["injection_id"] = injection.id
+            try:
+                if injection.trigger == "at_time" and injection.at is not None:
+                    current = await world.snapshot()
+                    if injection.at > current.captured_at:
+                        await world.advance_time(injection.at - current.captured_at)
+                await world.inject(injection.event_type, payload)
+            except Exception as exc:
+                raise InjectionError(f"injection {injection.id} failed: {exc}") from exc
+            delivered.add(injection.id)

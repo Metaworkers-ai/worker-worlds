@@ -1,12 +1,14 @@
 """Machine-readable reporters."""
 
 import asyncio
+import hashlib
 import html
 import json
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from typing import cast
 
-from worker_worlds.contracts import RunRecord, SuiteRecord, VerdictStatus
+from worker_worlds.contracts import ComparisonReport, RunRecord, SuiteRecord, VerdictStatus
 
 _SECRET_KEYS = frozenset({"secret", "password", "api_key", "access_token", "authorization_token"})
 
@@ -22,7 +24,7 @@ def _redact(value: object) -> object:
     return value
 
 
-def _canonical_redacted(model: RunRecord | SuiteRecord) -> str:
+def _canonical_redacted(model: RunRecord | SuiteRecord | ComparisonReport) -> str:
     return json.dumps(
         _redact(model.model_dump(mode="json")),
         sort_keys=True,
@@ -207,3 +209,136 @@ class HtmlReporter:
         path = output_directory / "report.html"
         await asyncio.to_thread(path.write_text, document, encoding="utf-8")
         return path
+
+
+class ComparisonReporter:
+    """Write canonical JSON, JUnit, and accessible static comparison HTML."""
+
+    def __init__(self, *, split_threshold_bytes: int = 500_000) -> None:
+        """Configure deterministic split mode for larger reports."""
+        self.split_threshold_bytes = split_threshold_bytes
+
+    @staticmethod
+    def _scenario_filename(scenario_id: object) -> str:
+        digest = hashlib.sha256(str(scenario_id).encode()).hexdigest()[:16]
+        return f"scenario-{digest}.html"
+
+    async def report(
+        self, report: ComparisonReport, output_directory: Path
+    ) -> tuple[Path, Path, Path]:
+        """Write all comparison formats with stable relative links."""
+        await asyncio.to_thread(output_directory.mkdir, parents=True, exist_ok=True)
+        json_path = output_directory / "comparison.json"
+        await asyncio.to_thread(
+            json_path.write_text, _canonical_redacted(report) + "\n", encoding="utf-8"
+        )
+        junit_path = output_directory / "comparison.junit.xml"
+        await asyncio.to_thread(junit_path.write_bytes, self._junit(report))
+        html_path = output_directory / "comparison.html"
+        document = self._html(report, split=False)
+        if len(document.encode()) > self.split_threshold_bytes:
+            detail_directory = output_directory / "scenarios"
+            await asyncio.to_thread(detail_directory.mkdir, exist_ok=True)
+            for scenario in report.scenarios:
+                detail = self._scenario_html(report, scenario)
+                await asyncio.to_thread(
+                    (detail_directory / self._scenario_filename(scenario.scenario_id)).write_text,
+                    detail,
+                    encoding="utf-8",
+                )
+            document = self._html(report, split=True)
+        await asyncio.to_thread(html_path.write_text, document, encoding="utf-8")
+        return json_path, junit_path, html_path
+
+    def _junit(self, report: ComparisonReport) -> bytes:
+        failures = sum(
+            item.primary_classification.value
+            in {"new_failure", "failure_mode_changed", "infrastructure_health_regressed"}
+            for item in report.scenarios
+        )
+        errors = sum(item.compatibility.value == "incompatible" for item in report.scenarios)
+        root = ET.Element(
+            "testsuite",
+            {
+                "name": "Worker Worlds behavioral comparison",
+                "tests": str(len(report.scenarios)),
+                "failures": str(failures),
+                "errors": str(errors),
+            },
+        )
+        for item in report.scenarios:
+            case = ET.SubElement(
+                root,
+                "testcase",
+                {"classname": "worker-worlds.compare", "name": str(item.scenario_id)},
+            )
+            props = ET.SubElement(case, "properties")
+            ET.SubElement(props, "property", {"name": "baseline", "value": report.baseline_source})
+            ET.SubElement(
+                props, "property", {"name": "candidate", "value": report.candidate_source}
+            )
+            ET.SubElement(
+                props,
+                "property",
+                {"name": "classification", "value": item.primary_classification.value},
+            )
+            if item.compatibility.value == "incompatible":
+                ET.SubElement(case, "error", {"message": "; ".join(item.compatibility_reasons)})
+            elif item.primary_classification.value in {
+                "new_failure",
+                "failure_mode_changed",
+                "infrastructure_health_regressed",
+            }:
+                ET.SubElement(case, "failure", {"message": item.primary_classification.value})
+            elif item.primary_classification.value == "fixed":
+                ET.SubElement(case, "system-out").text = "behavior fixed"
+        return cast("bytes", ET.tostring(root, encoding="utf-8", xml_declaration=True))
+
+    def _html(self, report: ComparisonReport, *, split: bool) -> str:
+        rows = []
+        for item in report.scenarios:
+            label = html.escape(str(item.scenario_id))
+            filename = self._scenario_filename(item.scenario_id)
+            title = f'<a href="scenarios/{filename}">{label}</a>' if split else label
+            rows.append(
+                '<tr><th scope="row">'
+                + title
+                + "</th><td>"
+                + html.escape(item.primary_classification.value)
+                + "</td><td>"
+                + f"{item.baseline.pass_rate:.1%} → {item.candidate.pass_rate:.1%}"
+                + "</td><td>"
+                + html.escape(", ".join(delta.identity for delta in item.failure_deltas) or "—")
+                + "</td></tr>"
+            )
+        reasons = "".join(f"<li>{html.escape(reason)}</li>" for reason in report.verdict.reasons)
+        return self._shell(
+            "Behavioral comparison",
+            f"<h1>Worker Worlds behavioral comparison</h1>"
+            f"<p><strong>Gate:</strong> {'PASS' if report.verdict.passed else 'FAIL'}</p>"
+            f"<p>Baseline <code>{html.escape(report.baseline_hash)}</code><br>"
+            f"Candidate <code>{html.escape(report.candidate_hash)}</code></p>"
+            f"<ul>{reasons}</ul><table><thead><tr><th>Scenario</th><th>Classification</th>"
+            f"<th>Pass rate</th><th>Evidence-linked changes</th></tr></thead><tbody>{''.join(rows)}</tbody></table>"
+            f"<h2>Reproduce</h2><pre>{html.escape(chr(10).join(report.reproduction_commands))}</pre>",
+        )
+
+    def _scenario_html(self, report: ComparisonReport, scenario: object) -> str:
+        data = json.dumps(_redact(scenario.model_dump(mode="json")), sort_keys=True, indent=2)  # type: ignore[attr-defined]
+        return self._shell(
+            f"Scenario {scenario.scenario_id}",  # type: ignore[attr-defined]
+            f'<nav><a href="../comparison.html">Back to comparison</a></nav>'
+            f"<h1>{html.escape(str(scenario.scenario_id))}</h1><pre>{html.escape(data)}</pre>",  # type: ignore[attr-defined]
+        )
+
+    @staticmethod
+    def _shell(title: str, body: str) -> str:
+        return (
+            '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+            '<meta name="viewport" content="width=device-width,initial-scale=1">'
+            f"<title>{html.escape(title)}</title><style>body{{font:16px system-ui;max-width:1100px;"
+            "margin:auto;padding:2rem;color:#17202a}}table{border-collapse:collapse;width:100%}"
+            "th,td{border:1px solid #bbb;padding:.55rem;text-align:left;vertical-align:top}"
+            "code,pre{background:#f4f5f6;padding:.25rem;overflow:auto}a:focus{outline:3px solid #06c}"
+            "</style></head><body><main>" + body + "</main></body></html>"
+        )

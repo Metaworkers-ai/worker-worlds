@@ -1,0 +1,119 @@
+{
+  "$defs": {
+    "JsonValue": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "description": "Deterministic mid-run world event requested by scenario data.",
+  "properties": {
+    "after_event": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "After Event"
+    },
+    "after_nth_tool": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "After Nth Tool"
+    },
+    "after_tool": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "After Tool"
+    },
+    "at": {
+      "anyOf": [
+        {
+          "description": "Timezone-aware UTC timestamp",
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "At"
+    },
+    "event_type": {
+      "title": "Event Type",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "payload": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Payload",
+      "type": "object"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "trigger": {
+      "pattern": "^(before_worker|after_tool|after_nth_tool|after_event|at_time|before_terminal)$",
+      "title": "Trigger",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "trigger",
+    "event_type"
+  ],
+  "title": "ScheduledInjection",
+  "type": "object"
+}

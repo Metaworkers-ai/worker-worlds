@@ -622,7 +622,9 @@
         "tool_timeout",
         "tool_validation_error",
         "tool_execution_error",
-        "authorization_rejection"
+        "authorization_rejection",
+        "injection_error",
+        "injection_budget_exceeded"
       ],
       "title": "TerminalReason",
       "type": "string"

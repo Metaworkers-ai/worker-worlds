@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import os
 from dataclasses import replace
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
@@ -33,7 +33,7 @@ def postgres_settings() -> DatabaseSettings:
 
 @pytest.fixture(autouse=True, scope="session")
 async def migrated(postgres_settings: DatabaseSettings) -> None:
-    assert await migrate(postgres_settings) == "002"
+    assert await migrate(postgres_settings) == "003"
 
 
 def _run_id() -> str:
@@ -236,5 +236,34 @@ async def test_snapshot_size_limit_fails_without_truncation(
     try:
         with pytest.raises(InfrastructureError, match="snapshot size"):
             await world.reset(seed=4, run_id=_run_id())
+    finally:
+        await world.close()
+
+
+async def test_controlled_time_stockout_injection_is_atomic(
+    postgres_settings: DatabaseSettings,
+) -> None:
+    world, _ = await _world(postgres_settings, seed=71)
+    try:
+        before = await world.snapshot()
+        inventory = before.state["inventory"]
+        assert isinstance(inventory, list) and inventory
+        first_inventory = inventory[0]
+        assert isinstance(first_inventory, dict)
+        inventory_id = str(first_inventory["id"])
+        await world.advance_time(timedelta(hours=2))
+        event = await world.inject(
+            "inventory.stockout",
+            {"entity_type": "inventory", "entity_id": inventory_id},
+        )
+        after = await world.snapshot()
+        rows = after.state["inventory"]
+        assert isinstance(rows, list)
+        typed_rows = [row for row in rows if isinstance(row, dict)]
+        changed = next(row for row in typed_rows if row["id"] == inventory_id)
+        assert changed["available"] == 0
+        assert event.event_type == "inventory.stockout"
+        assert event.occurred_at > before.captured_at
+        assert event.metadata["injected"] is True
     finally:
         await world.close()

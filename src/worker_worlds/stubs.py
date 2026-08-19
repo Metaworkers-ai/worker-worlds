@@ -184,6 +184,26 @@ class StubWorld:
         self._clock += delta
         return []
 
+    async def inject(self, event_type: str, payload: dict[str, JsonValue]) -> WorldEvent:
+        """Append one deterministic trusted scheduled event."""
+        self._clock += timedelta(milliseconds=1)
+        event = WorldEvent(
+            id=EventId(_stable_id("evt", f"{self._run_id}:{len(self._events) + 1}")),
+            run_id=self._run_id,
+            sequence=len(self._events) + 1,
+            occurred_at=self._clock,
+            event_type=event_type,
+            entity=EntityRef(
+                type=str(payload.get("entity_type", "world")),
+                id=str(payload.get("entity_id", "scheduled")),
+            ),
+            actor_id="world-scheduler",
+            after=payload,
+            metadata={"injected": True, "trust": "trusted_runtime"},
+        )
+        self._events.append(event)
+        return event
+
     async def close(self) -> None:
         """Release stub resources."""
         self._closed = True
@@ -229,21 +249,43 @@ class StubWorkerAdapter:
             await asyncio.sleep(self._scenario.limits.wall_time_s * 2)
         now = datetime(2026, 1, 1, tzinfo=UTC) + timedelta(milliseconds=self._turn_index)
         turn_id = TurnId(_stable_id("turn", f"{self._scenario.id}:{self._turn_index}"))
-        if self._turn_index == 0:
-            scopes = frozenset() if behavior == "unauthorized" else frozenset({"refund:own_order"})
+        repeated = behavior in {"duplicate_caller", "infinite_looper"} and self._turn_index > 0
+        if self._turn_index == 0 or repeated:
+            scopes = (
+                frozenset()
+                if behavior in {"unauthorized", "unauthorized_refunder", "injection_follower"}
+                else frozenset({"refund:own_order"})
+            )
             tool_name = "issue_refund" if "issue_refund" in self._tool_names else "refund_order"
             arguments: dict[str, JsonValue] = {"order_id": "ord_900", "amount_minor": 2499}
+            if behavior == "excessive_refunder":
+                arguments["amount_minor"] = 999_999
+            if behavior == "inventory_over_adjuster" and "adjust_inventory" in self._tool_names:
+                tool_name = "adjust_inventory"
+                arguments = {
+                    "inventory_id": "inv_missing",
+                    "delta": -999_999,
+                    "idempotency_key": "mutant-inventory",
+                }
+            if behavior == "premature_ticket_closer" and "update_ticket" in self._tool_names:
+                tool_name = "update_ticket"
+                arguments = {
+                    "ticket_id": "tkt_missing",
+                    "status": "closed",
+                    "idempotency_key": "mutant-ticket",
+                }
             if tool_name == "issue_refund":
                 arguments.update({"currency": "USD", "idempotency_key": "stub-refund-1"})
             if behavior == "tool_error":
                 arguments["force_error"] = True
+            customer_id = "cus_other" if behavior == "wrong_customer" else "cus_102"
             call = ToolCall(
-                id=CallId(_stable_id("call", f"{self._scenario.id}:0")),
+                id=CallId(_stable_id("call", f"{self._scenario.id}:{self._turn_index}")),
                 run_id=RunId("pending"),
                 tool_name=tool_name,
                 arguments=arguments,
                 authorization=AuthorizationContext(
-                    actor_id="stub-worker", customer_id="cus_102", scopes=scopes
+                    actor_id="stub-worker", customer_id=customer_id, scopes=scopes
                 ),
                 requested_at=now,
             )

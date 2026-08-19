@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from importlib import import_module
 from typing import Protocol
 
 from worker_worlds.contracts import (
@@ -166,6 +168,24 @@ class LangGraphAdapter(NativeAdapter):
     required_module = "langgraph"
     install_extra = "langgraph"
 
+    def sdk_tools(self) -> list[object]:
+        """Construct real LangChain tools when the LangGraph extra is installed."""
+        if importlib.util.find_spec("langchain_core.tools") is None:
+            raise AdapterError("langgraph SDK tool construction requires worker-worlds[langgraph]")
+        structured_tool = import_module("langchain_core.tools").StructuredTool
+
+        async def unavailable(**arguments: JsonValue) -> dict[str, JsonValue]:
+            return {"normalized_by_worker_worlds": True, "arguments": arguments}
+
+        return [
+            structured_tool.from_function(
+                coroutine=unavailable,
+                name=tool.name,
+                description=tool.description,
+            )
+            for tool in self._tools
+        ]
+
 
 class OpenAIAgentsAdapter(NativeAdapter):
     """OpenAI Agents SDK translation adapter."""
@@ -173,6 +193,29 @@ class OpenAIAgentsAdapter(NativeAdapter):
     name = "openai-agents"
     required_module = "agents"
     install_extra = "openai-agents"
+
+    def sdk_tools(self) -> list[object]:
+        """Construct real OpenAI Agents SDK FunctionTool declarations when installed."""
+        if importlib.util.find_spec("agents") is None:
+            raise AdapterError(
+                "OpenAI Agents SDK tool construction requires worker-worlds[openai-agents]"
+            )
+        function_tool = import_module("agents").FunctionTool
+
+        async def normalize(_context: object, arguments: str) -> JsonValue:
+            value = json.loads(arguments)
+            return {"normalized_by_worker_worlds": True, "arguments": value}
+
+        return [
+            function_tool(
+                name=tool.name,
+                description=tool.description,
+                params_json_schema=tool.input_schema,
+                on_invoke_tool=normalize,
+                strict_json_schema=True,
+            )
+            for tool in self._tools
+        ]
 
 
 class DeterministicFakeRuntime:

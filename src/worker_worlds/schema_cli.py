@@ -10,11 +10,20 @@ from pydantic import BaseModel
 
 from worker_worlds.contracts import (
     AuthorizationContext,
+    BaselineManifest,
+    ComparisonConfig,
+    ComparisonReport,
+    ComparisonVerdict,
     DiffResult,
+    DistributionSummary,
     EvidenceReference,
+    FailureModeDelta,
+    OutcomeSignature,
     RunRecord,
     Scenario,
     ScenarioAggregate,
+    ScenarioComparison,
+    ScheduledInjection,
     SuiteRecord,
     ToolCall,
     ToolResult,
@@ -28,6 +37,7 @@ from worker_worlds.contracts import (
 SCHEMA_DIRECTORY = Path("schemas/v1")
 MODELS: tuple[type[BaseModel], ...] = (
     Scenario,
+    ScheduledInjection,
     WorldEvent,
     WorldSnapshot,
     AuthorizationContext,
@@ -41,6 +51,14 @@ MODELS: tuple[type[BaseModel], ...] = (
     EvidenceReference,
     ScenarioAggregate,
     SuiteRecord,
+    BaselineManifest,
+    ComparisonConfig,
+    OutcomeSignature,
+    DistributionSummary,
+    FailureModeDelta,
+    ScenarioComparison,
+    ComparisonVerdict,
+    ComparisonReport,
 )
 
 

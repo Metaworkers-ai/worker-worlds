@@ -13,6 +13,10 @@ class InfrastructureError(WorkerWorldsError):
     """The harness could not collect complete world evidence."""
 
 
+class InjectionError(WorkerWorldsError):
+    """A deterministic scenario event injection failed."""
+
+
 class AdapterError(WorkerWorldsError):
     """A worker framework adapter failed outside worker behavior."""
 

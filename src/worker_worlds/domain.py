@@ -8,7 +8,7 @@ from typing import Annotated, Self
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from worker_worlds.contracts import Money
+from worker_worlds.contracts import JsonValue, Money
 
 
 class DomainModel(BaseModel):
@@ -152,6 +152,14 @@ class Ticket(DomainModel):
     subject: str
     status: TicketStatus
     created_at: datetime
+
+
+class CommerceFact(DomainModel):
+    """Explicit deterministic ambiguity that does not weaken entity invariants."""
+
+    key: str
+    value: JsonValue
+    trust: str = Field(pattern="^(trusted_fixture|untrusted_content)$")
 
 
 def validate_ticket_transition(current: TicketStatus, target: TicketStatus) -> None:

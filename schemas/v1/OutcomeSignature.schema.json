@@ -1,0 +1,120 @@
+{
+  "additionalProperties": false,
+  "description": "Inspectable semantic behavior identity for one run.",
+  "properties": {
+    "authorization_outcomes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Authorization Outcomes",
+      "type": "array"
+    },
+    "changed_entities": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Changed Entities",
+      "type": "array"
+    },
+    "digest": {
+      "title": "Digest",
+      "type": "string"
+    },
+    "event_sequence": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Event Sequence",
+      "type": "array"
+    },
+    "failed_assertions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Failed Assertions",
+      "type": "array"
+    },
+    "failed_policies": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Failed Policies",
+      "type": "array"
+    },
+    "incomplete_evidence": {
+      "title": "Incomplete Evidence",
+      "type": "boolean"
+    },
+    "mutation_categories": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Mutation Categories",
+      "type": "array"
+    },
+    "passed": {
+      "title": "Passed",
+      "type": "boolean"
+    },
+    "resource_violations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Resource Violations",
+      "type": "array"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "severities": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Severities",
+      "type": "array"
+    },
+    "terminal_reason": {
+      "title": "Terminal Reason",
+      "type": "string"
+    },
+    "tool_argument_categories": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tool Argument Categories",
+      "type": "array"
+    },
+    "tool_sequence": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tool Sequence",
+      "type": "array"
+    },
+    "version": {
+      "default": "1.0",
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "digest",
+    "passed",
+    "incomplete_evidence",
+    "failed_assertions",
+    "failed_policies",
+    "severities",
+    "terminal_reason",
+    "mutation_categories",
+    "changed_entities",
+    "event_sequence",
+    "tool_sequence",
+    "tool_argument_categories",
+    "authorization_outcomes",
+    "resource_violations"
+  ],
+  "title": "OutcomeSignature",
+  "type": "object"
+}

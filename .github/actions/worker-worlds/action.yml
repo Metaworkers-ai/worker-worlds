@@ -1,0 +1,83 @@
+name: Worker Worlds gate
+description: Run deterministic commerce scenarios and optionally compare a local baseline
+inputs:
+  scenario-path:
+    required: true
+    description: Scenario YAML file or directory
+  worker:
+    required: false
+    default: stub
+  world:
+    required: false
+    default: postgres
+  repetitions:
+    required: false
+    default: "5"
+  concurrency:
+    required: false
+    default: "4"
+  baseline-path:
+    required: false
+    default: ""
+  comparison-config:
+    required: false
+    default: ""
+  output-directory:
+    required: false
+    default: .worker-worlds/ci
+outputs:
+  gate-result:
+    value: ${{ steps.gate.outputs.gate_result }}
+  pass-rate-delta:
+    value: ${{ steps.gate.outputs.pass_rate_delta }}
+  new-critical-high:
+    value: ${{ steps.gate.outputs.new_critical_high }}
+  comparison-json:
+    value: ${{ steps.gate.outputs.comparison_json }}
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: python -m pip install .
+    - shell: bash
+      run: worker-worlds migrate
+    - id: suite
+      shell: bash
+      run: >-
+        worker-worlds suite "${{ inputs.scenario-path }}"
+        --worker "${{ inputs.worker }}" --world "${{ inputs.world }}"
+        --repetitions "${{ inputs.repetitions }}" --concurrency "${{ inputs.concurrency }}"
+        --output "${{ inputs.output-directory }}/candidate"
+    - id: gate
+      shell: bash
+      env:
+        BASELINE_PATH: ${{ inputs.baseline-path }}
+        CONFIG_PATH: ${{ inputs.comparison-config }}
+        OUTPUT_PATH: ${{ inputs.output-directory }}
+      run: |
+        set -euo pipefail
+        if [[ -z "$BASELINE_PATH" ]]; then
+          echo "gate_result=pass" >> "$GITHUB_OUTPUT"
+          echo "pass_rate_delta=0" >> "$GITHUB_OUTPUT"
+          echo "new_critical_high=0" >> "$GITHUB_OUTPUT"
+          echo "comparison_json=" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+        config_args=()
+        if [[ -n "$CONFIG_PATH" ]]; then config_args=(--config "$CONFIG_PATH"); fi
+        set +e
+        output=$(worker-worlds compare --baseline "$BASELINE_PATH" \
+          --candidate "$OUTPUT_PATH/candidate/suite.json" "${config_args[@]}" \
+          --output "$OUTPUT_PATH/comparison" 2>&1)
+        status=$?
+        set -e
+        printf '%s\n' "$output"
+        [[ $status -eq 0 ]] && result=pass || result=fail
+        critical=$(printf '%s\n' "$output" | sed -n 's/^new_critical=//p')
+        high=$(printf '%s\n' "$output" | sed -n 's/^new_high=//p')
+        delta=$(printf '%s\n' "$output" | sed -n 's/^pass_rate_delta=//p')
+        echo "gate_result=$result" >> "$GITHUB_OUTPUT"
+        echo "pass_rate_delta=${delta:-0}" >> "$GITHUB_OUTPUT"
+        echo "new_critical_high=$(( ${critical:-0} + ${high:-0} ))" >> "$GITHUB_OUTPUT"
+        echo "comparison_json=$OUTPUT_PATH/comparison/comparison.json" >> "$GITHUB_OUTPUT"
+        exit "$status"

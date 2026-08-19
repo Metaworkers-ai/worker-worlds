@@ -1,0 +1,146 @@
+{
+  "$defs": {
+    "ComparisonOverrideValue": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "description": "Strict deterministic regression-gate configuration.",
+  "properties": {
+    "allow_scenario_hash_mismatch": {
+      "default": false,
+      "title": "Allow Scenario Hash Mismatch",
+      "type": "boolean"
+    },
+    "critical_occurrences_allowed": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Critical Occurrences Allowed",
+      "type": "integer"
+    },
+    "excluded_informational_metrics": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Excluded Informational Metrics",
+      "type": "array"
+    },
+    "insufficient_samples": {
+      "default": "warning",
+      "pattern": "^(warning|fail)$",
+      "title": "Insufficient Samples",
+      "type": "string"
+    },
+    "maximum_cost_increase": {
+      "default": 1.0,
+      "minimum": 0,
+      "title": "Maximum Cost Increase",
+      "type": "number"
+    },
+    "maximum_flakiness_increase": {
+      "default": 0.1,
+      "minimum": 0,
+      "title": "Maximum Flakiness Increase",
+      "type": "number"
+    },
+    "maximum_infrastructure_error_rate": {
+      "default": 0.01,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Maximum Infrastructure Error Rate",
+      "type": "number"
+    },
+    "maximum_p50_latency_increase": {
+      "default": 1.0,
+      "minimum": 0,
+      "title": "Maximum P50 Latency Increase",
+      "type": "number"
+    },
+    "maximum_p95_latency_increase": {
+      "default": 1.0,
+      "minimum": 0,
+      "title": "Maximum P95 Latency Increase",
+      "type": "number"
+    },
+    "maximum_pass_rate_decrease": {
+      "default": 0.02,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Maximum Pass Rate Decrease",
+      "type": "number"
+    },
+    "maximum_token_increase": {
+      "default": 1.0,
+      "minimum": 0,
+      "title": "Maximum Token Increase",
+      "type": "number"
+    },
+    "minimum_candidate_pass_rate": {
+      "default": 0,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Minimum Candidate Pass Rate",
+      "type": "number"
+    },
+    "new_high_failures_allowed": {
+      "default": 0,
+      "minimum": 0,
+      "title": "New High Failures Allowed",
+      "type": "integer"
+    },
+    "practical_significance": {
+      "default": 0.02,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Practical Significance",
+      "type": "number"
+    },
+    "required_minimum_repetitions": {
+      "default": 5,
+      "exclusiveMinimum": 0,
+      "title": "Required Minimum Repetitions",
+      "type": "integer"
+    },
+    "scenario_overrides": {
+      "additionalProperties": {
+        "additionalProperties": {
+          "$ref": "#/$defs/ComparisonOverrideValue"
+        },
+        "type": "object"
+      },
+      "title": "Scenario Overrides",
+      "type": "object"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "tag_overrides": {
+      "additionalProperties": {
+        "additionalProperties": {
+          "$ref": "#/$defs/ComparisonOverrideValue"
+        },
+        "type": "object"
+      },
+      "title": "Tag Overrides",
+      "type": "object"
+    }
+  },
+  "title": "ComparisonConfig",
+  "type": "object"
+}

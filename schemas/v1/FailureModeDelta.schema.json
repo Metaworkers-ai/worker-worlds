@@ -1,0 +1,212 @@
+{
+  "$defs": {
+    "EvidenceKind": {
+      "description": "Kinds of bounded evidence references.",
+      "enum": [
+        "initial_snapshot",
+        "final_snapshot",
+        "event",
+        "tool_call",
+        "worker_turn",
+        "authorization",
+        "changed_entity",
+        "resource",
+        "policy"
+      ],
+      "title": "EvidenceKind",
+      "type": "string"
+    },
+    "EvidenceReference": {
+      "additionalProperties": false,
+      "description": "Resolvable bounded reference into RunRecord evidence.",
+      "properties": {
+        "facts": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Facts",
+          "type": "object"
+        },
+        "kind": {
+          "$ref": "#/$defs/EvidenceKind"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "reference": {
+          "title": "Reference",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "sequence": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sequence"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        }
+      },
+      "required": [
+        "kind",
+        "reference"
+      ],
+      "title": "EvidenceReference",
+      "type": "object"
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "description": "Semantic failure change with representative evidence links.",
+  "properties": {
+    "baseline_rate": {
+      "default": 0,
+      "title": "Baseline Rate",
+      "type": "number"
+    },
+    "baseline_run_ids": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Baseline Run Ids",
+      "type": "array"
+    },
+    "candidate_rate": {
+      "default": 0,
+      "title": "Candidate Rate",
+      "type": "number"
+    },
+    "candidate_run_ids": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Run Ids",
+      "type": "array"
+    },
+    "change": {
+      "title": "Change",
+      "type": "string"
+    },
+    "event_ids": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Event Ids",
+      "type": "array"
+    },
+    "evidence_refs": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/EvidenceReference"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "identity": {
+      "title": "Identity",
+      "type": "string"
+    },
+    "kind": {
+      "title": "Kind",
+      "type": "string"
+    },
+    "outcome_signatures": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Outcome Signatures",
+      "type": "array"
+    },
+    "representative_evidence": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Representative Evidence",
+      "type": "object"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "severity": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Severity"
+    },
+    "verdict_ids": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Verdict Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "kind",
+    "identity",
+    "change"
+  ],
+  "title": "FailureModeDelta",
+  "type": "object"
+}

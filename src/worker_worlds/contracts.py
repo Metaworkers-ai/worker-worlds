@@ -17,6 +17,7 @@ CallId = NewType("CallId", str)
 TurnId = NewType("TurnId", str)
 VerdictId = NewType("VerdictId", str)
 type JsonValue = None | bool | int | str | list[JsonValue] | dict[str, JsonValue]
+type ComparisonOverrideValue = bool | int | float | str
 UtcDateTime = Annotated[datetime, Field(description="Timezone-aware UTC timestamp")]
 
 
@@ -104,6 +105,7 @@ class Limits(Contract):
     mutations: Annotated[int, Field(ge=0)] = 20
     cost_minor: Annotated[int, Field(ge=0)] = 0
     tool_timeout_s: Annotated[float, Field(gt=0)] = 10
+    injections: Annotated[int, Field(ge=0)] = 20
 
 
 class AssertionSeverity(StrEnum):
@@ -155,6 +157,8 @@ class TerminalReason(StrEnum):
     TOOL_VALIDATION_ERROR = "tool_validation_error"
     TOOL_EXECUTION_ERROR = "tool_execution_error"
     AUTHORIZATION_REJECTION = "authorization_rejection"
+    INJECTION_ERROR = "injection_error"
+    INJECTION_BUDGET_EXCEEDED = "injection_budget_exceeded"
 
 
 class ToolResultStatus(StrEnum):
@@ -170,6 +174,21 @@ class Trigger(Contract):
     type: str
     actor: dict[str, JsonValue] = Field(default_factory=dict)
     content: str
+
+
+class ScheduledInjection(Contract):
+    """Deterministic mid-run world event requested by scenario data."""
+
+    id: str
+    trigger: str = Field(
+        pattern="^(before_worker|after_tool|after_nth_tool|after_event|at_time|before_terminal)$"
+    )
+    event_type: str
+    after_tool: str | None = None
+    after_nth_tool: Annotated[int, Field(gt=0)] | None = None
+    after_event: str | None = None
+    at: UtcDateTime | None = None
+    payload: dict[str, JsonValue] = Field(default_factory=dict)
 
 
 class AssertionSpec(Contract):
@@ -494,3 +513,177 @@ class SuiteRecord(Contract):
     runs: tuple[RunRecord, ...]
     artifact_references: dict[str, str] = Field(default_factory=dict)
     configuration_hash: str
+
+
+class CompatibilityLevel(StrEnum):
+    """Compatibility classification for two immutable suite artifacts."""
+
+    COMPATIBLE = "compatible"
+    WARNING = "compatible_with_warning"
+    INCOMPATIBLE = "incompatible"
+
+
+class ComparisonClassification(StrEnum):
+    """Primary semantic classification for a scenario comparison."""
+
+    NEW_FAILURE = "new_failure"
+    FIXED = "fixed"
+    UNCHANGED_PASS = "unchanged_pass"
+    UNCHANGED_FAILURE = "unchanged_failure"
+    FAILURE_MODE_CHANGED = "failure_mode_changed"
+    FLAKINESS_INCREASED = "flakiness_increased"
+    FLAKINESS_DECREASED = "flakiness_decreased"
+    PERFORMANCE_REGRESSED = "performance_regressed"
+    COST_REGRESSED = "cost_regressed"
+    INFRASTRUCTURE_REGRESSED = "infrastructure_health_regressed"
+    INSUFFICIENT_EVIDENCE = "insufficient_evidence"
+    INCOMPATIBLE = "incompatible"
+
+
+class BaselineManifest(Contract):
+    """Immutable content-addressed baseline with bundled comparison evidence."""
+
+    name: str
+    created_at: UtcDateTime
+    suite_hash: str
+    content_hash: str
+    source: str
+    package_version: str
+    world: str
+    worker: str
+    worker_version: str
+    adapter_names: tuple[str, ...]
+    scenario_hashes: dict[str, str]
+    policy_versions: dict[str, str]
+    suite: SuiteRecord
+
+
+class ComparisonConfig(Contract):
+    """Strict deterministic regression-gate configuration."""
+
+    critical_occurrences_allowed: Annotated[int, Field(ge=0)] = 0
+    new_high_failures_allowed: Annotated[int, Field(ge=0)] = 0
+    minimum_candidate_pass_rate: Annotated[float, Field(ge=0, le=1)] = 0
+    maximum_pass_rate_decrease: Annotated[float, Field(ge=0, le=1)] = 0.02
+    maximum_flakiness_increase: Annotated[float, Field(ge=0)] = 0.10
+    maximum_infrastructure_error_rate: Annotated[float, Field(ge=0, le=1)] = 0.01
+    maximum_p50_latency_increase: Annotated[float, Field(ge=0)] = 1.0
+    maximum_p95_latency_increase: Annotated[float, Field(ge=0)] = 1.0
+    maximum_token_increase: Annotated[float, Field(ge=0)] = 1.0
+    maximum_cost_increase: Annotated[float, Field(ge=0)] = 1.0
+    required_minimum_repetitions: Annotated[int, Field(gt=0)] = 5
+    insufficient_samples: str = Field(default="warning", pattern="^(warning|fail)$")
+    practical_significance: Annotated[float, Field(ge=0, le=1)] = 0.02
+    allow_scenario_hash_mismatch: bool = False
+    scenario_overrides: dict[str, dict[str, ComparisonOverrideValue]] = Field(default_factory=dict)
+    tag_overrides: dict[str, dict[str, ComparisonOverrideValue]] = Field(default_factory=dict)
+    excluded_informational_metrics: tuple[str, ...] = ()
+
+
+class OutcomeSignature(Contract):
+    """Inspectable semantic behavior identity for one run."""
+
+    version: str = "1.0"
+    digest: str
+    passed: bool
+    incomplete_evidence: bool
+    failed_assertions: tuple[str, ...]
+    failed_policies: tuple[str, ...]
+    severities: tuple[str, ...]
+    terminal_reason: str
+    mutation_categories: tuple[str, ...]
+    changed_entities: tuple[str, ...]
+    event_sequence: tuple[str, ...]
+    tool_sequence: tuple[str, ...]
+    tool_argument_categories: tuple[str, ...]
+    authorization_outcomes: tuple[str, ...]
+    resource_violations: tuple[str, ...]
+
+
+class DistributionSummary(Contract):
+    """Small-sample-aware deterministic distribution summary."""
+
+    requested: int
+    completed: int
+    passed: int
+    failed: int
+    errors: int
+    pass_rate: float
+    wilson_low: float
+    wilson_high: float
+    variability: float
+    low_sample: bool
+    outcome_counts: dict[str, int]
+    severity_counts: dict[str, int]
+    terminal_counts: dict[str, int]
+    tool_counts: dict[str, int]
+    mutation_counts: dict[str, int]
+    duration_p50_ms: float
+    duration_p95_ms: float
+    tokens_total: int | None = None
+    cost_minor_total: int | None = None
+    infrastructure_error_rate: float = 0
+
+
+class FailureModeDelta(Contract):
+    """Semantic failure change with representative evidence links."""
+
+    kind: str
+    identity: str
+    change: str
+    severity: str | None = None
+    baseline_rate: float = 0
+    candidate_rate: float = 0
+    baseline_run_ids: tuple[RunId, ...] = ()
+    candidate_run_ids: tuple[RunId, ...] = ()
+    verdict_ids: tuple[VerdictId, ...] = ()
+    evidence_refs: tuple[EvidenceReference, ...] = ()
+    event_ids: tuple[EventId, ...] = ()
+    outcome_signatures: tuple[str, ...] = ()
+    representative_evidence: dict[str, JsonValue] = Field(default_factory=dict)
+
+
+class ScenarioComparison(Contract):
+    """Distribution comparison for one scenario with one primary finding."""
+
+    scenario_id: ScenarioId
+    compatibility: CompatibilityLevel
+    compatibility_reasons: tuple[str, ...]
+    primary_classification: ComparisonClassification
+    findings: tuple[ComparisonClassification, ...]
+    baseline: DistributionSummary
+    candidate: DistributionSummary
+    pass_rate_delta: float
+    flakiness_delta: float
+    failure_deltas: tuple[FailureModeDelta, ...]
+    baseline_run_ids: tuple[RunId, ...]
+    candidate_run_ids: tuple[RunId, ...]
+    tags: tuple[str, ...] = ()
+
+
+class ComparisonVerdict(Contract):
+    """Pure gate result over comparison evidence."""
+
+    passed: bool
+    reasons: tuple[str, ...]
+    warnings: tuple[str, ...]
+    new_critical: int
+    new_high: int
+
+
+class ComparisonReport(Contract):
+    """Complete immutable behavioral comparison artifact."""
+
+    id: str
+    created_at: UtcDateTime
+    baseline_name: str
+    baseline_hash: str
+    candidate_hash: str
+    compatibility: CompatibilityLevel
+    compatibility_reasons: tuple[str, ...]
+    config: ComparisonConfig
+    scenarios: tuple[ScenarioComparison, ...]
+    verdict: ComparisonVerdict
+    reproduction_commands: tuple[str, ...]
+    baseline_source: str
+    candidate_source: str

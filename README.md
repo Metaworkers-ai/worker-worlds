@@ -70,6 +70,31 @@ pip install 'worker-worlds[openai-agents]'
 Core imports and deterministic fake adapter tests do not require either SDK or
 paid model access.
 
+## Behavioral baselines and comparisons
+
+```bash
+worker-worlds baseline create --from .worker-worlds/week2-report/suite.json \
+  --name main --output .worker-worlds/baselines
+worker-worlds baseline list --directory .worker-worlds/baselines
+worker-worlds baseline inspect --baseline .worker-worlds/baselines/main.json
+worker-worlds compare --baseline .worker-worlds/baselines/main.json \
+  --candidate .worker-worlds/candidate/suite.json --config worker-worlds.yaml \
+  --output .worker-worlds/comparison
+```
+
+Comparisons use inspectable semantic outcome distributions, Wilson intervals,
+explicit low-sample labels, and representative evidence links. A new critical
+violation always fails the gate. Comparison HTML is offline and splits stable
+per-scenario pages above 500 KB.
+
+Scenario metadata may contain bounded deterministic injections using
+`before_worker`, `after_tool`, `after_nth_tool`, `after_event`, `at_time`, or
+`before_terminal`. Delivery uses the controlled world clock without sleeping
+and records trusted scheduler events in the append-only world log.
+
+The reviewed Week 3 matrix emits 88 stable scenarios through
+`worker_worlds.scenario_library.reviewed_scenarios()`.
+
 ## Frozen Day 0 decisions
 
 - Python 3.12, strict typing, and async boundaries.

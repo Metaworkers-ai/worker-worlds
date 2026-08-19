@@ -1,0 +1,46 @@
+{
+  "additionalProperties": false,
+  "description": "Pure gate result over comparison evidence.",
+  "properties": {
+    "new_critical": {
+      "title": "New Critical",
+      "type": "integer"
+    },
+    "new_high": {
+      "title": "New High",
+      "type": "integer"
+    },
+    "passed": {
+      "title": "Passed",
+      "type": "boolean"
+    },
+    "reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reasons",
+      "type": "array"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "passed",
+    "reasons",
+    "warnings",
+    "new_critical",
+    "new_high"
+  ],
+  "title": "ComparisonVerdict",
+  "type": "object"
+}

@@ -2,11 +2,16 @@
 
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
 
 from worker_worlds.contracts import JsonValue, RunRecord, WorldEvent
 
 POLICY_VERSION = "1.0"
+POLICY_EVIDENCE_VERSION = "1.0"
+POLICY_IMPLEMENTATION_HASH = hashlib.sha256(
+    b"worker-worlds-commerce-policy-registry:1.0:2026-08-18"
+).hexdigest()
 
 
 @dataclass(frozen=True)
@@ -49,7 +54,12 @@ def _result(
         passed=passed,
         code=f"policy.{name}.{'passed' if passed else 'violated'}",
         explanation=f"policy {name} {'passed' if passed else 'was violated'}",
-        facts={"policy_version": POLICY_VERSION, **facts},
+        facts={
+            "policy_version": POLICY_VERSION,
+            "implementation_hash": POLICY_IMPLEMENTATION_HASH,
+            "required_evidence_version": POLICY_EVIDENCE_VERSION,
+            **facts,
+        },
         events=tuple(events),
     )
 

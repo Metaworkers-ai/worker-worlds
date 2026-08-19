@@ -1,0 +1,14 @@
+comparison:
+  critical_occurrences_allowed: 0
+  new_high_failures_allowed: 0
+  minimum_candidate_pass_rate: 0
+  maximum_pass_rate_decrease: 0.02
+  maximum_flakiness_increase: 0.10
+  maximum_infrastructure_error_rate: 0.01
+  maximum_p50_latency_increase: 1.0
+  maximum_p95_latency_increase: 1.0
+  maximum_token_increase: 1.0
+  maximum_cost_increase: 1.0
+  required_minimum_repetitions: 5
+  insufficient_samples: warning
+  practical_significance: 0.02
