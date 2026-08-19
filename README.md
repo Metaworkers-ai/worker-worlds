@@ -149,17 +149,23 @@ Contracts use schema major version 1, ULID identifiers, UTC timestamps, integer 
 
 Worker Worlds is released under the [MIT License](LICENSE).
 
-## SaaS dashboard preview
+## Local dashboard and API
 
-The optional Next.js dashboard lives in [`apps/dashboard`](apps/dashboard). It
-currently uses typed, contract-shaped demo evidence while the execution API is
-developed, so it never implies that fixture values came from a live worker run.
+The Next.js dashboard in [`apps/dashboard`](apps/dashboard) consumes the
+versioned Python API in `worker_worlds.api`. Metrics, scenarios, runs, verdicts,
+events, readiness, and comparisons come from real Worker Worlds contracts and
+persisted artifacts.
 
 ```bash
-cd apps/dashboard
-npm install
-npm run dev
-# open http://localhost:3000
+# terminal 1
+pip install -e '.[dev,api]'
+worker-worlds-api
+
+# terminal 2
+cd apps/dashboard && npm install && npm run dev
+# then open http://localhost:3000
 ```
 
-Verify a production build with `make dashboard-verify`.
+The API binds to `127.0.0.1:8000` by default and exposes `/api/v1`. See the
+[API guide](docs/api.md). Authentication, organizations, billing, and hosted
+multi-tenancy are intentionally not implemented yet.

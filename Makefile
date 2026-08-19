@@ -1,4 +1,4 @@
-.PHONY: setup format lint typecheck test build schemas schemas-check scenarios scenarios-check docs db-up db-down migrate verify dashboard-setup dashboard-verify
+.PHONY: setup format lint typecheck test build schemas schemas-check scenarios scenarios-check docs db-up db-down migrate verify api dashboard-setup dashboard-verify
 
 setup:
 	python3.12 -m venv .venv
@@ -45,6 +45,9 @@ db-down:
 
 migrate:
 	.venv/bin/worker-worlds migrate
+
+api:
+	.venv/bin/worker-worlds-api
 
 verify: lint typecheck schemas-check scenarios-check test docs build
 

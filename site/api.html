@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Worker Worlds 1.0</title><style>body{font:16px system-ui;margin:auto;max-width:1100px;padding:1rem;line-height:1.5}nav a{margin-right:1rem}pre{white-space:pre-wrap;overflow-wrap:anywhere}a:focus{outline:3px solid #0563c1}</style></head><body><header><h1>Worker Worlds <small>1.0.0rc1</small></h1><nav aria-label="Documentation"><a href="quickstart.html">quickstart</a> <a href="concepts.html">concepts</a> <a href="authoring.html">authoring</a> <a href="operations.html">operations</a> <a href="reference.html">reference</a> <a href="release.html">release</a> <a href="api.html">api</a> <a href="live-adapter-smoke.html">live-adapter-smoke</a> <a href="security-threat-model.html">threat-model</a> <a href="security-secure-worker-deployment.html">secure-worker-deployment</a></nav></header><main><pre># Local HTTP API
+
+Worker Worlds exposes a versioned local control plane at `/api/v1`. It reuses
+the framework-neutral runner and canonical contracts; domain rules remain in the
+world and grading remains in the grader.
+
+```bash
+pip install -e &#x27;.[dev,api]&#x27;
+docker compose up -d --wait postgres
+worker-worlds migrate
+worker-worlds-api
+```
+
+Defaults bind only to `127.0.0.1:8000`. Relevant configuration:
+
+- `WORKER_WORLDS_API_HOST` and `WORKER_WORLDS_API_PORT`
+- `WORKER_WORLDS_DATABASE_URL`
+- `WORKER_WORLDS_ARTIFACT_DIR` (default `.worker-worlds/api`)
+- `WORKER_WORLDS_SCENARIO_DIR`
+- `WORKER_WORLDS_DASHBOARD_ORIGINS`
+
+Endpoints:
+
+- `GET /api/v1/health`
+- `GET /api/v1/overview`
+- `GET /api/v1/scenarios`
+- `GET /api/v1/runs`
+- `GET /api/v1/runs/{run_id}`
+- `POST /api/v1/runs`
+- `GET /api/v1/comparisons`
+- `GET /docs` for generated OpenAPI documentation
+
+`POST /api/v1/runs` accepts a scenario ID resolved only from configured scenario
+roots, a supported worker adapter, and `stub` or `postgres` world selection. The
+response is the canonical `RunRecord`; it is also persisted under the configured
+artifact directory.
+
+This API has no authentication and is for a trusted local environment. Do not
+bind it to a public interface. Authentication, organizations, authorization,
+rate limits, durable jobs, and billing are separate hosted-SaaS work.
+</pre></main></body></html>

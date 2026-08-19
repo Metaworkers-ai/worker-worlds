@@ -8,10 +8,17 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`. The preview currently uses typed demo records in
-`src/lib/dashboard-data.ts`; it does not connect to Postgres or execute workers.
-The intended next boundary is a versioned HTTP API that returns the existing
-Worker Worlds `RunRecord`, `SuiteRecord`, scenario, and comparison contracts.
+Start the Python service from the repository root first:
+
+```bash
+pip install -e '.[dev,api]'
+worker-worlds-api
+```
+
+Open `http://localhost:3000`. The dashboard reads `/api/v1`, discovers actual
+scenario YAML, derives metrics from persisted `RunRecord` artifacts, starts the
+existing runner, and displays its real verdict and event evidence. Override the
+API location with `NEXT_PUBLIC_WORKER_WORLDS_API_URL`.
 
 ```bash
 npm run lint

@@ -29,13 +29,17 @@ dev = [
   "types-PyYAML>=6.0.12,<7",
   "asyncpg-stubs>=0.31,<0.32",
   "twine>=7,<8",
+  "fastapi[standard]>=0.141,<1",
+  "httpx>=0.28,<1",
 ]
 langgraph = ["langgraph>=0.6,<1"]
 openai-agents = ["openai-agents>=0.2,<1"]
+api = ["fastapi[standard]>=0.141,<1"]
 
 [project.scripts]
 worker-worlds = "worker_worlds.cli:main"
 worker-worlds-schema = "worker_worlds.schema_cli:main"
+worker-worlds-api = "worker_worlds.api:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/worker_worlds"]

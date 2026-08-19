@@ -1,27 +1,24 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Activity,
-  ArrowDownRight,
+  AlertCircle,
   ArrowRight,
-  ArrowUpRight,
   Blocks,
   BookOpen,
   Box,
-  Check,
   CheckCircle2,
   ChevronRight,
   CircleDot,
-  Code2,
-  Command,
   GitCompareArrows,
   LayoutDashboard,
+  LoaderCircle,
   Menu,
-  MoreHorizontal,
   Play,
+  RefreshCw,
   Search,
-  Settings,
+  Server,
   ShieldCheck,
   TerminalSquare,
   TriangleAlert,
@@ -29,13 +26,6 @@ import {
   Zap,
 } from "lucide-react";
 
-import {
-  activity,
-  families,
-  runs,
-  type Run,
-  type RunStatus,
-} from "@/lib/dashboard-data";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -46,12 +36,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -61,7 +45,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   Table,
@@ -72,24 +55,25 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  loadDashboard,
+  loadRun,
+  startRun,
+  type Comparison,
+  type DashboardData,
+  type Overview,
+  type RunRecord,
+  type RunSummary,
+  type Scenario,
+} from "@/lib/dashboard-data";
 
 type View = "overview" | "runs" | "scenarios" | "comparisons";
 
 const navigation = [
   { id: "overview" as const, label: "Overview", icon: LayoutDashboard },
-  { id: "runs" as const, label: "Runs", icon: Activity, count: "24" },
-  {
-    id: "scenarios" as const,
-    label: "Scenarios",
-    icon: BookOpen,
-    count: "200",
-  },
-  {
-    id: "comparisons" as const,
-    label: "Comparisons",
-    icon: GitCompareArrows,
-    count: "1",
-  },
+  { id: "runs" as const, label: "Runs", icon: Activity },
+  { id: "scenarios" as const, label: "Scenarios", icon: BookOpen },
+  { id: "comparisons" as const, label: "Comparisons", icon: GitCompareArrows },
 ];
 
 function Logo() {
@@ -111,18 +95,25 @@ function Logo() {
 function Sidebar({
   view,
   setView,
+  data,
 }: {
   view: View;
   setView: (view: View) => void;
+  data: DashboardData | null;
 }) {
+  const counts: Partial<Record<View, number>> = {
+    runs: data?.runs.length,
+    scenarios: data?.scenarios.length,
+    comparisons: data?.comparisons.length,
+  };
   return (
     <div className="flex h-full flex-col bg-sidebar p-3">
       <div className="px-2 py-3">
         <Logo />
       </div>
-      <div className="mt-5 px-2 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+      <p className="mt-5 px-2 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
         Workspace
-      </div>
+      </p>
       <nav className="mt-2 space-y-1">
         {navigation.map((item) => (
           <button
@@ -131,50 +122,35 @@ function Sidebar({
             className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors ${view === item.id ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground"}`}
           >
             <item.icon className="size-4" />
-            <span>{item.label}</span>
-            {item.count && (
-              <span className="ml-auto font-mono text-[10px] text-muted-foreground">
-                {item.count}
-              </span>
-            )}
-          </button>
-        ))}
-      </nav>
-      <div className="mt-6 px-2 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
-        Developer
-      </div>
-      <nav className="mt-2 space-y-1">
-        {[
-          { label: "Worlds", icon: Box },
-          { label: "Adapters", icon: Code2 },
-          { label: "Settings", icon: Settings },
-        ].map((item) => (
-          <button
-            key={item.label}
-            className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent/60 hover:text-foreground"
-          >
-            <item.icon className="size-4" />
             {item.label}
+            {counts[item.id] !== undefined ? (
+              <span className="ml-auto font-mono text-[10px] text-muted-foreground">
+                {counts[item.id]}
+              </span>
+            ) : null}
           </button>
         ))}
       </nav>
       <div className="mt-auto rounded-lg border border-border/70 bg-card/50 p-3">
         <div className="flex items-center gap-2 text-xs font-medium">
-          <CircleDot className="size-3.5 text-emerald-400" /> Preview ready
+          <CircleDot
+            className={`size-3.5 ${data?.health.database_ready ? "text-emerald-400" : "text-amber-400"}`}
+          />
+          {data?.health.status === "ready" ? "System ready" : "System degraded"}
         </div>
         <p className="mt-2 text-[11px] leading-4 text-muted-foreground">
-          Contract-shaped demo evidence
+          {data?.health.database ?? "Connecting to the local API…"}
         </p>
-        <p className="font-mono text-[10px] text-muted-foreground">
-          API connection pending
+        <p className="mt-1 font-mono text-[10px] text-muted-foreground">
+          {data ? `worker-worlds ${data.health.package_version}` : "api/v1"}
         </p>
       </div>
     </div>
   );
 }
 
-function StatusBadge({ status }: { status: RunStatus }) {
-  const styles =
+function StatusBadge({ status }: { status: RunSummary["status"] }) {
+  const style =
     status === "pass"
       ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
       : status === "fail"
@@ -183,7 +159,7 @@ function StatusBadge({ status }: { status: RunStatus }) {
   return (
     <Badge
       variant="outline"
-      className={`${styles} gap-1.5 font-mono text-[10px] uppercase`}
+      className={`${style} gap-1.5 font-mono text-[10px] uppercase`}
     >
       <span className="size-1.5 rounded-full bg-current" />
       {status}
@@ -195,13 +171,11 @@ function Metric({
   label,
   value,
   detail,
-  trend,
   icon: Icon,
 }: {
   label: string;
   value: string;
   detail: string;
-  trend?: "up" | "down";
   icon: typeof Activity;
 }) {
   return (
@@ -211,52 +185,60 @@ function Metric({
           <span className="text-xs font-medium">{label}</span>
           <Icon className="size-4" />
         </div>
-        <div className="mt-4 flex items-end justify-between">
-          <p className="font-mono text-3xl font-medium tracking-tight">
-            {value}
-          </p>
-          <p
-            className={`flex items-center text-[11px] ${trend === "down" ? "text-emerald-400" : trend === "up" ? "text-emerald-400" : "text-muted-foreground"}`}
-          >
-            {trend === "up" && <ArrowUpRight className="size-3" />}
-            {trend === "down" && <ArrowDownRight className="size-3" />}
-            {detail}
-          </p>
-        </div>
+        <p className="mt-4 font-mono text-3xl font-medium tracking-tight">
+          {value}
+        </p>
+        <p className="mt-2 text-[11px] text-muted-foreground">{detail}</p>
       </CardContent>
     </Card>
   );
 }
 
-function ActivityChart() {
+function EmptyState({
+  title,
+  description,
+  action,
+}: {
+  title: string;
+  description: string;
+  action?: React.ReactNode;
+}) {
+  return (
+    <div className="grid min-h-56 place-items-center rounded-lg border border-dashed border-border p-8 text-center">
+      <div>
+        <div className="mx-auto grid size-10 place-items-center rounded-full bg-muted">
+          <TerminalSquare className="size-4 text-muted-foreground" />
+        </div>
+        <h3 className="mt-4 text-sm font-medium">{title}</h3>
+        <p className="mx-auto mt-2 max-w-sm text-xs leading-5 text-muted-foreground">
+          {description}
+        </p>
+        {action ? <div className="mt-4">{action}</div> : null}
+      </div>
+    </div>
+  );
+}
+
+function HealthChart({ overview }: { overview: Overview }) {
+  const values = overview.recent_pass_rates.length
+    ? overview.recent_pass_rates
+    : [0, 0, 0, 0, 0, 0];
   return (
     <Card className="border-border/70 bg-card/70 shadow-none lg:col-span-2">
-      <CardHeader className="flex-row items-start justify-between space-y-0">
-        <div>
-          <CardTitle className="text-base">Evaluation health</CardTitle>
-          <CardDescription>Pass rate across the last 12 suites</CardDescription>
-        </div>
-        <Select defaultValue="30">
-          <SelectTrigger className="h-8 w-[110px] text-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="7">7 days</SelectItem>
-            <SelectItem value="30">30 days</SelectItem>
-            <SelectItem value="90">90 days</SelectItem>
-          </SelectContent>
-        </Select>
+      <CardHeader>
+        <CardTitle className="text-base">Evaluation health</CardTitle>
+        <CardDescription>
+          Pass rate derived from persisted run evidence
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex h-40 items-end gap-2 border-b border-border/60 pb-1">
-          {activity.map((value, index) => (
-            <div
-              key={index}
-              className="group relative flex h-full flex-1 items-end"
-            >
+          {values.map((value, index) => (
+            <div key={index} className="flex h-full flex-1 items-end">
               <div
-                className="w-full rounded-sm bg-primary/20 transition-colors group-hover:bg-primary/50"
-                style={{ height: `${value}%` }}
+                className="w-full rounded-sm bg-primary/25 transition-colors hover:bg-primary/45"
+                style={{ height: `${Math.max(4, value * 100)}%` }}
+                title={`${(value * 100).toFixed(1)}%`}
               >
                 <div className="h-1 rounded-t-sm bg-primary" />
               </div>
@@ -264,56 +246,24 @@ function ActivityChart() {
           ))}
         </div>
         <div className="mt-3 flex justify-between font-mono text-[10px] text-muted-foreground">
-          <span>Jul 22</span>
-          <span>Aug 01</span>
-          <span>Aug 19</span>
+          <span>Older</span>
+          <span>{overview.total_runs} recorded runs</span>
+          <span>Latest</span>
         </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function RegressionCard({ setView }: { setView: (view: View) => void }) {
-  return (
-    <Card className="border-red-500/20 bg-red-500/[0.04] shadow-none">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div className="grid size-9 place-items-center rounded-md bg-red-500/10">
-            <TriangleAlert className="size-4 text-red-400" />
-          </div>
-          <Badge variant="outline" className="border-red-500/20 text-red-400">
-            Critical
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <CardTitle className="text-base">New regression detected</CardTitle>
-        <CardDescription className="mt-2 leading-5">
-          support-agent-v2 reused an idempotency key with conflicting refund
-          input.
-        </CardDescription>
-        <button
-          onClick={() => setView("comparisons")}
-          className="mt-5 flex items-center gap-1 text-xs font-medium text-red-400 hover:text-red-300"
-        >
-          Inspect comparison <ArrowRight className="size-3" />
-        </button>
       </CardContent>
     </Card>
   );
 }
 
 function RunsTable({
+  runs,
   onSelect,
-  compact = false,
-  data = runs,
 }: {
-  onSelect: (run: Run) => void;
-  compact?: boolean;
-  data?: Run[];
+  runs: RunSummary[];
+  onSelect: (run: RunSummary) => void;
 }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-border/70">
+    <div className="w-full max-w-full overflow-x-auto rounded-lg border border-border/70">
       <Table>
         <TableHeader>
           <TableRow className="bg-muted/30 hover:bg-muted/30">
@@ -326,31 +276,31 @@ function RunsTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.slice(0, compact ? 4 : data.length).map((run) => (
+          {runs.map((run) => (
             <TableRow
               key={run.id}
               onClick={() => onSelect(run)}
               className="cursor-pointer"
             >
               <TableCell>
-                <p className="text-sm font-medium">{run.scenario}</p>
+                <p className="max-w-md truncate text-sm font-medium">
+                  {run.scenario_name}
+                </p>
                 <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">
                   {run.id}
                 </p>
               </TableCell>
-              <TableCell>
-                <span className="text-xs text-muted-foreground">
-                  {run.worker}
-                </span>
+              <TableCell className="text-xs text-muted-foreground">
+                {run.worker}
               </TableCell>
               <TableCell>
                 <StatusBadge status={run.status} />
               </TableCell>
               <TableCell className="hidden font-mono text-xs text-muted-foreground md:table-cell">
-                {run.duration}
+                {run.duration_ms}ms
               </TableCell>
               <TableCell className="hidden text-xs text-muted-foreground lg:table-cell">
-                {run.started}
+                {new Date(run.started_at).toLocaleString()}
               </TableCell>
               <TableCell>
                 <ChevronRight className="size-4 text-muted-foreground" />
@@ -363,61 +313,108 @@ function RunsTable({
   );
 }
 
-function Overview({
+function OverviewView({
+  data,
   setView,
   onSelect,
 }: {
+  data: DashboardData;
   setView: (view: View) => void;
-  onSelect: (run: Run) => void;
+  onSelect: (run: RunSummary) => void;
 }) {
+  const overview = data.overview;
+  const latestFailure = data.runs.find((run) => run.status !== "pass");
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-sm text-muted-foreground">Good morning, Piyush</p>
+        <p className="text-sm text-muted-foreground">
+          Local evaluation workspace
+        </p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-          Your workers are behaving safely.
+          {overview.total_runs
+            ? "Worker behavior, backed by evidence."
+            : "Ready for your first real run."}
         </h1>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Metric
           label="Pass rate"
-          value="98.7%"
-          detail="2.4%"
-          trend="up"
+          value={`${(overview.pass_rate * 100).toFixed(1)}%`}
+          detail={`${overview.passed_runs} passed · ${overview.failed_runs} not passed`}
           icon={ShieldCheck}
         />
         <Metric
-          label="Runs this month"
-          value="2,418"
-          detail="12%"
-          trend="up"
+          label="Persisted runs"
+          value={String(overview.total_runs)}
+          detail="Canonical RunRecord artifacts"
           icon={Activity}
         />
         <Metric
-          label="Critical regressions"
-          value="1"
-          detail="3 fixed"
-          trend="down"
+          label="Critical failures"
+          value={String(overview.critical_regressions)}
+          detail="Across recorded verdicts"
           icon={TriangleAlert}
         />
         <Metric
           label="Median duration"
-          value="1.2s"
-          detail="180ms"
-          trend="down"
+          value={`${overview.median_duration_ms}ms`}
+          detail="End-to-end execution"
           icon={Zap}
         />
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
-        <ActivityChart />
-        <RegressionCard setView={setView} />
+        <HealthChart overview={overview} />
+        <Card
+          className={`shadow-none ${latestFailure ? "border-red-500/20 bg-red-500/[0.04]" : "border-border/70 bg-card/70"}`}
+        >
+          <CardHeader>
+            <div
+              className={`grid size-9 place-items-center rounded-md ${latestFailure ? "bg-red-500/10 text-red-400" : "bg-emerald-500/10 text-emerald-400"}`}
+            >
+              {latestFailure ? (
+                <TriangleAlert className="size-4" />
+              ) : (
+                <CheckCircle2 className="size-4" />
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <CardTitle className="text-base">
+              {latestFailure
+                ? "Failure needs inspection"
+                : data.runs.length
+                  ? "Latest evidence passed"
+                  : "No evidence recorded yet"}
+            </CardTitle>
+            <CardDescription className="mt-2 leading-5">
+              {latestFailure
+                ? latestFailure.scenario_name
+                : data.runs.length
+                  ? "No failed verdicts exist in the current persisted run set."
+                  : "Start an evaluation to populate this workspace with real evidence."}
+            </CardDescription>
+            <button
+              onClick={() =>
+                latestFailure ? onSelect(latestFailure) : setView("runs")
+              }
+              className="mt-5 flex items-center gap-1 text-xs font-medium text-primary"
+            >
+              {latestFailure
+                ? "Inspect evidence"
+                : data.runs.length
+                  ? "View runs"
+                  : "Start a run"}{" "}
+              <ArrowRight className="size-3" />
+            </button>
+          </CardContent>
+        </Card>
       </div>
       <Card className="border-border/70 bg-card/70 shadow-none">
         <CardHeader className="flex-row items-center justify-between">
           <div>
             <CardTitle className="text-base">Recent runs</CardTitle>
             <CardDescription>
-              Latest evidence from your evaluation workspace
+              Persisted evidence from the local API
             </CardDescription>
           </div>
           <Button variant="ghost" size="sm" onClick={() => setView("runs")}>
@@ -425,213 +422,269 @@ function Overview({
           </Button>
         </CardHeader>
         <CardContent>
-          <RunsTable compact onSelect={onSelect} />
+          {data.runs.length ? (
+            <RunsTable runs={data.runs.slice(0, 5)} onSelect={onSelect} />
+          ) : (
+            <EmptyState
+              title="No runs yet"
+              description="The API is connected, but its artifact directory contains no RunRecord files."
+            />
+          )}
         </CardContent>
       </Card>
     </div>
   );
 }
 
-function RunsView({ onSelect }: { onSelect: (run: Run) => void }) {
+function RunsView({
+  runs,
+  scenarios,
+  running,
+  onRun,
+  onSelect,
+}: {
+  runs: RunSummary[];
+  scenarios: Scenario[];
+  running: boolean;
+  onRun: (scenarioId: string, world: "stub" | "postgres") => void;
+  onSelect: (run: RunSummary) => void;
+}) {
   const [query, setQuery] = useState("");
+  const [scenarioId, setScenarioId] = useState("");
+  const [world, setWorld] = useState<"stub" | "postgres">("postgres");
+  const preferred =
+    scenarios.find((item) => item.id === "refund.partial.happy")?.id ??
+    scenarios[0]?.id ??
+    "";
+  const selected = scenarioId || preferred;
   const filtered = useMemo(
     () =>
       runs.filter((run) =>
-        `${run.scenario} ${run.worker} ${run.id}`
+        `${run.scenario_name} ${run.worker} ${run.id}`
           .toLowerCase()
           .includes(query.toLowerCase()),
       ),
-    [query],
+    [query, runs],
   );
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-sm text-muted-foreground">Execution history</p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">Runs</h1>
-        </div>
-        <Button>
-          <Play className="size-3.5 fill-current" /> New run
-        </Button>
-      </div>
-      <div className="flex flex-wrap gap-3">
-        <div className="relative min-w-64 flex-1">
-          <Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
-          <Input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            className="pl-9"
-            placeholder="Search scenarios, workers, or run IDs"
-            aria-label="Search runs"
-          />
-        </div>
-        <Select defaultValue="all">
-          <SelectTrigger className="w-32" aria-label="Filter by status">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All status</SelectItem>
-            <SelectItem value="pass">Passed</SelectItem>
-            <SelectItem value="fail">Failed</SelectItem>
-          </SelectContent>
-        </Select>
-        <Button variant="outline">
-          <Command className="size-4" /> Filters
-        </Button>
-      </div>
-      <RunsTable onSelect={onSelect} data={filtered} />
-      <p className="text-xs text-muted-foreground">
-        Showing {filtered.length} of 2,418 runs · retained for 90 days
-      </p>
-    </div>
-  );
-}
-
-function ScenariosView() {
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-sm text-muted-foreground">
-            Deterministic release library
-          </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-            200 commerce scenarios
-          </h1>
-        </div>
-        <Button variant="outline">
-          <BookOpen className="size-4" /> Review package
-        </Button>
-      </div>
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {families.map((family) => (
-          <Card
-            key={family.name}
-            className="group border-border/70 bg-card/70 shadow-none transition-colors hover:border-primary/30"
-          >
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="grid size-9 place-items-center rounded-md bg-muted">
-                  <Box className="size-4 text-muted-foreground" />
-                </div>
-                <Badge variant="secondary" className="font-mono text-[10px]">
-                  {family.risk}
-                </Badge>
-              </div>
-              <CardTitle className="pt-3 text-base">{family.name}</CardTitle>
-              <CardDescription>
-                {family.count} independently readable scenarios
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Risk coverage</span>
-                <span className="font-mono text-emerald-400">
-                  {family.coverage}%
-                </span>
-              </div>
-              <Progress value={family.coverage} className="mt-2 h-1.5" />
-              <div className="mt-5 flex items-center justify-between text-xs text-muted-foreground">
-                <span>Domain review pending</span>
-                <ChevronRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ComparisonsView() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-sm text-muted-foreground">Behavioral release gate</p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-          Worker comparison
-        </h1>
+        <p className="text-sm text-muted-foreground">Execution history</p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight">Runs</h1>
       </div>
-      <Card className="border-red-500/20 bg-card/70 shadow-none">
-        <CardHeader className="flex-row items-start justify-between">
+      <Card className="border-primary/20 bg-primary/[0.03] shadow-none">
+        <CardContent className="flex flex-wrap items-end gap-3 p-4">
+          <div className="min-w-64 flex-1">
+            <p className="mb-2 text-xs text-muted-foreground">Scenario</p>
+            <Select value={selected} onValueChange={setScenarioId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Choose a scenario" />
+              </SelectTrigger>
+              <SelectContent>
+                {scenarios.map((scenario) => (
+                  <SelectItem key={scenario.id} value={scenario.id}>
+                    {scenario.id}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div>
-            <CardTitle className="text-lg">
-              support-agent-v1 → support-agent-v2
-            </CardTitle>
-            <CardDescription className="mt-1 font-mono text-xs">
-              comparison_0000000000YJ28VZKK
-            </CardDescription>
+            <p className="mb-2 text-xs text-muted-foreground">World</p>
+            <Select
+              value={world}
+              onValueChange={(value) => setWorld(value as "stub" | "postgres")}
+            >
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="postgres">Postgres</SelectItem>
+                <SelectItem value="stub">In-memory</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <Badge className="bg-red-500/10 text-red-400 hover:bg-red-500/10">
-            Gate failed
-          </Badge>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-4">
-            <Metric
-              label="Pass-rate delta"
-              value="−0.5%"
-              detail="candidate"
-              icon={ArrowDownRight}
-            />
-            <Metric
-              label="New critical"
-              value="1"
-              detail="blocking"
-              icon={TriangleAlert}
-            />
-            <Metric
-              label="Fixed failures"
-              value="3"
-              detail="improved"
-              icon={CheckCircle2}
-            />
-            <Metric
-              label="Sample size"
-              value="200"
-              detail="runs"
-              icon={Blocks}
-            />
-          </div>
-          <Separator className="my-6" />
-          <div className="grid gap-6 lg:grid-cols-[1fr_1.3fr]">
-            <div>
-              <h3 className="text-sm font-medium">Release decision</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                The candidate introduced one previously unseen critical outcome
-                signature. Sample size cannot override a critical safety
-                regression.
-              </p>
-              <div className="mt-4 rounded-md border border-red-500/20 bg-red-500/[0.05] p-3 text-xs text-red-300">
-                <TriangleAlert className="mr-2 inline size-3.5" />
-                Do not deploy candidate worker
-              </div>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium">New evidence signature</h3>
-              <div className="mt-3 rounded-md border border-border bg-background/70 p-4 font-mono text-xs">
-                <div className="flex gap-3">
-                  <span className="text-red-400">FAIL</span>
-                  <span>refund.idempotency.conflict</span>
-                </div>
-                <p className="mt-3 text-muted-foreground">
-                  Different input reused request key refund-customer-001
-                </p>
-                <div className="mt-4 grid grid-cols-2 gap-3 text-muted-foreground">
-                  <span>Baseline: no mutation</span>
-                  <span>Candidate: duplicate attempt</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <Button
+            disabled={!selected || running}
+            onClick={() => onRun(selected, world)}
+          >
+            {running ? (
+              <LoaderCircle className="size-4 animate-spin" />
+            ) : (
+              <Play className="size-3.5 fill-current" />
+            )}
+            {running ? "Running…" : "Start run"}
+          </Button>
         </CardContent>
       </Card>
+      <div className="relative">
+        <Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
+        <Input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          className="pl-9"
+          placeholder="Search real runs"
+          aria-label="Search runs"
+        />
+      </div>
+      {filtered.length ? (
+        <RunsTable runs={filtered} onSelect={onSelect} />
+      ) : (
+        <EmptyState
+          title="No matching runs"
+          description={
+            runs.length
+              ? "Try another search term."
+              : "Choose a scenario above to create the first persisted run."
+          }
+        />
+      )}
     </div>
   );
 }
 
-function RunDetail({ run, close }: { run: Run; close: () => void }) {
-  const failed = run.status === "fail";
+function ScenariosView({ scenarios }: { scenarios: Scenario[] }) {
+  const groups = useMemo(() => {
+    const map = new Map<string, Scenario[]>();
+    for (const scenario of scenarios)
+      map.set(scenario.family, [...(map.get(scenario.family) ?? []), scenario]);
+    return [...map.entries()].sort(([a], [b]) => a.localeCompare(b));
+  }, [scenarios]);
+  return (
+    <div className="space-y-6">
+      <div>
+        <p className="text-sm text-muted-foreground">Validated YAML library</p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight">
+          {scenarios.length} available scenarios
+        </h1>
+      </div>
+      {groups.length ? (
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {groups.map(([family, items]) => (
+            <Card
+              key={family}
+              className="border-border/70 bg-card/70 shadow-none"
+            >
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="grid size-9 place-items-center rounded-md bg-muted">
+                    <Box className="size-4 text-muted-foreground" />
+                  </div>
+                  <Badge variant="secondary" className="font-mono text-[10px]">
+                    {items[0]?.severity}
+                  </Badge>
+                </div>
+                <CardTitle className="pt-3 text-base">{family}</CardTitle>
+                <CardDescription>
+                  {items.length} validated scenarios
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">Loaded by API</span>
+                  <span className="font-mono text-emerald-400">100%</span>
+                </div>
+                <Progress value={100} className="mt-2 h-1.5" />
+                <p className="mt-4 truncate font-mono text-[10px] text-muted-foreground">
+                  {items[0]?.source}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          title="No scenarios found"
+          description="Set WORKER_WORLDS_SCENARIO_DIR to a directory containing valid Worker Worlds YAML."
+        />
+      )}
+    </div>
+  );
+}
+
+function ComparisonsView({ comparisons }: { comparisons: Comparison[] }) {
+  return (
+    <div className="space-y-6">
+      <div>
+        <p className="text-sm text-muted-foreground">
+          Behavioral release gates
+        </p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight">
+          Comparisons
+        </h1>
+      </div>
+      {comparisons.length ? (
+        comparisons.map((comparison) => (
+          <Card
+            key={comparison.id}
+            className={
+              comparison.gate === "fail"
+                ? "border-red-500/20 bg-card/70 shadow-none"
+                : "border-emerald-500/20 bg-card/70 shadow-none"
+            }
+          >
+            <CardHeader className="flex-row items-start justify-between">
+              <div>
+                <CardTitle className="text-base">
+                  {comparison.baseline_worker} → {comparison.candidate_worker}
+                </CardTitle>
+                <CardDescription className="mt-1 font-mono text-xs">
+                  {comparison.id}
+                </CardDescription>
+              </div>
+              <Badge
+                className={
+                  comparison.gate === "fail"
+                    ? "bg-red-500/10 text-red-400"
+                    : "bg-emerald-500/10 text-emerald-400"
+                }
+              >
+                {comparison.gate}
+              </Badge>
+            </CardHeader>
+            <CardContent className="grid gap-3 sm:grid-cols-3">
+              <Metric
+                label="Pass-rate delta"
+                value={`${(comparison.pass_rate_delta * 100).toFixed(1)}%`}
+                detail="Candidate vs baseline"
+                icon={Activity}
+              />
+              <Metric
+                label="New critical"
+                value={String(comparison.new_critical)}
+                detail="Blocking findings"
+                icon={TriangleAlert}
+              />
+              <Metric
+                label="New high"
+                value={String(comparison.new_high)}
+                detail="High-severity findings"
+                icon={AlertCircle}
+              />
+            </CardContent>
+          </Card>
+        ))
+      ) : (
+        <EmptyState
+          title="No comparisons found"
+          description="Comparison artifacts will appear after a baseline and candidate suite are evaluated beneath the API artifact directory."
+        />
+      )}
+    </div>
+  );
+}
+
+function RunDetail({
+  summary,
+  record,
+  loading,
+  close,
+}: {
+  summary: RunSummary;
+  record: RunRecord | null;
+  loading: boolean;
+  close: () => void;
+}) {
   return (
     <div
       className="fixed inset-0 z-50 flex justify-end bg-black/55 backdrop-blur-sm"
@@ -643,132 +696,101 @@ function RunDetail({ run, close }: { run: Run; close: () => void }) {
       >
         <div className="flex items-start justify-between">
           <div>
-            <StatusBadge status={run.status} />
-            <h2 className="mt-3 text-xl font-semibold">{run.scenario}</h2>
+            <StatusBadge status={summary.status} />
+            <h2 className="mt-3 text-xl font-semibold">
+              {summary.scenario_name}
+            </h2>
             <p className="mt-1 font-mono text-xs text-muted-foreground">
-              {run.id}
+              {summary.id}
             </p>
           </div>
-          <Button size="icon" variant="ghost" onClick={close} aria-label="Close run details">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={close}
+            aria-label="Close run details"
+          >
             <X className="size-4" />
           </Button>
         </div>
-        <div className="mt-6 grid grid-cols-3 gap-3">
-          {[
-            ["Worker", run.worker],
-            ["Duration", run.duration],
-            ["Tool calls", String(run.tools)],
-          ].map(([label, value]) => (
-            <div
-              key={label}
-              className="rounded-md border border-border bg-card p-3"
-            >
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                {label}
-              </p>
-              <p className="mt-2 truncate font-mono text-xs">{value}</p>
-            </div>
-          ))}
-        </div>
-        <Tabs defaultValue="evidence" className="mt-7">
-          <TabsList>
-            <TabsTrigger value="evidence">Evidence</TabsTrigger>
-            <TabsTrigger value="state">State diff</TabsTrigger>
-            <TabsTrigger value="record">Run record</TabsTrigger>
-          </TabsList>
-          <TabsContent value="evidence" className="mt-5">
-            <div className="space-y-0">
-              {[
-                {
-                  icon: Search,
-                  title: "get_order",
-                  note: "order_01M0C8 · authorized",
-                  time: "0ms",
-                  ok: true,
-                },
-                {
-                  icon: ShieldCheck,
-                  title: "Authorization evaluated",
-                  note: "customer owns order · refund:write",
-                  time: "132ms",
-                  ok: true,
-                },
-                {
-                  icon: failed ? TriangleAlert : Check,
-                  title: "issue_refund",
-                  note: failed
-                    ? "Idempotency key reused with conflicting input"
-                    : "2,500 USD minor units · committed atomically",
-                  time: "418ms",
-                  ok: !failed,
-                },
-                {
-                  icon: failed ? X : CheckCircle2,
-                  title: failed
-                    ? "Critical assertion failed"
-                    : "Evidence complete",
-                  note: failed
-                    ? "No successful mutation event was appended"
-                    : "State and event assertions passed",
-                  time: run.duration,
-                  ok: !failed,
-                },
-              ].map((item, index) => (
-                <div key={item.title} className="relative flex gap-4 pb-6">
+        {loading ? (
+          <div className="grid h-72 place-items-center">
+            <LoaderCircle className="size-6 animate-spin text-primary" />
+          </div>
+        ) : record ? (
+          <Tabs defaultValue="evidence" className="mt-7">
+            <TabsList>
+              <TabsTrigger value="evidence">Evidence</TabsTrigger>
+              <TabsTrigger value="events">
+                Events ({record.events.length})
+              </TabsTrigger>
+              <TabsTrigger value="record">Record</TabsTrigger>
+            </TabsList>
+            <TabsContent value="evidence" className="mt-5 space-y-3">
+              {record.verdicts.map((verdict) => (
+                <div
+                  key={verdict.id}
+                  className="flex gap-3 rounded-md border border-border bg-card p-4"
+                >
                   <div
-                    className={`relative z-10 grid size-8 shrink-0 place-items-center rounded-full border ${item.ok ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400" : "border-red-500/30 bg-red-500/10 text-red-400"}`}
+                    className={`grid size-7 shrink-0 place-items-center rounded-full ${verdict.status === "pass" ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"}`}
                   >
-                    <item.icon className="size-3.5" />
+                    {verdict.status === "pass" ? (
+                      <CheckCircle2 className="size-3.5" />
+                    ) : (
+                      <TriangleAlert className="size-3.5" />
+                    )}
                   </div>
-                  {index < 3 && (
-                    <div className="absolute left-4 top-8 h-[calc(100%-2rem)] border-l border-border" />
-                  )}
-                  <div className="flex-1 pt-1">
-                    <div className="flex justify-between gap-4">
-                      <p className="text-sm font-medium">{item.title}</p>
-                      <span className="font-mono text-[10px] text-muted-foreground">
-                        {item.time}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {item.note}
+                  <div>
+                    <p className="text-sm font-medium">
+                      {verdict.assertion_id}
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                      {verdict.message}
+                    </p>
+                    <p className="mt-2 font-mono text-[10px] text-muted-foreground">
+                      {verdict.severity} · {verdict.reason_code}
                     </p>
                   </div>
                 </div>
               ))}
-            </div>
-          </TabsContent>
-          <TabsContent value="state" className="mt-5">
-            <div className="rounded-md border border-border bg-card p-4 font-mono text-xs leading-6">
-              <p className="text-muted-foreground">orders.order_01M0C8</p>
-              <p className="text-red-400">− refunded_minor: 0</p>
-              <p className="text-emerald-400">
-                + refunded_minor: {failed ? "0" : "2500"}
-              </p>
-              <p className="text-red-400">− refundable_minor: 10000</p>
-              <p className="text-emerald-400">
-                + refundable_minor: {failed ? "10000" : "7500"}
-              </p>
-            </div>
-          </TabsContent>
-          <TabsContent value="record" className="mt-5">
-            <pre className="overflow-x-auto rounded-md border border-border bg-card p-4 font-mono text-[11px] leading-5 text-muted-foreground">
-              {JSON.stringify(
-                {
-                  schema_version: "1.0",
-                  id: run.id,
-                  status: run.status,
-                  terminal_reason: run.reason
-                    .toLowerCase()
-                    .replaceAll(" ", "_"),
-                  evidence_complete: true,
-                },
-                null,
-                2,
+            </TabsContent>
+            <TabsContent value="events" className="mt-5 space-y-3">
+              {record.events.length ? (
+                record.events.map((event) => (
+                  <div
+                    key={event.id}
+                    className="rounded-md border border-border bg-card p-4"
+                  >
+                    <div className="flex justify-between gap-3">
+                      <p className="font-mono text-xs text-primary">
+                        {event.sequence}. {event.event_type}
+                      </p>
+                      <p className="font-mono text-[10px] text-muted-foreground">
+                        {event.entity_type}:{event.entity_id}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <EmptyState
+                  title="No mutation events"
+                  description="This run completed without changing world state."
+                />
               )}
-            </pre>
-          </TabsContent>
-        </Tabs>
+            </TabsContent>
+            <TabsContent value="record" className="mt-5">
+              <pre className="max-h-[65vh] overflow-auto rounded-md border border-border bg-card p-4 font-mono text-[10px] leading-5 text-muted-foreground">
+                {JSON.stringify(record, null, 2)}
+              </pre>
+            </TabsContent>
+          </Tabs>
+        ) : (
+          <EmptyState
+            title="Run detail unavailable"
+            description="The summary exists, but its canonical RunRecord could not be loaded."
+          />
+        )}
       </aside>
     </div>
   );
@@ -776,84 +798,223 @@ function RunDetail({ run, close }: { run: Run; close: () => void }) {
 
 export function DashboardShell() {
   const [view, setView] = useState<View>("overview");
-  const [selectedRun, setSelectedRun] = useState<Run | null>(null);
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [running, setRunning] = useState(false);
+  const [selected, setSelected] = useState<RunSummary | null>(null);
+  const [record, setRecord] = useState<RunRecord | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    try {
+      setData(await loadDashboard());
+      setError(null);
+    } catch (reason) {
+      setError(
+        reason instanceof Error
+          ? reason.message
+          : "Could not connect to Worker Worlds API",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    loadDashboard()
+      .then((result) => {
+        if (active) {
+          setData(result);
+          setError(null);
+        }
+      })
+      .catch((reason: unknown) => {
+        if (active) {
+          setError(
+            reason instanceof Error
+              ? reason.message
+              : "Could not connect to Worker Worlds API",
+          );
+        }
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const selectRun = useCallback(async (summary: RunSummary) => {
+    setSelected(summary);
+    setRecord(null);
+    setDetailLoading(true);
+    try {
+      setRecord(await loadRun(summary.id));
+    } catch (reason) {
+      setError(
+        reason instanceof Error
+          ? reason.message
+          : "Run detail could not be loaded",
+      );
+    } finally {
+      setDetailLoading(false);
+    }
+  }, []);
+
+  const runScenario = useCallback(
+    async (scenarioId: string, world: "stub" | "postgres") => {
+      setRunning(true);
+      setError(null);
+      try {
+        await startRun(scenarioId, world);
+        await refresh();
+      } catch (reason) {
+        setError(
+          reason instanceof Error
+            ? reason.message
+            : "Evaluation failed to start",
+        );
+      } finally {
+        setRunning(false);
+      }
+    },
+    [refresh],
+  );
+
   return (
     <div className="dark min-h-screen bg-background text-foreground">
       <div className="grid min-h-screen lg:grid-cols-[232px_1fr]">
         <aside className="hidden border-r border-border lg:block">
-          <Sidebar view={view} setView={setView} />
+          <Sidebar view={view} setView={setView} data={data} />
         </aside>
         <div className="min-w-0">
           <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border/70 bg-background/90 px-4 backdrop-blur-xl md:px-7">
             <Sheet>
               <SheetTrigger asChild>
-                <Button size="icon" variant="ghost" className="lg:hidden" aria-label="Open navigation">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="lg:hidden"
+                  aria-label="Open navigation"
+                >
                   <Menu className="size-4" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-[250px] p-0">
-                <Sidebar view={view} setView={setView} />
+                <Sidebar view={view} setView={setView} data={data} />
               </SheetContent>
             </Sheet>
             <div className="lg:hidden">
               <Logo />
             </div>
-            <div className="hidden flex-1 md:block">
-              <button className="flex h-9 w-72 items-center gap-2 rounded-md border border-border bg-muted/30 px-3 text-xs text-muted-foreground">
-                <Search className="size-3.5" />
-                Search workspace
-                <span className="ml-auto rounded border border-border px-1.5 py-0.5 font-mono text-[9px]">
-                  ⌘ K
-                </span>
-              </button>
-            </div>
             <div className="ml-auto flex items-center gap-2">
               <Badge
                 variant="outline"
-                className="hidden gap-1.5 border-emerald-500/20 text-emerald-400 sm:flex"
+                className={`hidden gap-1.5 sm:flex ${data?.health.database_ready ? "border-emerald-500/20 text-emerald-400" : "border-amber-500/20 text-amber-400"}`}
               >
-                <span className="size-1.5 rounded-full bg-emerald-400" />
-                Demo data
+                <span className="size-1.5 rounded-full bg-current" />
+                {data?.health.database_ready ? "API connected" : "API degraded"}
               </Badge>
               <Button size="sm" onClick={() => setView("runs")}>
                 <Play className="size-3 fill-current" />
                 Run evaluation
               </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button size="icon" variant="ghost" aria-label="Open workspace menu" className="hidden sm:inline-flex">
-                    <MoreHorizontal className="size-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem>
-                    <TerminalSquare /> Open CLI
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings /> Workspace settings
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => void refresh()}
+                aria-label="Refresh dashboard"
+              >
+                <RefreshCw
+                  className={`size-4 ${loading ? "animate-spin" : ""}`}
+                />
+              </Button>
               <Avatar className="hidden size-8 sm:flex">
                 <AvatarFallback className="bg-primary/15 text-xs text-primary">
-                  PK
+                  WW
                 </AvatarFallback>
               </Avatar>
             </div>
           </header>
           <main className="mx-auto max-w-[1440px] p-4 md:p-7">
-            {view === "overview" && (
-              <Overview setView={setView} onSelect={setSelectedRun} />
+            {error ? (
+              <div className="mb-5 flex items-start gap-3 rounded-lg border border-red-500/20 bg-red-500/[0.06] p-4 text-sm">
+                <AlertCircle className="mt-0.5 size-4 shrink-0 text-red-400" />
+                <div>
+                  <p className="font-medium text-red-300">
+                    Worker Worlds API error
+                  </p>
+                  <p className="mt-1 text-xs text-red-300/75">{error}</p>
+                  <p className="mt-2 font-mono text-[10px] text-muted-foreground">
+                    Start with: worker-worlds-api
+                  </p>
+                </div>
+              </div>
+            ) : null}
+            {loading && !data ? (
+              <div className="grid min-h-[70vh] place-items-center">
+                <div className="text-center">
+                  <LoaderCircle className="mx-auto size-7 animate-spin text-primary" />
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Loading real Worker Worlds evidence…
+                  </p>
+                </div>
+              </div>
+            ) : data ? (
+              <>
+                {view === "overview" ? (
+                  <OverviewView
+                    data={data}
+                    setView={setView}
+                    onSelect={(run) => void selectRun(run)}
+                  />
+                ) : null}
+                {view === "runs" ? (
+                  <RunsView
+                    runs={data.runs}
+                    scenarios={data.scenarios}
+                    running={running}
+                    onRun={(id, world) => void runScenario(id, world)}
+                    onSelect={(run) => void selectRun(run)}
+                  />
+                ) : null}
+                {view === "scenarios" ? (
+                  <ScenariosView scenarios={data.scenarios} />
+                ) : null}
+                {view === "comparisons" ? (
+                  <ComparisonsView comparisons={data.comparisons} />
+                ) : null}
+              </>
+            ) : (
+              <EmptyState
+                title="API not connected"
+                description="Start worker-worlds-api on port 8000, then refresh this page."
+                action={
+                  <Button variant="outline" onClick={() => void refresh()}>
+                    <Server className="size-4" />
+                    Retry connection
+                  </Button>
+                }
+              />
             )}
-            {view === "runs" && <RunsView onSelect={setSelectedRun} />}
-            {view === "scenarios" && <ScenariosView />}
-            {view === "comparisons" && <ComparisonsView />}
           </main>
         </div>
       </div>
-      {selectedRun && (
-        <RunDetail run={selectedRun} close={() => setSelectedRun(null)} />
-      )}
+      {selected ? (
+        <RunDetail
+          summary={selected}
+          record={record}
+          loading={detailLoading}
+          close={() => {
+            setSelected(null);
+            setRecord(null);
+          }}
+        />
+      ) : null}
     </div>
   );
 }
