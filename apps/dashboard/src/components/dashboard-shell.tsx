@@ -9,6 +9,7 @@ import {
   BookOpen,
   Box,
   CheckCircle2,
+  ChevronsUpDown,
   ChevronRight,
   CircleDot,
   GitCompareArrows,
@@ -36,7 +37,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
 import {
   Select,
@@ -436,6 +450,123 @@ function OverviewView({
   );
 }
 
+function humanizeFamily(family: string): string {
+  return family
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function ScenarioPicker({
+  scenarios,
+  value,
+  onValueChange,
+}: {
+  scenarios: Scenario[];
+  value: string;
+  onValueChange: (value: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [family, setFamily] = useState("all");
+  const selected = scenarios.find((scenario) => scenario.id === value);
+  const families = useMemo(
+    () => Array.from(new Set(scenarios.map((scenario) => scenario.family))).sort(),
+    [scenarios],
+  );
+  const visibleScenarios =
+    family === "all"
+      ? scenarios
+      : scenarios.filter((scenario) => scenario.family === family);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          aria-label="Choose a scenario"
+          className="h-auto min-h-9 w-full justify-between px-3 py-2 text-left font-normal"
+        >
+          {selected ? (
+            <span className="min-w-0">
+              <span className="block truncate text-sm text-foreground">
+                {selected.objective}
+              </span>
+              <span className="mt-0.5 block truncate font-mono text-[10px] text-muted-foreground">
+                {selected.id} · {humanizeFamily(selected.family)}
+              </span>
+            </span>
+          ) : (
+            <span className="text-muted-foreground">Choose a scenario</span>
+          )}
+          <ChevronsUpDown className="ml-3 size-4 shrink-0 text-muted-foreground" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        className="w-[min(42rem,calc(100vw-2rem))] gap-0 p-0"
+      >
+        <Command>
+          <CommandInput placeholder="Search by task, ID, family, tag, or tool…" />
+          <div
+            className="no-scrollbar flex gap-1 overflow-x-auto border-b px-2 py-2"
+            aria-label="Filter scenarios by family"
+          >
+            {["all", ...families].map((item) => (
+              <Button
+                key={item}
+                type="button"
+                size="sm"
+                variant={family === item ? "secondary" : "ghost"}
+                className="h-7 shrink-0 px-2 text-xs"
+                onClick={() => setFamily(item)}
+              >
+                {item === "all" ? "All" : humanizeFamily(item)}
+              </Button>
+            ))}
+          </div>
+          <CommandList className="max-h-80">
+            <CommandEmpty>No matching scenarios.</CommandEmpty>
+            <CommandGroup
+              heading={
+                family === "all"
+                  ? `${scenarios.length} scenarios`
+                  : humanizeFamily(family)
+              }
+            >
+              {visibleScenarios.map((scenario) => (
+                <CommandItem
+                  key={scenario.id}
+                  value={`${scenario.id} ${scenario.objective} ${scenario.family} ${scenario.tags.join(" ")} ${scenario.tools.join(" ")}`}
+                  data-checked={scenario.id === value}
+                  className="items-start py-2.5"
+                  onSelect={() => {
+                    onValueChange(scenario.id);
+                    setOpen(false);
+                  }}
+                >
+                  <span className="min-w-0 pr-6">
+                    <span className="block text-sm leading-snug">
+                      {scenario.objective}
+                    </span>
+                    <span className="mt-1 flex flex-wrap items-center gap-1.5 text-[10px] text-muted-foreground">
+                      <Badge variant="outline" className="px-1.5 py-0 text-[9px]">
+                        {humanizeFamily(scenario.family)}
+                      </Badge>
+                      <span className="font-mono">{scenario.id}</span>
+                    </span>
+                  </span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 function RunsView({
   runs,
   scenarios,
@@ -476,18 +607,11 @@ function RunsView({
         <CardContent className="flex flex-wrap items-end gap-3 p-4">
           <div className="min-w-64 flex-1">
             <p className="mb-2 text-xs text-muted-foreground">Scenario</p>
-            <Select value={selected} onValueChange={setScenarioId}>
-              <SelectTrigger>
-                <SelectValue placeholder="Choose a scenario" />
-              </SelectTrigger>
-              <SelectContent>
-                {scenarios.map((scenario) => (
-                  <SelectItem key={scenario.id} value={scenario.id}>
-                    {scenario.id}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <ScenarioPicker
+              scenarios={scenarios}
+              value={selected}
+              onValueChange={setScenarioId}
+            />
           </div>
           <div>
             <p className="mb-2 text-xs text-muted-foreground">World</p>
