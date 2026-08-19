@@ -249,6 +249,62 @@ class StubWorkerAdapter:
             await asyncio.sleep(self._scenario.limits.wall_time_s * 2)
         now = datetime(2026, 1, 1, tzinfo=UTC) + timedelta(milliseconds=self._turn_index)
         turn_id = TurnId(_stable_id("turn", f"{self._scenario.id}:{self._turn_index}"))
+        scripted = self._scenario.metadata.get("stub_tool_calls")
+        if isinstance(scripted, list):
+            if self._turn_index >= len(scripted):
+                self._turn_index += 1
+                return WorkerTurn(
+                    id=turn_id,
+                    index=self._turn_index - 1,
+                    occurred_at=now,
+                    message="script complete",
+                    tool_result=tool_result,
+                    terminal=True,
+                )
+            specification = scripted[self._turn_index]
+            if not isinstance(specification, dict):
+                raise ValueError("stub_tool_calls entries must be objects")
+            tool_name = str(specification.get("tool"))
+            if tool_name not in self._tool_names:
+                raise ValueError(f"scripted tool is unavailable: {tool_name}")
+            script_arguments_value = self._resolve_script_value(
+                specification.get("arguments", {}), tool_result
+            )
+            if not isinstance(script_arguments_value, dict):
+                raise ValueError("scripted tool arguments must be an object")
+            script_arguments = cast(dict[str, JsonValue], script_arguments_value)
+            script_scopes = specification.get("scopes", [])
+            if not isinstance(script_scopes, list):
+                raise ValueError("scripted scopes must be a list")
+            call = ToolCall(
+                id=CallId(_stable_id("call", f"{self._scenario.id}:{self._turn_index}")),
+                run_id=RunId("pending"),
+                tool_name=tool_name,
+                arguments=script_arguments,
+                authorization=AuthorizationContext(
+                    actor_id="stub-worker",
+                    customer_id=str(specification.get("customer_id", "cus_102")),
+                    scopes=frozenset(str(item) for item in script_scopes),
+                ),
+                requested_at=now,
+                idempotency_key=(
+                    str(script_arguments["idempotency_key"])
+                    if "idempotency_key" in script_arguments
+                    else None
+                ),
+            )
+            index = self._turn_index
+            self._turn_index += 1
+            return WorkerTurn(id=turn_id, index=index, occurred_at=now, tool_call=call)
+        if behavior == "abstain":
+            self._turn_index += 1
+            return WorkerTurn(
+                id=turn_id,
+                index=0,
+                occurred_at=now,
+                message="No authorized mutation is safe.",
+                terminal=True,
+            )
         repeated = behavior in {"duplicate_caller", "infinite_looper"} and self._turn_index > 0
         if self._turn_index == 0 or repeated:
             scopes = (
@@ -274,8 +330,13 @@ class StubWorkerAdapter:
                     "status": "closed",
                     "idempotency_key": "mutant-ticket",
                 }
+            if tool_name == "issue_refund" or (
+                tool_name == "refund_order"
+                and self._scenario.metadata.get("provenance") == "release-reviewed-matrix-v1"
+            ):
+                arguments["idempotency_key"] = "stub-refund-1"
             if tool_name == "issue_refund":
-                arguments.update({"currency": "USD", "idempotency_key": "stub-refund-1"})
+                arguments["currency"] = "USD"
             if behavior == "tool_error":
                 arguments["force_error"] = True
             customer_id = "cus_other" if behavior == "wrong_customer" else "cus_102"
@@ -288,6 +349,9 @@ class StubWorkerAdapter:
                     actor_id="stub-worker", customer_id=customer_id, scopes=scopes
                 ),
                 requested_at=now,
+                idempotency_key=(
+                    str(arguments["idempotency_key"]) if "idempotency_key" in arguments else None
+                ),
             )
             self._turn_index += 1
             return WorkerTurn(id=turn_id, index=0, occurred_at=now, tool_call=call)
@@ -300,6 +364,25 @@ class StubWorkerAdapter:
             tool_result=tool_result,
             terminal=True,
         )
+
+    @staticmethod
+    def _resolve_script_value(value: object, tool_result: ToolResult | None) -> object:
+        """Resolve bounded previous-tool placeholders in deterministic fake scripts."""
+        if isinstance(value, str) and value.startswith("$last."):
+            if tool_result is None or not isinstance(tool_result.output, dict):
+                raise ValueError(f"cannot resolve scripted placeholder: {value}")
+            key = value.removeprefix("$last.")
+            if key not in tool_result.output:
+                raise ValueError(f"scripted tool result lacks {key}")
+            return tool_result.output[key]
+        if isinstance(value, dict):
+            return {
+                str(key): StubWorkerAdapter._resolve_script_value(item, tool_result)
+                for key, item in value.items()
+            }
+        if isinstance(value, list):
+            return [StubWorkerAdapter._resolve_script_value(item, tool_result) for item in value]
+        return value
 
     def is_terminal(self, turn: WorkerTurn) -> bool:
         """Identify an explicit normalized terminal turn."""

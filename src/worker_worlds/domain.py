@@ -40,6 +40,7 @@ class OrderStatus(StrEnum):
 class RefundStatus(StrEnum):
     """Refund processing states."""
 
+    PENDING = "pending"
     SUCCEEDED = "succeeded"
     FAILED = "failed"
 

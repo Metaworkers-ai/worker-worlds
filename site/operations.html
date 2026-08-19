@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Worker Worlds 1.0</title><style>body{font:16px system-ui;margin:auto;max-width:1100px;padding:1rem;line-height:1.5}nav a{margin-right:1rem}pre{white-space:pre-wrap;overflow-wrap:anywhere}a:focus{outline:3px solid #0563c1}</style></head><body><header><h1>Worker Worlds <small>1.0.0rc1</small></h1><nav aria-label="Documentation"><a href="quickstart.html">quickstart</a> <a href="concepts.html">concepts</a> <a href="authoring.html">authoring</a> <a href="operations.html">operations</a> <a href="reference.html">reference</a> <a href="release.html">release</a> <a href="live-adapter-smoke.html">live-adapter-smoke</a> <a href="security-threat-model.html">threat-model</a> <a href="security-secure-worker-deployment.html">secure-worker-deployment</a></nav></header><main><pre># Operations
+
+Use the pinned Compose service for local Postgres. Migrations are forward-only,
+checksummed, and applied by `worker-worlds migrate`. Every run owns a validated
+schema and lease; `close()` removes only that namespace. Artifact retention is an
+operator decision. Use summary reports in CI and retain per-run JSON for failures.
+
+Troubleshooting begins with `worker-worlds doctor`. Never aim cleanup at an
+unspecified database. Reference performance and security claims apply only to
+the documented local profile; provider queues and external worker latency are
+separate.
+</pre></main></body></html>

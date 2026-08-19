@@ -239,7 +239,7 @@ class DeterministicGrader:
         elif operation == "length" and isinstance(observed, (list, dict, str)):
             passed = len(observed) == expected
         elif operation == "regex" and isinstance(observed, str) and isinstance(expected, str):
-            passed = re.fullmatch(expected, observed) is not None
+            passed = _safe_fullmatch(expected, observed)
         elif operation == "enum_equals":
             passed = observed == expected
         elif operation in {"all", "any"}:
@@ -275,7 +275,7 @@ class DeterministicGrader:
         if operation == "equals":
             return observed == expected
         if operation == "regex" and isinstance(observed, str) and isinstance(expected, str):
-            return re.fullmatch(expected, observed) is not None
+            return _safe_fullmatch(expected, observed)
         raise ValueError(f"unsupported predicate operation: {operation}")
 
     def _value_within(self, assertion: AssertionSpec, record: RunRecord) -> Evaluation:
@@ -538,3 +538,17 @@ class DeterministicGrader:
             policy_name=str(policy) if policy is not None else None,
             required=assertion.required,
         )
+
+
+_MAX_REGEX_PATTERN = 256
+_MAX_REGEX_INPUT = 10_000
+_NESTED_QUANTIFIER = re.compile(r"\([^)]*[+*][^)]*\)[+*{]")
+
+
+def _safe_fullmatch(pattern: str, value: str) -> bool:
+    """Bound core regex evaluation and reject common catastrophic forms."""
+    if len(pattern) > _MAX_REGEX_PATTERN or len(value) > _MAX_REGEX_INPUT:
+        raise ValueError("regex pattern or input exceeds safe evaluation limits")
+    if _NESTED_QUANTIFIER.search(pattern):
+        raise ValueError("regex contains a nested quantifier")
+    return re.fullmatch(pattern, value) is not None

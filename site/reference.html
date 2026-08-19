@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Worker Worlds 1.0</title><style>body{font:16px system-ui;margin:auto;max-width:1100px;padding:1rem;line-height:1.5}nav a{margin-right:1rem}pre{white-space:pre-wrap;overflow-wrap:anywhere}a:focus{outline:3px solid #0563c1}</style></head><body><header><h1>Worker Worlds <small>1.0.0rc1</small></h1><nav aria-label="Documentation"><a href="quickstart.html">quickstart</a> <a href="concepts.html">concepts</a> <a href="authoring.html">authoring</a> <a href="operations.html">operations</a> <a href="reference.html">reference</a> <a href="release.html">release</a> <a href="live-adapter-smoke.html">live-adapter-smoke</a> <a href="security-threat-model.html">threat-model</a> <a href="security-secure-worker-deployment.html">secure-worker-deployment</a></nav></header><main><pre># Reference
+
+Run `worker-worlds --help` and each subcommand&#x27;s `--help` for the canonical CLI.
+Exit code 0 means the requested operation and gate passed, 1 means evaluated
+behavior or drift failed, and 2 means configuration, input, or infrastructure was
+invalid. Scenario and contract schemas live in `schemas/v1`; policy identities are
+listed in `worker_worlds.policies`; tool schemas are returned by `World.tools`.
+
+Configuration precedence is built-in defaults, `worker-worlds.yaml`, explicit
+`WORKER_WORLDS_*` variables, then CLI arguments. Database URLs are never emitted
+by normal commands. Supported runtime: Python 3.12; Postgres 17; LangGraph
+`&gt;=0.6,&lt;1`; OpenAI Agents SDK `&gt;=0.2,&lt;1`. Schema major 1 is preserved throughout
+the 1.x package line.
+</pre></main></body></html>

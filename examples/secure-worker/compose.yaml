@@ -1,0 +1,23 @@
+services:
+  worker:
+    image: worker-worlds-worker:1.0.0rc1
+    user: "65532:65532"
+    read_only: true
+    init: true
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 64
+    mem_limit: 512m
+    cpus: 1.0
+    tmpfs:
+      - /tmp:size=64m,mode=1770,uid=65532,gid=65532
+      - /workspace:size=128m,mode=0700,uid=65532,gid=65532
+    networks: [worker_isolated]
+    environment:
+      WORKER_WORLDS_WORKSPACE: /workspace
+    restart: "no"
+
+networks:
+  worker_isolated:
+    internal: true

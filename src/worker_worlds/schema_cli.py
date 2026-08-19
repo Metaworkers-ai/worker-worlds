@@ -8,6 +8,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from worker_worlds.config import WorkerWorldsConfig
 from worker_worlds.contracts import (
     AuthorizationContext,
     BaselineManifest,
@@ -59,6 +60,7 @@ MODELS: tuple[type[BaseModel], ...] = (
     ScenarioComparison,
     ComparisonVerdict,
     ComparisonReport,
+    WorkerWorldsConfig,
 )
 
 

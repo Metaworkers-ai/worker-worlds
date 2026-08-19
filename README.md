@@ -1,107 +1,150 @@
 # Worker Worlds
 
-Worker Worlds lets teams see what AI workers would do before they do it. This
-Day 0 foundation freezes framework-neutral contracts and provides an executable,
-deterministic commerce stub.
+See what your AI workers would do—before they do it—in deterministic, stateful enterprise simulations.
 
-## Development
+Worker Worlds runs a worker against an isolated commerce world, records every tool call and mutation, grades final state and event history, and compares behavior between worker versions.
 
-Python 3.12 is required.
+## What the worker said vs. what the world shows
+
+```text
+Worker: "I issued the requested $25 refund."
+
+World evidence:
+  tool call       issue_refund(amount_minor=2500, currency="USD")
+  authorization   allowed for customer and order
+  state change    captured_minor: 10000 -> refundable_minor: 7500
+  event           refund.issued, sequence=1, committed atomically
+  verdict         PASS — required state and event evidence are complete
+```
+
+A convincing response is not enough: incomplete evidence never passes.
+
+## Architecture
+
+```text
+Scenario + policy
+       |
+       v
+Framework-neutral runner <---- Worker adapter (stub / LangGraph / Agents SDK)
+       |
+       v
+Tool gateway ---- authorization + validation + idempotency
+       |
+       v
+Isolated commerce world ---- atomic state + append-only event log
+       |
+       +---- snapshots / hashes ---- grader ---- RunRecord
+                                             \---- JSON / HTML / comparison
+```
+
+## Five-minute quickstart
+
+Python 3.12 and Docker are required.
 
 ```bash
 make setup
-make verify
-.venv/bin/worker-worlds run examples/scenarios/refund_happy.yaml \
-  --worker stub --output .worker-worlds/runs/
-```
-
-The JSON output is a canonical `RunRecord` containing normalized turns, calls,
-results, world snapshots, events, verdicts, and complete failure provenance.
-The stub remains in-memory for contract tests. Week 1 adds the isolated
-Postgres commerce world; native framework adapters, HTML reporting, and
-behavioral diff execution remain later work.
-
-## Postgres quickstart
-
-```bash
 docker compose up -d --wait postgres
+export WORKER_WORLDS_TEST_DATABASE_URL=postgresql://worker_worlds:worker_worlds_local@127.0.0.1:55432/worker_worlds_test
+make verify
 .venv/bin/worker-worlds migrate
 .venv/bin/worker-worlds doctor
 .venv/bin/worker-worlds run examples/scenarios/refund_happy.yaml \
   --worker stub --world postgres --output .worker-worlds/runs/
 ```
 
-The safe local default is
-`postgresql://worker_worlds:worker_worlds_local@127.0.0.1:55432/worker_worlds_dev`.
-Override it only with `WORKER_WORLDS_DATABASE_URL` or `--database-url`.
-Database names are restricted to `worker_worlds_dev` and
-`worker_worlds_test[_suffix]`; per-run schemas are validated before cleanup.
+The safe local development URL is `postgresql://worker_worlds:worker_worlds_local@127.0.0.1:55432/worker_worlds_dev`. Override it only with `WORKER_WORLDS_DATABASE_URL` or `--database-url`. Test code requires an explicit `WORKER_WORLDS_TEST_DATABASE_URL`.
 
-For integration tests, explicitly set a test URL:
+## A scenario is readable YAML
 
-```bash
-export WORKER_WORLDS_TEST_DATABASE_URL=postgresql://worker_worlds:worker_worlds_local@127.0.0.1:55432/worker_worlds_test
-pytest
+```yaml
+schema_version: "1.0"
+id: refund-happy
+seed: 42
+objective: Refund 2500 USD on the authorized customer's order.
+authorization:
+  actor_id: customer-001
+  scopes: [refund:write]
+assertions:
+  - kind: state
+    path: orders.order-001.refunded_minor
+    operator: equals
+    expected: 2500
+  - kind: event
+    event_type: refund.issued
 ```
 
-Schema contracts are checked in under `schemas/v1/`. Run `make schemas` after
-an intentional additive contract update and `make schemas-check` in CI.
-
-## Repeated suites and reports
-
-Run five isolated repetitions and create canonical JSON, JUnit XML, and a
-portable static HTML report:
+The checked-in release library contains 200 independently readable scenarios in [`scenarios/release`](scenarios/release). Export and validate it with:
 
 ```bash
-.venv/bin/worker-worlds suite examples/scenarios/refund_happy.yaml \
-  --worker stub --world postgres --repetitions 5 \
-  --output .worker-worlds/week2-report/
-open .worker-worlds/week2-report/report.html
+worker-worlds scenario export scenarios/release --overwrite
+worker-worlds scenario validate scenarios/release
+worker-worlds scenario coverage scenarios/release --output artifacts/scenario-coverage.json --overwrite
 ```
 
-Network-free native adapter examples are available as `langgraph-fake` and
-`openai-agents-fake`. Real integrations are optional installs:
+## Evidence and verdicts
+
+Failures retain the causal trail instead of collapsing into a boolean:
+
+```json
+{
+  "status": "fail",
+  "terminal_reason": "authorization_rejection",
+  "verdict": {"outcome": "fail", "complete_evidence": true},
+  "failed_assertions": ["refund.issued event was absent"],
+  "mutations": 0
+}
+```
+
+![Worker Worlds suite summary showing 200 passing scenario runs](docs/assets/suite-summary.png)
+
+![Critical failure report showing assertion and execution evidence](docs/assets/critical-failure.png)
+
+![World-event evidence showing authorization and before-and-after state](docs/assets/world-event-evidence.png)
+
+## Behavioral comparisons
+
+Create an immutable baseline, then compare a candidate. New critical violations fail with a nonzero exit code.
+
+```bash
+worker-worlds baseline create --from artifacts/reference/suite.json \
+  --name rc1 --output .worker-worlds/baselines
+worker-worlds compare --baseline .worker-worlds/baselines/rc1.json \
+  --candidate artifacts/candidate/suite.json --config worker-worlds.yaml \
+  --output .worker-worlds/comparison
+```
+
+![Behavioral comparison showing a candidate regression and failed release gate](docs/assets/behavioral-comparison.png)
+
+## Adapters and boundaries
+
+The core runner is framework-neutral. Supported adapters are the deterministic stub, LangGraph, and OpenAI Agents SDK. Fake adapter examples need no network or paid API; real SDK integrations are optional extras:
 
 ```bash
 pip install 'worker-worlds[langgraph]'
 pip install 'worker-worlds[openai-agents]'
 ```
 
-Core imports and deterministic fake adapter tests do not require either SDK or
-paid model access.
+Worker Worlds implements world-state and per-run database isolation. It does **not** sandbox arbitrary worker processes, isolate the host, or enforce network egress. Those are deployment responsibilities. Use scoped test credentials and see the [secure worker deployment guide](docs/security/secure-worker-deployment.md) before running untrusted workers.
 
-## Behavioral baselines and comparisons
+## Performance disclosure
+
+Local deterministic evaluation is designed for parallel execution, but results depend on hardware and Postgres configuration. The release benchmark records machine metadata, concurrency, suite size, total duration, and latency distribution; it is not a hosted-service throughput claim. Small stochastic samples are not statistical proof, and simulated commerce behavior can diverge from production systems.
+
+## Development and documentation
 
 ```bash
-worker-worlds baseline create --from .worker-worlds/week2-report/suite.json \
-  --name main --output .worker-worlds/baselines
-worker-worlds baseline list --directory .worker-worlds/baselines
-worker-worlds baseline inspect --baseline .worker-worlds/baselines/main.json
-worker-worlds compare --baseline .worker-worlds/baselines/main.json \
-  --candidate .worker-worlds/candidate/suite.json --config worker-worlds.yaml \
-  --output .worker-worlds/comparison
+make setup       # install development dependencies
+make verify      # format, lint, strict typecheck, tests, schemas, scenarios, docs, build
+make schemas-check
+make scenarios-check
 ```
 
-Comparisons use inspectable semantic outcome distributions, Wilson intervals,
-explicit low-sample labels, and representative evidence links. A new critical
-violation always fails the gate. Comparison HTML is offline and splits stable
-per-scenario pages above 500 KB.
+- [Quickstart](docs/quickstart.md), [concepts](docs/concepts.md), and [scenario authoring](docs/authoring.md)
+- [Operations](docs/operations.md), [CLI reference](docs/reference.md), and [release process](docs/release.md)
+- [Threat model](docs/security/threat-model.md), [secure deployment](docs/security/secure-worker-deployment.md), and [live-adapter smoke tests](docs/live-adapter-smoke.md)
+- [Domain-review package](docs/domain-review/index.html) and [release checklist](docs/release-checklist.md)
+- [Contributing](CONTRIBUTING.md), [security policy](SECURITY.md), and [changelog](CHANGELOG.md)
 
-Scenario metadata may contain bounded deterministic injections using
-`before_worker`, `after_tool`, `after_nth_tool`, `after_event`, `at_time`, or
-`before_terminal`. Delivery uses the controlled world clock without sleeping
-and records trusted scheduler events in the append-only world log.
+Contracts use schema major version 1, ULID identifiers, UTC timestamps, integer monetary minor units with ISO currency, strict unknown-field rejection, and canonical deterministic serialization. Checked-in schemas live in [`schemas/v1`](schemas/v1).
 
-The reviewed Week 3 matrix emits 88 stable scenarios through
-`worker_worlds.scenario_library.reviewed_scenarios()`.
-
-## Frozen Day 0 decisions
-
-- Python 3.12, strict typing, and async boundaries.
-- ULID identifiers; timezone-aware UTC timestamps; controlled world clock.
-- Integer minor units and ISO 4217 currency codes; floats are rejected.
-- Schema `1.x`; unsupported major versions are rejected during validation.
-- Pydantic records forbid unknown fields and canonical JSON sorts object keys.
-- World rules remain in worlds; framework translation remains in adapters;
-  presentation remains in reporters.
-- Incomplete evidence always produces an error verdict and can never pass.
+Worker Worlds is released under the [MIT License](LICENSE).

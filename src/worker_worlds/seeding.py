@@ -53,6 +53,14 @@ def build_fixture(world_version: str, seed: int) -> dict[str, list[dict[str, Any
         refunded=Money(amount_minor=0, currency="USD"),
         created_at=base + timedelta(minutes=1),
     )
+    cancellable_order = Order(
+        id="ord_cancel",
+        customer_id=customer.id,
+        status=OrderStatus.PENDING,
+        captured=Money(amount_minor=0, currency="USD"),
+        refunded=Money(amount_minor=0, currency="USD"),
+        created_at=base + timedelta(minutes=2),
+    )
     line = LineItem(
         id=entity_id("li"),
         order_id=order.id,
@@ -157,7 +165,7 @@ def build_fixture(world_version: str, seed: int) -> dict[str, list[dict[str, Any
             inventory.model_dump(mode="json"),
             secondary_inventory.model_dump(mode="json"),
         ],
-        "orders": [order.model_dump(mode="json")],
+        "orders": [order.model_dump(mode="json"), cancellable_order.model_dump(mode="json")],
         "line_items": [line.model_dump(mode="json")],
         "refunds": [],
         "shipments": [shipment.model_dump(mode="json"), split_shipment.model_dump(mode="json")],

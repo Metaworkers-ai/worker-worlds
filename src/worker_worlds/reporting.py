@@ -141,6 +141,15 @@ class JUnitReporter:
 class HtmlReporter:
     """Generate one escaped semantic static HTML report with inline CSS."""
 
+    def __init__(
+        self, *, artifact_mode: str = "auto", split_threshold_bytes: int = 500_000
+    ) -> None:
+        """Configure full, summary, or deterministic automatic split rendering."""
+        if artifact_mode not in {"auto", "full", "summary"}:
+            raise ValueError("artifact mode must be auto, full, or summary")
+        self.artifact_mode = artifact_mode
+        self.split_threshold_bytes = split_threshold_bytes
+
     async def report(self, suite: SuiteRecord, output_directory: Path) -> Path:
         """Render summary, failures, details, evidence, and reproducibility."""
         await asyncio.to_thread(output_directory.mkdir, parents=True, exist_ok=True)
@@ -150,8 +159,15 @@ class HtmlReporter:
         for record in suite.runs:
             for verdict in record.verdicts:
                 severity[verdict.severity.value] += 1
-        rows = []
-        details = []
+        rows: list[str] = []
+        details: list[str] = []
+        estimated_size = len(_canonical_redacted(suite).encode())
+        split = self.artifact_mode == "summary" or (
+            self.artifact_mode == "auto" and estimated_size > self.split_threshold_bytes
+        )
+        evidence_directory = output_directory / "evidence"
+        if split:
+            await asyncio.to_thread(evidence_directory.mkdir, exist_ok=True)
         for record in suite.runs:
             failures = [
                 verdict for verdict in record.verdicts if verdict.status is not VerdictStatus.PASS
@@ -192,17 +208,36 @@ class HtmlReporter:
                     "cost_minor": record.cost_minor,
                 },
             }
-            details.append(
-                f'<details id="{html.escape(str(record.id))}"><summary>{html.escape(str(record.scenario_id))} '
-                f"repetition {record.repetition} - {'PASS' if record.passed else 'FAIL'}</summary>"
-                f"<pre>{html.escape(json.dumps(_redact(detail_payload), sort_keys=True, indent=2))}</pre></details>"
+            label = (
+                f"{html.escape(str(record.scenario_id))} repetition {record.repetition} - "
+                f"{'PASS' if record.passed else 'FAIL'}"
             )
+            if split:
+                evidence_name = f"{record.id}.html"
+                payload = html.escape(json.dumps(_redact(detail_payload), sort_keys=True, indent=2))
+                page = (
+                    '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+                    '<meta name="viewport" content="width=device-width"><title>Worker Worlds evidence</title>'
+                    "<style>body{font:16px system-ui;max-width:1100px;margin:auto;padding:2rem}"
+                    "pre{white-space:pre-wrap;overflow-wrap:anywhere}</style></head><body>"
+                    f'<p><a href="../report.html">Back to summary</a></p><h1>{label}</h1>'
+                    f"<pre>{payload}</pre></body></html>"
+                )
+                await asyncio.to_thread(
+                    (evidence_directory / evidence_name).write_text, page, encoding="utf-8"
+                )
+                details.append(f'<p><a href="evidence/{evidence_name}">{label}</a></p>')
+            else:
+                details.append(
+                    f'<details id="{html.escape(str(record.id))}"><summary>{label}</summary>'
+                    f"<pre>{html.escape(json.dumps(_redact(detail_payload), sort_keys=True, indent=2))}</pre></details>"
+                )
         document = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
 <title>Worker Worlds - {html.escape(suite.name)}</title>
 <style>body{{font:16px system-ui;max-width:1100px;margin:auto;padding:2rem;line-height:1.5}}table{{border-collapse:collapse;width:100%}}th,td{{border:1px solid #777;padding:.5rem;text-align:left}}pre{{white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f5f5;padding:1rem}}.status{{font-weight:700}}a:focus,summary:focus{{outline:3px solid #005fcc}}</style></head>
 <body><header><h1>Worker Worlds suite: {html.escape(suite.name)}</h1><p class="status">Passed {passed} of {total} repetitions ({(passed / total * 100 if total else 0):.1f}%).</p></header>
-<main><section aria-labelledby="summary"><h2 id="summary">Summary</h2><dl><dt>Worker</dt><dd>{html.escape(suite.worker)} {html.escape(suite.worker_version)}</dd><dt>World</dt><dd>{html.escape(suite.world)}</dd><dt>Verdicts</dt><dd>{html.escape(str(severity))}</dd><dt>Duration</dt><dd>{sum(record.total_duration_ms for record in suite.runs)} ms</dd><dt>Tool calls</dt><dd>{sum(record.tool_call_count for record in suite.runs)}</dd></dl></section>
+<main><section aria-labelledby="summary"><h2 id="summary">Summary</h2><dl><dt>Worker</dt><dd>{html.escape(suite.worker)} {html.escape(suite.worker_version)}</dd><dt>World</dt><dd>{html.escape(suite.world)}</dd><dt>Verdicts</dt><dd>{html.escape(str(severity))}</dd><dt>Duration</dt><dd>{sum(record.total_duration_ms for record in suite.runs)} ms</dd><dt>Tool calls</dt><dd>{sum(record.tool_call_count for record in suite.runs)}</dd><dt>Evidence mode</dt><dd>{"linked" if split else "inline"}</dd><dt>Source size</dt><dd>{estimated_size} bytes</dd></dl></section>
 <section aria-labelledby="failures"><h2 id="failures">Failure index</h2><table><thead><tr><th>Scenario</th><th>Repetition</th><th>Terminal reason</th><th>Evidence code</th></tr></thead><tbody>{"".join(rows) or '<tr><td colspan="4">No failures</td></tr>'}</tbody></table></section>
 <section aria-labelledby="details"><h2 id="details">Scenario details</h2>{"".join(details)}</section>
 <section aria-labelledby="repro"><h2 id="repro">Reproducibility</h2><dl><dt>Schema</dt><dd>{html.escape(suite.schema_version)}</dd><dt>Configuration hash</dt><dd>{html.escape(suite.configuration_hash)}</dd><dt>Suite ID</dt><dd>{html.escape(suite.id)}</dd></dl><p>Reproduce with <code>worker-worlds suite &lt;scenario-path&gt; --repetitions 5</code>.</p></section></main></body></html>"""

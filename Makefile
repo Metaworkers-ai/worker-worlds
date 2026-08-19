@@ -1,4 +1,4 @@
-.PHONY: setup format lint typecheck test build schemas schemas-check db-up db-down migrate verify
+.PHONY: setup format lint typecheck test build schemas schemas-check scenarios scenarios-check docs db-up db-down migrate verify
 
 setup:
 	python3.12 -m venv .venv
@@ -27,6 +27,16 @@ schemas:
 schemas-check:
 	.venv/bin/worker-worlds-schema check
 
+scenarios:
+	.venv/bin/worker-worlds scenario export scenarios/release --overwrite
+
+scenarios-check:
+	.venv/bin/worker-worlds scenario export scenarios/release --check
+	.venv/bin/worker-worlds scenario validate scenarios/release
+
+docs:
+	.venv/bin/python scripts/build_docs.py
+
 db-up:
 	docker compose up -d --wait postgres
 
@@ -36,4 +46,4 @@ db-down:
 migrate:
 	.venv/bin/worker-worlds migrate
 
-verify: lint typecheck schemas-check test build
+verify: lint typecheck schemas-check scenarios-check test docs build

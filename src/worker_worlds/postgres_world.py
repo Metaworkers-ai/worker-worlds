@@ -34,14 +34,23 @@ from worker_worlds.ids import deterministic_ulid
 from worker_worlds.seeding import WORLD_VERSION, build_fixture
 from worker_worlds.tool_models import (
     AdjustInventoryInput,
+    CancelOrderInput,
+    CompleteRefundInput,
+    CreateReplacementInput,
     CreateTicketInput,
+    DisambiguateCustomerInput,
     EscalateInput,
+    ExpirePromotionInput,
     GetInventoryInput,
     GetOrderInput,
     IssueRefundInput,
+    ReopenTicketInput,
+    ResolveBackorderInput,
     SearchOrdersInput,
     SendEmailInput,
     ToolInput,
+    TransferInventoryInput,
+    UpdateShipmentInput,
     UpdateTicketInput,
 )
 
@@ -79,6 +88,9 @@ CREATE TABLE {schema}.emails (
  subject text NOT NULL, body text NOT NULL, created_at timestamptz NOT NULL);
 CREATE TABLE {schema}.escalations (
  id text PRIMARY KEY, ticket_id text NOT NULL REFERENCES {schema}.tickets(id), reason text NOT NULL, created_at timestamptz NOT NULL);
+CREATE TABLE {schema}.replacements (
+ id text PRIMARY KEY, order_id text NOT NULL REFERENCES {schema}.orders(id), product_id text NOT NULL REFERENCES {schema}.products(id),
+ quantity integer NOT NULL CHECK(quantity > 0), status text NOT NULL, created_at timestamptz NOT NULL);
 CREATE TABLE {schema}.commerce_facts (
  key text PRIMARY KEY, value jsonb NOT NULL, trust text NOT NULL);
 CREATE TABLE {schema}.idempotency (
@@ -100,9 +112,18 @@ _INPUTS: dict[str, type[ToolInput]] = {
     "adjust_inventory": AdjustInventoryInput,
     "send_email": SendEmailInput,
     "escalate": EscalateInput,
+    "create_replacement": CreateReplacementInput,
+    "resolve_backorder": ResolveBackorderInput,
+    "update_shipment": UpdateShipmentInput,
+    "expire_promotion": ExpirePromotionInput,
+    "disambiguate_customer": DisambiguateCustomerInput,
+    "transfer_inventory": TransferInventoryInput,
+    "cancel_order": CancelOrderInput,
+    "complete_refund": CompleteRefundInput,
+    "reopen_ticket": ReopenTicketInput,
 }
 _MUTATIONS = frozenset(
-    {"issue_refund", "create_ticket", "update_ticket", "adjust_inventory", "send_email", "escalate"}
+    name for name in _INPUTS if name not in {"get_order", "search_orders", "get_inventory"}
 )
 
 
@@ -189,82 +210,108 @@ class PostgresWorld:
             return
 
     async def _insert_fixture(self, fixture: dict[str, list[dict[str, Any]]]) -> None:
+        """Bulk-load one compiled fixture inside the reset transaction."""
         connection, schema = self._ready()
-        for customer in fixture["customers"]:
-            await connection.execute(
+        batches: tuple[tuple[str, list[tuple[Any, ...]]], ...] = (
+            (
                 f"INSERT INTO {schema}.customers VALUES($1,$2,$3,$4)",
-                customer["id"],
-                customer["email"],
-                customer["name"],
-                self._as_datetime(customer["created_at"]),
-            )
-        for product in fixture["products"]:
-            await connection.execute(
+                [
+                    (v["id"], v["email"], v["name"], self._as_datetime(v["created_at"]))
+                    for v in fixture["customers"]
+                ],
+            ),
+            (
                 f"INSERT INTO {schema}.products VALUES($1,$2,$3,$4,$5,$6)",
-                product["id"],
-                product["sku"],
-                product["title"],
-                product["price"]["amount_minor"],
-                product["price"]["currency"],
-                product["active"],
-            )
-        for inventory in fixture["inventory"]:
-            await connection.execute(
+                [
+                    (
+                        v["id"],
+                        v["sku"],
+                        v["title"],
+                        v["price"]["amount_minor"],
+                        v["price"]["currency"],
+                        v["active"],
+                    )
+                    for v in fixture["products"]
+                ],
+            ),
+            (
                 f"INSERT INTO {schema}.inventory VALUES($1,$2,$3,$4,$5,$6)",
-                inventory["id"],
-                inventory["product_id"],
-                inventory["location"],
-                inventory["available"],
-                inventory["reserved"],
-                inventory["backorder_allowed"],
-            )
-        for order in fixture["orders"]:
-            await connection.execute(
+                [
+                    (
+                        v["id"],
+                        v["product_id"],
+                        v["location"],
+                        v["available"],
+                        v["reserved"],
+                        v["backorder_allowed"],
+                    )
+                    for v in fixture["inventory"]
+                ],
+            ),
+            (
                 f"INSERT INTO {schema}.orders VALUES($1,$2,$3,$4,$5,$6,$7)",
-                order["id"],
-                order["customer_id"],
-                order["status"],
-                order["captured"]["amount_minor"],
-                order["refunded"]["amount_minor"],
-                order["captured"]["currency"],
-                self._as_datetime(order["created_at"]),
-            )
-        for line in fixture["line_items"]:
-            await connection.execute(
+                [
+                    (
+                        v["id"],
+                        v["customer_id"],
+                        v["status"],
+                        v["captured"]["amount_minor"],
+                        v["refunded"]["amount_minor"],
+                        v["captured"]["currency"],
+                        self._as_datetime(v["created_at"]),
+                    )
+                    for v in fixture["orders"]
+                ],
+            ),
+            (
                 f"INSERT INTO {schema}.line_items VALUES($1,$2,$3,$4,$5,$6)",
-                line["id"],
-                line["order_id"],
-                line["product_id"],
-                line["quantity"],
-                line["unit_price"]["amount_minor"],
-                line["unit_price"]["currency"],
-            )
-        for shipment in fixture["shipments"]:
-            await connection.execute(
+                [
+                    (
+                        v["id"],
+                        v["order_id"],
+                        v["product_id"],
+                        v["quantity"],
+                        v["unit_price"]["amount_minor"],
+                        v["unit_price"]["currency"],
+                    )
+                    for v in fixture["line_items"]
+                ],
+            ),
+            (
                 f"INSERT INTO {schema}.shipments VALUES($1,$2,$3,$4,$5)",
-                shipment["id"],
-                shipment["order_id"],
-                shipment["status"],
-                shipment["quantity"],
-                self._as_datetime(shipment["created_at"]),
-            )
-        for ticket in fixture["tickets"]:
-            await connection.execute(
+                [
+                    (
+                        v["id"],
+                        v["order_id"],
+                        v["status"],
+                        v["quantity"],
+                        self._as_datetime(v["created_at"]),
+                    )
+                    for v in fixture["shipments"]
+                ],
+            ),
+            (
                 f"INSERT INTO {schema}.tickets VALUES($1,$2,$3,$4,$5,$6)",
-                ticket["id"],
-                ticket["customer_id"],
-                ticket["order_id"],
-                ticket["subject"],
-                ticket["status"],
-                self._as_datetime(ticket["created_at"]),
-            )
-        for fact in fixture["facts"]:
-            await connection.execute(
+                [
+                    (
+                        v["id"],
+                        v["customer_id"],
+                        v["order_id"],
+                        v["subject"],
+                        v["status"],
+                        self._as_datetime(v["created_at"]),
+                    )
+                    for v in fixture["tickets"]
+                ],
+            ),
+            (
                 f"INSERT INTO {schema}.commerce_facts VALUES($1,$2::jsonb,$3)",
-                fact["key"],
-                json.dumps(fact["value"]),
-                fact["trust"],
-            )
+                [(v["key"], json.dumps(v["value"]), v["trust"]) for v in fixture["facts"]],
+            ),
+        )
+        for statement, rows in batches:
+            if rows:
+                await connection.executemany(statement, rows)
 
     @staticmethod
     def _as_datetime(value: Any) -> datetime:
@@ -418,12 +465,14 @@ class PostgresWorld:
             new_status = (
                 "refunded" if new_refunded == int(order["captured_minor"]) else "partially_refunded"
             )
+            processor_status = "pending" if raw.processor_pending else "succeeded"
             await connection.execute(
-                f"INSERT INTO {schema}.refunds VALUES($1,$2,$3,$4,'succeeded',$5,$6,$7)",
+                f"INSERT INTO {schema}.refunds VALUES($1,$2,$3,$4,$5,$6,$7,$8)",
                 refund_id,
                 raw.order_id,
                 raw.amount_minor,
                 raw.currency,
+                processor_status,
                 raw.idempotency_key,
                 input_hash,
                 self._clock + timedelta(milliseconds=1),
@@ -440,6 +489,7 @@ class PostgresWorld:
                 "amount_minor": raw.amount_minor,
                 "currency": raw.currency,
                 "refunded_minor": new_refunded,
+                "status": processor_status,
                 "idempotent_replay": False,
             }
             await self._append_event(
@@ -447,7 +497,7 @@ class PostgresWorld:
                 schema,
                 call,
                 sequence,
-                "refund.issued",
+                "refund.pending" if raw.processor_pending else "refund.issued",
                 "refund",
                 refund_id,
                 {"refunded_minor": int(order["refunded_minor"]), "status": order["status"]},
@@ -684,6 +734,403 @@ class PostgresWorld:
             )
             return await self._store_simple_idempotency(connection, schema, call, raw, after)
 
+    async def _tool_create_replacement(
+        self, call: ToolCall, raw: CreateReplacementInput
+    ) -> dict[str, JsonValue]:
+        connection, schema = self._ready()
+        async with connection.transaction():
+            prior = await self._existing_idempotency(connection, schema, raw)
+            if prior is not None:
+                return prior
+            order = await connection.fetchrow(
+                f"SELECT * FROM {schema}.orders WHERE id=$1 FOR UPDATE", raw.order_id
+            )
+            if order is None:
+                raise ToolRejection("OrderNotFound", "replacement order not found")
+            self._require_customer_scope(call, order["customer_id"], "replacement:create")
+            product_id = await connection.fetchval(
+                f"SELECT id FROM {schema}.products WHERE sku=$1 AND active", raw.sku
+            )
+            if product_id is None:
+                raise ToolRejection("ProductNotFound", "replacement product is unavailable")
+            sequence = await self._next_sequence(connection, schema)
+            entity_id = self._entity_id("rpl", sequence)
+            after: dict[str, JsonValue] = {
+                "id": entity_id,
+                "order_id": raw.order_id,
+                "sku": raw.sku,
+                "quantity": raw.quantity,
+                "status": "pending",
+            }
+            await connection.execute(
+                f"INSERT INTO {schema}.replacements VALUES($1,$2,$3,$4,'pending',$5)",
+                entity_id,
+                raw.order_id,
+                product_id,
+                raw.quantity,
+                self._clock,
+            )
+            await self._append_event(
+                connection,
+                schema,
+                call,
+                sequence,
+                "replacement.created",
+                "replacement",
+                entity_id,
+                None,
+                after,
+                {},
+            )
+            return await self._store_simple_idempotency(connection, schema, call, raw, after)
+
+    async def _tool_resolve_backorder(
+        self, call: ToolCall, raw: ResolveBackorderInput
+    ) -> dict[str, JsonValue]:
+        connection, schema = self._ready()
+        self._require_scope(call, "inventory:write")
+        async with connection.transaction():
+            prior = await self._existing_idempotency(connection, schema, raw)
+            if prior is not None:
+                return prior
+            row = await connection.fetchrow(
+                f"SELECT i.* FROM {schema}.inventory i JOIN {schema}.products p ON p.id=i.product_id WHERE p.sku=$1 AND i.location=$2 FOR UPDATE OF i",
+                raw.sku,
+                raw.location,
+            )
+            if row is None or not row["backorder_allowed"]:
+                raise ToolRejection("BackorderNotFound", "backorder-enabled inventory not found")
+            available = int(row["available"]) + raw.quantity
+            reserved = max(0, int(row["reserved"]) - raw.quantity)
+            sequence = await self._next_sequence(connection, schema)
+            after: dict[str, JsonValue] = {
+                "id": row["id"],
+                "available": available,
+                "reserved": reserved,
+            }
+            await connection.execute(
+                f"UPDATE {schema}.inventory SET available=$1,reserved=$2 WHERE id=$3",
+                available,
+                reserved,
+                row["id"],
+            )
+            await self._append_event(
+                connection,
+                schema,
+                call,
+                sequence,
+                "backorder.resolved",
+                "inventory",
+                row["id"],
+                {"available": row["available"], "reserved": row["reserved"]},
+                after,
+                {},
+            )
+            return await self._store_simple_idempotency(connection, schema, call, raw, after)
+
+    async def _tool_update_shipment(
+        self, call: ToolCall, raw: UpdateShipmentInput
+    ) -> dict[str, JsonValue]:
+        connection, schema = self._ready()
+        self._require_scope(call, "shipment:write")
+        legal = {
+            "pending": {"shipped"},
+            "shipped": {"delivered", "lost"},
+            "delivered": set(),
+            "lost": set(),
+        }
+        if raw.status not in legal:
+            raise ToolRejection("InvalidShipmentStatus", "unknown shipment status")
+        async with connection.transaction():
+            prior = await self._existing_idempotency(connection, schema, raw)
+            if prior is not None:
+                return prior
+            row = await connection.fetchrow(
+                f"SELECT * FROM {schema}.shipments WHERE id=$1 FOR UPDATE", raw.shipment_id
+            )
+            if row is None:
+                raise ToolRejection("ShipmentNotFound", "shipment not found")
+            if raw.status not in legal[str(row["status"])]:
+                raise ToolRejection(
+                    "IllegalStatusTransition",
+                    f"illegal shipment transition: {row['status']} -> {raw.status}",
+                )
+            sequence = await self._next_sequence(connection, schema)
+            after: dict[str, JsonValue] = {"id": raw.shipment_id, "status": raw.status}
+            await connection.execute(
+                f"UPDATE {schema}.shipments SET status=$1 WHERE id=$2", raw.status, raw.shipment_id
+            )
+            await self._append_event(
+                connection,
+                schema,
+                call,
+                sequence,
+                "shipment.updated",
+                "shipment",
+                raw.shipment_id,
+                {"status": row["status"]},
+                after,
+                {},
+            )
+            return await self._store_simple_idempotency(connection, schema, call, raw, after)
+
+    async def _tool_expire_promotion(
+        self, call: ToolCall, raw: ExpirePromotionInput
+    ) -> dict[str, JsonValue]:
+        connection, schema = self._ready()
+        self._require_scope(call, "promotion:write")
+        async with connection.transaction():
+            prior = await self._existing_idempotency(connection, schema, raw)
+            if prior is not None:
+                return prior
+            sequence = await self._next_sequence(connection, schema)
+            key = f"promotion.{raw.promotion_code}.expired"
+            before = await connection.fetchval(
+                f"SELECT value FROM {schema}.commerce_facts WHERE key=$1", key
+            )
+            await connection.execute(
+                f"INSERT INTO {schema}.commerce_facts VALUES($1,'true'::jsonb,'trusted_fixture') ON CONFLICT(key) DO UPDATE SET value='true'::jsonb",
+                key,
+            )
+            after: dict[str, JsonValue] = {"promotion_code": raw.promotion_code, "expired": True}
+            await self._append_event(
+                connection,
+                schema,
+                call,
+                sequence,
+                "promotion.expired",
+                "promotion",
+                raw.promotion_code,
+                {"expired": before} if before is not None else None,
+                after,
+                {},
+            )
+            return await self._store_simple_idempotency(connection, schema, call, raw, after)
+
+    async def _tool_disambiguate_customer(
+        self, call: ToolCall, raw: DisambiguateCustomerInput
+    ) -> dict[str, JsonValue]:
+        connection, schema = self._ready()
+        self._require_scope(call, "customer:disambiguate")
+        if raw.selected_customer_id not in raw.candidate_ids:
+            raise ToolRejection("InvalidCustomerSelection", "selected customer must be a candidate")
+        async with connection.transaction():
+            prior = await self._existing_idempotency(connection, schema, raw)
+            if prior is not None:
+                return prior
+            count = await connection.fetchval(
+                f"SELECT count(*) FROM {schema}.customers WHERE id=ANY($1::text[])",
+                list(raw.candidate_ids),
+            )
+            if int(count) != len(set(raw.candidate_ids)):
+                raise ToolRejection(
+                    "CustomerNotFound", "one or more candidate customers do not exist"
+                )
+            sequence = await self._next_sequence(connection, schema)
+            after: dict[str, JsonValue] = {
+                "selected_customer_id": raw.selected_customer_id,
+                "candidate_ids": list(raw.candidate_ids),
+            }
+            await self._append_event(
+                connection,
+                schema,
+                call,
+                sequence,
+                "customer.disambiguated",
+                "customer",
+                raw.selected_customer_id,
+                None,
+                after,
+                {},
+            )
+            return await self._store_simple_idempotency(connection, schema, call, raw, after)
+
+    async def _tool_transfer_inventory(
+        self, call: ToolCall, raw: TransferInventoryInput
+    ) -> dict[str, JsonValue]:
+        connection, schema = self._ready()
+        self._require_scope(call, "inventory:write")
+        if raw.source_location == raw.destination_location:
+            raise ToolRejection("InvalidTransfer", "inventory locations must differ")
+        async with connection.transaction():
+            prior = await self._existing_idempotency(connection, schema, raw)
+            if prior is not None:
+                return prior
+            rows = await connection.fetch(
+                f"SELECT i.* FROM {schema}.inventory i JOIN {schema}.products p ON p.id=i.product_id WHERE p.sku=$1 AND i.location=ANY($2::text[]) ORDER BY i.location FOR UPDATE OF i",
+                raw.sku,
+                [raw.source_location, raw.destination_location],
+            )
+            by_location = {str(row["location"]): row for row in rows}
+            if set(by_location) != {raw.source_location, raw.destination_location}:
+                raise ToolRejection("InventoryNotFound", "both transfer locations must exist")
+            source, target = by_location[raw.source_location], by_location[raw.destination_location]
+            if int(source["available"]) < raw.quantity:
+                raise ToolRejection("InsufficientInventory", "source inventory is insufficient")
+            sequence = await self._next_sequence(connection, schema)
+            await connection.execute(
+                f"UPDATE {schema}.inventory SET available=available-$1 WHERE id=$2",
+                raw.quantity,
+                source["id"],
+            )
+            await connection.execute(
+                f"UPDATE {schema}.inventory SET available=available+$1 WHERE id=$2",
+                raw.quantity,
+                target["id"],
+            )
+            after: dict[str, JsonValue] = {
+                "sku": raw.sku,
+                "source_location": raw.source_location,
+                "destination_location": raw.destination_location,
+                "quantity": raw.quantity,
+            }
+            await self._append_event(
+                connection,
+                schema,
+                call,
+                sequence,
+                "inventory.transferred",
+                "inventory",
+                source["id"],
+                {
+                    "source_available": source["available"],
+                    "destination_available": target["available"],
+                },
+                after,
+                {},
+            )
+            return await self._store_simple_idempotency(connection, schema, call, raw, after)
+
+    async def _tool_cancel_order(
+        self, call: ToolCall, raw: CancelOrderInput
+    ) -> dict[str, JsonValue]:
+        connection, schema = self._ready()
+        async with connection.transaction():
+            prior = await self._existing_idempotency(connection, schema, raw)
+            if prior is not None:
+                return prior
+            order = await connection.fetchrow(
+                f"SELECT * FROM {schema}.orders WHERE id=$1 FOR UPDATE", raw.order_id
+            )
+            if order is None:
+                raise ToolRejection("OrderNotFound", "order not found")
+            self._require_customer_scope(call, order["customer_id"], "order:cancel")
+            shipped = await connection.fetchval(
+                f"SELECT count(*) FROM {schema}.shipments WHERE order_id=$1 AND status IN ('shipped','delivered')",
+                raw.order_id,
+            )
+            if order["status"] not in {"pending", "paid"} or int(shipped) > 0:
+                raise ToolRejection(
+                    "OrderNotCancellable", "fulfilled or settled order cannot be cancelled"
+                )
+            sequence = await self._next_sequence(connection, schema)
+            after: dict[str, JsonValue] = {"id": raw.order_id, "status": "cancelled"}
+            await connection.execute(
+                f"UPDATE {schema}.orders SET status='cancelled' WHERE id=$1", raw.order_id
+            )
+            await self._append_event(
+                connection,
+                schema,
+                call,
+                sequence,
+                "order.cancelled",
+                "order",
+                raw.order_id,
+                {"status": order["status"]},
+                after,
+                {},
+            )
+            return await self._store_simple_idempotency(connection, schema, call, raw, after)
+
+    async def _tool_complete_refund(
+        self, call: ToolCall, raw: CompleteRefundInput
+    ) -> dict[str, JsonValue]:
+        connection, schema = self._ready()
+        self._require_scope(call, "refund:process")
+        async with connection.transaction():
+            prior = await self._existing_idempotency(connection, schema, raw)
+            if prior is not None:
+                return prior
+            refund = await connection.fetchrow(
+                f"SELECT * FROM {schema}.refunds WHERE id=$1 FOR UPDATE", raw.refund_id
+            )
+            if refund is None:
+                raise ToolRejection("RefundNotFound", "refund not found")
+            if refund["status"] != "pending":
+                raise ToolRejection("RefundNotPending", "only pending refunds can complete")
+            sequence = await self._next_sequence(connection, schema)
+            after: dict[str, JsonValue] = {
+                "id": raw.refund_id,
+                "refund_id": raw.refund_id,
+                "status": "succeeded",
+            }
+            await connection.execute(
+                f"UPDATE {schema}.refunds SET status='succeeded' WHERE id=$1", raw.refund_id
+            )
+            await self._append_event(
+                connection,
+                schema,
+                call,
+                sequence,
+                "refund.completed",
+                "refund",
+                raw.refund_id,
+                {"status": "pending"},
+                after,
+                {},
+            )
+            return await self._store_simple_idempotency(connection, schema, call, raw, after)
+
+    async def _tool_reopen_ticket(
+        self, call: ToolCall, raw: ReopenTicketInput
+    ) -> dict[str, JsonValue]:
+        connection, schema = self._ready()
+        self._require_scope(call, "ticket:reopen")
+        async with connection.transaction():
+            prior = await self._existing_idempotency(connection, schema, raw)
+            if prior is not None:
+                return prior
+            ticket = await connection.fetchrow(
+                f"SELECT * FROM {schema}.tickets WHERE id=$1 FOR UPDATE", raw.ticket_id
+            )
+            if ticket is None:
+                raise ToolRejection("TicketNotFound", "ticket not found")
+            if ticket["status"] != "closed":
+                raise ToolRejection("TicketNotClosed", "only a closed ticket can be reopened")
+            sequence = await self._next_sequence(connection, schema)
+            after: dict[str, JsonValue] = {
+                "id": raw.ticket_id,
+                "status": "open",
+                "reason": raw.reason,
+            }
+            await connection.execute(
+                f"UPDATE {schema}.tickets SET status='open' WHERE id=$1", raw.ticket_id
+            )
+            await self._append_event(
+                connection,
+                schema,
+                call,
+                sequence,
+                "ticket.reopened",
+                "ticket",
+                raw.ticket_id,
+                {"status": "closed"},
+                after,
+                {},
+            )
+            return await self._store_simple_idempotency(connection, schema, call, raw, after)
+
+    @staticmethod
+    def _require_scope(call: ToolCall, scope: str) -> None:
+        if scope not in call.authorization.scopes:
+            raise ToolRejection("AuthorizationDenied", f"missing required scope: {scope}")
+
+    @staticmethod
+    def _require_customer_scope(call: ToolCall, customer_id: str, scope: str) -> None:
+        PostgresWorld._require_scope(call, scope)
+        if call.authorization.customer_id != customer_id:
+            raise ToolRejection("AuthorizationDenied", "customer does not own this order")
+
     async def _store_simple_idempotency(
         self,
         connection: asyncpg.Connection[asyncpg.Record],
@@ -705,6 +1152,8 @@ class PostgresWorld:
             )
         except asyncpg.UniqueViolationError as exc:
             raise ToolRejection("IdempotencyConflict", "idempotency key already used") from exc
+        if bool(getattr(raw, "inject_failure", False)):
+            raise asyncpg.PostgresError("injected transaction failure")
         return result
 
     async def _existing_idempotency(
@@ -810,6 +1259,7 @@ class PostgresWorld:
             "tickets": f"SELECT id,customer_id,order_id,subject,status,created_at FROM {schema}.tickets ORDER BY id",
             "emails": f"SELECT id,customer_id,subject,body,created_at FROM {schema}.emails ORDER BY id",
             "escalations": f"SELECT id,ticket_id,reason,created_at FROM {schema}.escalations ORDER BY id",
+            "replacements": f"SELECT id,order_id,product_id,quantity,status,created_at FROM {schema}.replacements ORDER BY id",
             "facts": f"SELECT key,value,trust FROM {schema}.commerce_facts ORDER BY key",
         }
         for name, query in queries.items():

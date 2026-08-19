@@ -4,12 +4,19 @@ build-backend = "hatchling.build"
 
 [project]
 name = "worker-worlds"
-version = "0.1.0"
+version = "1.0.0rc1"
 description = "Deterministic simulation and regression testing for AI workers"
 readme = "README.md"
 requires-python = ">=3.12"
 license = {file = "LICENSE"}
 authors = [{name = "Metaworkers AI"}]
+keywords = ["agents", "evaluation", "simulation", "commerce", "testing"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3.12",
+  "Typing :: Typed",
+]
 dependencies = ["asyncpg>=0.30,<1", "pydantic>=2.10,<3", "PyYAML>=6.0.2,<7"]
 
 [project.optional-dependencies]
@@ -21,6 +28,7 @@ dev = [
   "ruff>=0.9,<1",
   "types-PyYAML>=6.0.12,<7",
   "asyncpg-stubs>=0.31,<0.32",
+  "twine>=7,<8",
 ]
 langgraph = ["langgraph>=0.6,<1"]
 openai-agents = ["openai-agents>=0.2,<1"]
@@ -31,6 +39,15 @@ worker-worlds-schema = "worker_worlds.schema_cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/worker_worlds"]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"schemas" = "share/worker-worlds/schemas"
+"scenarios/release" = "share/worker-worlds/scenarios"
+"examples/scenarios" = "share/worker-worlds/examples/scenarios"
+"docs/assets" = "share/worker-worlds/report-assets"
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "schemas", "scenarios", "examples", "migrations", "docs", "scripts", "site", "worker-worlds.yaml", "compose.yaml", "Makefile", "README.md", "LICENSE", "SECURITY.md", "CHANGELOG.md", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md"]
 
 [tool.ruff]
 target-version = "py312"
@@ -44,6 +61,8 @@ ignore = ["COM812", "D203", "D213"]
 "tests/**" = ["D"]
 "src/worker_worlds/postgres_world.py" = ["E501"]
 "src/worker_worlds/reporting.py" = ["E501"]
+"scripts/benchmark.py" = ["E501"]
+"src/worker_worlds/review.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.12"
@@ -55,3 +74,4 @@ plugins = ["pydantic.mypy"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+markers = ["live: credential-guarded paid-provider smoke tests disabled by default"]

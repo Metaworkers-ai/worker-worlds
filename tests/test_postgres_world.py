@@ -4,12 +4,14 @@ import asyncio
 import os
 from dataclasses import replace
 from datetime import UTC, datetime, timedelta
+from typing import cast
 
 import pytest
 
 from worker_worlds.contracts import (
     AuthorizationContext,
     CallId,
+    JsonValue,
     RunId,
     ToolCall,
     ToolResultStatus,
@@ -64,6 +66,21 @@ def _call(
             actor_id="test-worker",
             customer_id=customer,
             scopes=frozenset({"refund:own_order"}),
+        ),
+        requested_at=datetime.now(UTC),
+    )
+
+
+def _mutation_call(
+    run_id: str, tool_name: str, arguments: dict[str, JsonValue], scopes: set[str]
+) -> ToolCall:
+    return ToolCall(
+        id=CallId(prefixed_ulid("call")),
+        run_id=RunId(run_id),
+        tool_name=tool_name,
+        arguments=arguments,
+        authorization=AuthorizationContext(
+            actor_id="test-worker", customer_id="cus_102", scopes=frozenset(scopes)
         ),
         requested_at=datetime.now(UTC),
     )
@@ -265,5 +282,178 @@ async def test_controlled_time_stockout_injection_is_atomic(
         assert event.event_type == "inventory.stockout"
         assert event.occurred_at > before.captured_at
         assert event.metadata["injected"] is True
+    finally:
+        await world.close()
+
+
+async def test_specialized_mutations_are_atomic_idempotent_and_authorized(
+    postgres_settings: DatabaseSettings,
+) -> None:
+    world, run_id = await _world(postgres_settings, seed=72)
+    try:
+        snapshot = await world.snapshot()
+        shipments = snapshot.state["shipments"]
+        assert isinstance(shipments, list)
+        pending = next(
+            row for row in shipments if isinstance(row, dict) and row["status"] == "pending"
+        )
+        shipment = _mutation_call(
+            run_id,
+            "update_shipment",
+            {"shipment_id": pending["id"], "status": "shipped", "idempotency_key": "ship-1"},
+            {"shipment:write"},
+        )
+        first, retry = await world.invoke(shipment), await world.invoke(shipment)
+        assert first.output == retry.output
+
+        replacement = await world.invoke(
+            _mutation_call(
+                run_id,
+                "create_replacement",
+                {"order_id": "ord_900", "sku": "SKU-2", "quantity": 1, "idempotency_key": "rpl-1"},
+                {"replacement:create"},
+            )
+        )
+        assert replacement.status is ToolResultStatus.SUCCESS
+        denied = await world.invoke(
+            _mutation_call(
+                run_id,
+                "expire_promotion",
+                {"promotion_code": "SAVE10", "idempotency_key": "promo-1"},
+                set(),
+            )
+        )
+        assert denied.error_type == "AuthorizationDenied"
+        assert [event.event_type for event in await world.events()] == [
+            "shipment.updated",
+            "replacement.created",
+        ]
+    finally:
+        await world.close()
+
+
+async def test_pending_refund_completion_and_concurrent_retry(
+    postgres_settings: DatabaseSettings,
+) -> None:
+    world, run_id = await _world(postgres_settings, seed=73)
+    try:
+        pending_call = _call(run_id, amount=100, key="pending")
+        pending_call = pending_call.model_copy(
+            update={"arguments": {**pending_call.arguments, "processor_pending": True}}
+        )
+        pending = await world.invoke(pending_call)
+        assert isinstance(pending.output, dict) and pending.output["status"] == "pending"
+        refund_id = str(pending.output["refund_id"])
+        completion = _mutation_call(
+            run_id,
+            "complete_refund",
+            {"refund_id": refund_id, "idempotency_key": "complete-1"},
+            {"refund:process"},
+        )
+        first, retry = await asyncio.gather(world.invoke(completion), world.invoke(completion))
+        assert first.output == retry.output
+        assert [event.event_type for event in await world.events()] == [
+            "refund.pending",
+            "refund.completed",
+        ]
+    finally:
+        await world.close()
+
+
+async def test_remaining_specialized_mutation_flows(
+    postgres_settings: DatabaseSettings,
+) -> None:
+    world, run_id = await _world(postgres_settings, seed=74)
+    try:
+        snapshot = await world.snapshot()
+        customers = snapshot.state["customers"]
+        tickets = snapshot.state["tickets"]
+        assert isinstance(customers, list) and isinstance(tickets, list)
+        customer_ids = [str(row["id"]) for row in customers if isinstance(row, dict)]
+        ticket_id = str(next(row["id"] for row in tickets if isinstance(row, dict)))
+        calls = [
+            _mutation_call(
+                run_id,
+                "resolve_backorder",
+                {
+                    "sku": "SKU-2",
+                    "location": "secondary",
+                    "quantity": 1,
+                    "idempotency_key": "back-1",
+                },
+                {"inventory:write"},
+            ),
+            _mutation_call(
+                run_id,
+                "expire_promotion",
+                {"promotion_code": "SAVE10", "idempotency_key": "promo-1"},
+                {"promotion:write"},
+            ),
+            _mutation_call(
+                run_id,
+                "disambiguate_customer",
+                {
+                    "selected_customer_id": "cus_102",
+                    "candidate_ids": cast(list[JsonValue], customer_ids),
+                    "idempotency_key": "customer-1",
+                },
+                {"customer:disambiguate"},
+            ),
+            _mutation_call(
+                run_id,
+                "transfer_inventory",
+                {
+                    "sku": "SKU-2",
+                    "source_location": "default",
+                    "destination_location": "secondary",
+                    "quantity": 1,
+                    "idempotency_key": "transfer-1",
+                },
+                {"inventory:write"},
+            ),
+            _mutation_call(
+                run_id,
+                "cancel_order",
+                {"order_id": "ord_cancel", "idempotency_key": "cancel-1"},
+                {"order:cancel"},
+            ),
+            _mutation_call(
+                run_id,
+                "update_ticket",
+                {"ticket_id": ticket_id, "status": "closed", "idempotency_key": "close-1"},
+                set(),
+            ),
+            _mutation_call(
+                run_id,
+                "reopen_ticket",
+                {
+                    "ticket_id": ticket_id,
+                    "reason": "customer replied",
+                    "idempotency_key": "reopen-1",
+                },
+                {"ticket:reopen"},
+            ),
+        ]
+        for call in calls:
+            result = await world.invoke(call)
+            retry = await world.invoke(call)
+            assert result.status is ToolResultStatus.SUCCESS
+            assert retry.output == result.output
+        invalid = await world.invoke(
+            _mutation_call(
+                run_id,
+                "transfer_inventory",
+                {
+                    "sku": "SKU-2",
+                    "source_location": "default",
+                    "destination_location": "default",
+                    "quantity": 1,
+                    "idempotency_key": "bad-transfer",
+                },
+                {"inventory:write"},
+            )
+        )
+        assert invalid.error_type == "InvalidTransfer"
+        assert len(await world.events()) == len(calls)
     finally:
         await world.close()

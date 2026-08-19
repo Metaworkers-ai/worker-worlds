@@ -6,15 +6,15 @@ from worker_worlds.scenario_library import reviewed_scenarios
 def test_reviewed_week3_library_has_required_family_coverage() -> None:
     scenarios = reviewed_scenarios()
     counts = Counter(str(scenario.metadata["family"]) for scenario in scenarios)
-    assert len(scenarios) == 88
+    assert len(scenarios) == 200
     assert counts == {
-        "refunds-payments": 20,
-        "orders-identity": 11,
-        "inventory-catalog": 11,
-        "tickets-escalation": 11,
-        "shipping-fulfillment": 10,
-        "adversarial-conflicts": 16,
-        "reliability-injection": 9,
+        "refunds-payments": 42,
+        "orders-identity": 24,
+        "inventory-catalog": 24,
+        "tickets-escalation": 24,
+        "shipping-fulfillment": 24,
+        "adversarial-conflicts": 38,
+        "reliability-injection": 24,
     }
     assert len({scenario.id for scenario in scenarios}) == len(scenarios)
     assert all(scenario.metadata["risk"] for scenario in scenarios)

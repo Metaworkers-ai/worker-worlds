@@ -1,3 +1,16 @@
+schema_version: "1.0"
+execution:
+  world: stub
+  worker: stub
+  scenario_locations: [examples/scenarios]
+  repetitions: 1
+  concurrency: 4
+reporting:
+  mode: auto
+  output: .worker-worlds/runs
+database: {}
+baselines_directory: .worker-worlds/baselines
+provider: {}
 comparison:
   critical_occurrences_allowed: 0
   new_high_failures_allowed: 0
