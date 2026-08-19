@@ -148,3 +148,18 @@ make scenarios-check
 Contracts use schema major version 1, ULID identifiers, UTC timestamps, integer monetary minor units with ISO currency, strict unknown-field rejection, and canonical deterministic serialization. Checked-in schemas live in [`schemas/v1`](schemas/v1).
 
 Worker Worlds is released under the [MIT License](LICENSE).
+
+## SaaS dashboard preview
+
+The optional Next.js dashboard lives in [`apps/dashboard`](apps/dashboard). It
+currently uses typed, contract-shaped demo evidence while the execution API is
+developed, so it never implies that fixture values came from a live worker run.
+
+```bash
+cd apps/dashboard
+npm install
+npm run dev
+# open http://localhost:3000
+```
+
+Verify a production build with `make dashboard-verify`.
