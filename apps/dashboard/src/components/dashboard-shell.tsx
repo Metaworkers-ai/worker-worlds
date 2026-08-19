@@ -9,6 +9,7 @@ import {
   BookOpen,
   Box,
   CheckCircle2,
+  ChevronDown,
   ChevronsUpDown,
   ChevronRight,
   CircleDot,
@@ -668,6 +669,7 @@ function RunsView({
 }
 
 function ScenariosView({ scenarios }: { scenarios: Scenario[] }) {
+  const [expandedFamily, setExpandedFamily] = useState<string | null>(null);
   const groups = useMemo(() => {
     const map = new Map<string, Scenario[]>();
     for (const scenario of scenarios)
@@ -687,7 +689,7 @@ function ScenariosView({ scenarios }: { scenarios: Scenario[] }) {
           {groups.map(([family, items]) => (
             <Card
               key={family}
-              className="border-border/70 bg-card/70 shadow-none"
+              className={`border-border/70 bg-card/70 shadow-none transition-colors ${expandedFamily === family ? "border-primary/35" : ""}`}
             >
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -698,10 +700,25 @@ function ScenariosView({ scenarios }: { scenarios: Scenario[] }) {
                     {items[0]?.severity}
                   </Badge>
                 </div>
-                <CardTitle className="pt-3 text-base">{family}</CardTitle>
-                <CardDescription>
+                <CardTitle className="pt-3 text-base">
+                  {humanizeFamily(family)}
+                </CardTitle>
+                <Button
+                  variant="link"
+                  className="h-auto w-fit justify-start p-0 text-sm text-muted-foreground hover:text-foreground"
+                  aria-expanded={expandedFamily === family}
+                  aria-controls={`scenario-family-${family}`}
+                  onClick={() =>
+                    setExpandedFamily((current) =>
+                      current === family ? null : family,
+                    )
+                  }
+                >
                   {items.length} validated scenarios
-                </CardDescription>
+                  <ChevronDown
+                    className={`size-3.5 transition-transform ${expandedFamily === family ? "rotate-180" : ""}`}
+                  />
+                </Button>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between text-xs">
@@ -712,6 +729,43 @@ function ScenariosView({ scenarios }: { scenarios: Scenario[] }) {
                 <p className="mt-4 truncate font-mono text-[10px] text-muted-foreground">
                   {items[0]?.source}
                 </p>
+                {expandedFamily === family ? (
+                  <div
+                    id={`scenario-family-${family}`}
+                    className="mt-4 max-h-72 space-y-2 overflow-y-auto border-t pt-3"
+                  >
+                    {items.map((scenario) => (
+                      <div
+                        key={scenario.id}
+                        className="rounded-md border border-border/60 bg-background/40 p-2.5"
+                      >
+                        <p className="text-xs leading-relaxed text-foreground">
+                          {scenario.objective}
+                        </p>
+                        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                          <span className="font-mono text-[9px] text-muted-foreground">
+                            {scenario.id}
+                          </span>
+                          <Badge
+                            variant="outline"
+                            className="px-1.5 py-0 text-[8px]"
+                          >
+                            {scenario.review_status.replaceAll("_", " ")}
+                          </Badge>
+                          {scenario.tools.slice(0, 2).map((tool) => (
+                            <Badge
+                              key={tool}
+                              variant="secondary"
+                              className="px-1.5 py-0 font-mono text-[8px]"
+                            >
+                              {tool}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
               </CardContent>
             </Card>
           ))}
