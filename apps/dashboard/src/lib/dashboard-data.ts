@@ -30,6 +30,17 @@ export type Scenario = ApiEnvelope & {
   source: string;
 };
 
+export type Agent = ApiEnvelope & {
+  id: string;
+  adapter: string;
+  version: string;
+  model_provider: string | null;
+  model_name: string | null;
+  ready: boolean;
+  missing_requirements: string[];
+  deterministic_test_infrastructure: boolean;
+};
+
 export type RunSummary = ApiEnvelope & {
   id: string;
   scenario_id: string;
@@ -77,13 +88,23 @@ export type RunRecord = ApiEnvelope & {
   mutation_count: number;
   cleanup_succeeded: boolean;
   incomplete_evidence: boolean;
+  model_tokens: number | null;
+  cost_minor: number | null;
   initial_snapshot_hash: string | null;
   final_snapshot_hash: string | null;
   events: WorldEvent[];
   verdicts: Verdict[];
   turns: Array<{
     index: number;
-    content?: string | null;
+    message?: string | null;
+    model_tokens?: number | null;
+    cost_minor?: number | null;
+    provider_response_ids?: string[];
+    provider_request_ids?: string[];
+    provider_retry_count?: number;
+    model_provider?: string | null;
+    model_name?: string | null;
+    model_version?: string | null;
     tool_call?: {
       tool_name: string;
       arguments: Record<string, unknown>;
@@ -111,6 +132,7 @@ export type DashboardData = {
   health: Health;
   overview: Overview;
   scenarios: Scenario[];
+  agents: Agent[];
   runs: RunSummary[];
   comparisons: Comparison[];
 };
@@ -127,21 +149,25 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   });
   if (!response.ok) {
     const body = (await response.json().catch(() => null)) as {
-      detail?: string;
+      detail?: string | { message?: string };
     } | null;
+    const detail = body?.detail;
     throw new Error(
-      body?.detail ?? `Worker Worlds API returned ${response.status}`,
+      typeof detail === "string"
+        ? detail
+        : detail?.message ?? `Worker Worlds API returned ${response.status}`,
     );
   }
   return (await response.json()) as T;
 }
 
 export async function loadDashboard(): Promise<DashboardData> {
-  const [health, overview, scenarioList, runList, comparisonList] =
+  const [health, overview, scenarioList, agentList, runList, comparisonList] =
     await Promise.all([
       request<Health>("/health"),
       request<Overview>("/overview"),
       request<ApiEnvelope & { scenarios: Scenario[] }>("/scenarios"),
+      request<ApiEnvelope & { agents: Agent[] }>("/agents"),
       request<ApiEnvelope & { runs: RunSummary[] }>("/runs?limit=100"),
       request<ApiEnvelope & { comparisons: Comparison[] }>("/comparisons"),
     ]);
@@ -149,6 +175,7 @@ export async function loadDashboard(): Promise<DashboardData> {
     health,
     overview,
     scenarios: scenarioList.scenarios,
+    agents: agentList.agents,
     runs: runList.runs,
     comparisons: comparisonList.comparisons,
   };
@@ -160,6 +187,7 @@ export function loadRun(runId: string): Promise<RunRecord> {
 
 export function startRun(
   scenarioId: string,
+  agentId: string,
   world: "stub" | "postgres" = "postgres",
 ): Promise<RunRecord> {
   return request<RunRecord>("/runs", {
@@ -167,7 +195,7 @@ export function startRun(
     body: JSON.stringify({
       schema_version: "1.0",
       scenario_id: scenarioId,
-      worker: "stub",
+      agent_id: agentId,
       world,
     }),
   });

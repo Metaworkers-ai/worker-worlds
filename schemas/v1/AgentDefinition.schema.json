@@ -1,0 +1,117 @@
+{
+  "$defs": {
+    "AgentAdapterType": {
+      "description": "Framework boundaries supported by schema version one.",
+      "enum": [
+        "stub",
+        "openai-agents",
+        "langgraph"
+      ],
+      "title": "AgentAdapterType",
+      "type": "string"
+    },
+    "AgentModelMetadata": {
+      "additionalProperties": false,
+      "description": "Non-secret model identity used for reproducibility.",
+      "properties": {
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+-]*$",
+          "title": "Name",
+          "type": "string"
+        },
+        "provider": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "title": "Provider",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:[-+][0-9A-Za-z.-]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        }
+      },
+      "required": [
+        "provider",
+        "name"
+      ],
+      "title": "AgentModelMetadata",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "A selectable agent without credentials or imported SDK objects.",
+  "properties": {
+    "adapter": {
+      "$ref": "#/$defs/AgentAdapterType"
+    },
+    "factory": {
+      "anyOf": [
+        {
+          "pattern": "^(?P<module>[A-Za-z_]\\w*(?:\\.[A-Za-z_]\\w*)*):(?P<callable>[A-Za-z_]\\w*(?:\\.[A-Za-z_]\\w*)*)$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Factory"
+    },
+    "id": {
+      "pattern": "^[a-z][a-z0-9]*(?:[-_.][a-z0-9]+)*$",
+      "title": "Id",
+      "type": "string"
+    },
+    "model": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AgentModelMetadata"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "required_env": {
+      "default": [],
+      "items": {
+        "pattern": "^[A-Z_][A-Z0-9_]*$",
+        "type": "string"
+      },
+      "title": "Required Env",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "version": {
+      "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:[-+][0-9A-Za-z.-]+)?$",
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "adapter"
+  ],
+  "title": "AgentDefinition",
+  "type": "object"
+}

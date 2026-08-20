@@ -27,11 +27,16 @@ Endpoints:
 - `GET /api/v1/runs`
 - `GET /api/v1/runs/{run_id}`
 - `POST /api/v1/runs`
+- `GET /api/v1/agents`
+- `GET /api/v1/agents/{agent_id}`
 - `GET /api/v1/comparisons`
 - `GET /docs` for generated OpenAPI documentation
 
 `POST /api/v1/runs` accepts a scenario ID resolved only from configured scenario
 roots, a supported worker adapter, and `stub` or `postgres` world selection. The
+optional `agent_id` selects the same credential-free registry used by the CLI
+and dashboard. Unknown agents return 404; registered but unavailable agents
+return 409 with requirement names only. Environment values are never returned.
 response is the canonical `RunRecord`; it is also persisted under the configured
 artifact directory.
 

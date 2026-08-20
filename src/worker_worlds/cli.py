@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import os
 import sys
 import xml.etree.ElementTree as ET
 from collections.abc import Mapping
@@ -21,9 +22,10 @@ from worker_worlds.adapters import (
 )
 from worker_worlds.baselines import create_baseline, inspect_baseline, load_baseline, load_suite
 from worker_worlds.comparison import compare_suites
-from worker_worlds.config import load_config
+from worker_worlds.config import WorkerWorldsConfig, load_config
 from worker_worlds.contracts import ComparisonConfig, Scenario
 from worker_worlds.database import DatabaseSettings, database_health, migrate, migration_files
+from worker_worlds.discovery import discover_scenarios, resolve_scenario
 from worker_worlds.errors import WorkerWorldsError
 from worker_worlds.grading import DeterministicGrader
 from worker_worlds.postgres_world import PostgresWorld
@@ -70,7 +72,11 @@ def _parser() -> argparse.ArgumentParser:
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
     run = subparsers.add_parser("run", help="run one scenario")
-    run.add_argument("scenario", type=Path)
+    run.add_argument("scenario", type=Path, nargs="?")
+    run.add_argument("--scenario", dest="scenario_id")
+    run.add_argument("--agent")
+    run.add_argument("--config", type=Path)
+    run.add_argument("--no-interactive", action="store_true")
     workers = ("stub", "langgraph-fake", "openai-agents-fake")
     run.add_argument("--worker", choices=workers, default="stub")
     run.add_argument("--world", choices=("stub", "postgres"), default="stub")
@@ -127,6 +133,25 @@ def _parser() -> argparse.ArgumentParser:
         "directory", type=Path, nargs="?", default=Path("scenarios/release")
     )
     scenario_review.add_argument("--output", type=Path, default=Path("docs/domain-review"))
+    scenarios = subparsers.add_parser("scenarios", help="discover configured scenarios")
+    scenarios_commands = scenarios.add_subparsers(dest="scenarios_command", required=True)
+    scenarios_list = scenarios_commands.add_parser("list")
+    scenarios_list.add_argument("--config", type=Path)
+    scenarios_search = scenarios_commands.add_parser("search")
+    scenarios_search.add_argument("query")
+    scenarios_search.add_argument("--config", type=Path)
+    scenarios_show = scenarios_commands.add_parser("show")
+    scenarios_show.add_argument("scenario_id")
+    scenarios_show.add_argument("--config", type=Path)
+    agents = subparsers.add_parser("agents", help="inspect registered agents")
+    agents_commands = agents.add_subparsers(dest="agents_command", required=True)
+    for command in ("list", "show", "doctor"):
+        child = agents_commands.add_parser(command)
+        if command != "list":
+            child.add_argument("agent_id")
+        child.add_argument("--config", type=Path)
+        if command == "doctor":
+            child.add_argument("--database-url")
     subparsers.add_parser("version", help="print the Worker Worlds version")
     config = subparsers.add_parser("config", help="inspect validated effective configuration")
     config.add_argument("config_command", choices=("show",))
@@ -166,24 +191,84 @@ def _require_replaceable(path: Path, args: argparse.Namespace) -> None:
 
 
 async def _run(args: argparse.Namespace) -> int:
-    scenario = load_scenario(args.scenario)
+    config, _ = load_config(args.config)
+    scenario_path = args.scenario
+    interactive_selection = False
+    if args.scenario_id:
+        scenario, scenario_path = resolve_scenario(config, args.scenario_id)
+    elif scenario_path is not None:
+        scenario = load_scenario(scenario_path)
+    else:
+        if args.no_interactive or not sys.stdin.isatty():
+            raise WorkerWorldsError(
+                "scenario is required in non-interactive mode; use --scenario <id> or a YAML path"
+            )
+        choices = list(discover_scenarios(config).items())
+        scenario_id = _select(
+            "scenario",
+            [
+                (identifier, discovered.trigger.content, True)
+                for identifier, (discovered, _path) in choices
+            ],
+        )
+        scenario, scenario_path = dict(choices)[scenario_id]
+        interactive_selection = True
+    worker_name = args.worker
+    agent_id = args.agent
+    if agent_id is None and args.scenario is None and not args.scenario_id and sys.stdin.isatty():
+        registry = config.agent_registry()
+        registry_ids = list(registry.agents)
+        if registry_ids:
+            readiness = [registry.readiness(identifier, os.environ) for identifier in registry_ids]
+            agent_id = _select(
+                "agent",
+                [
+                    (
+                        item.id,
+                        f"{item.adapter.value} {item.version}",
+                        item.ready,
+                    )
+                    for item in readiness
+                ],
+            )
+            interactive_selection = True
+    if agent_id is not None:
+        definition = config.agent_registry().get(agent_id)
+        worker_name = definition.adapter.value
+    reproducible_command = (
+        f"worker-worlds run --scenario {scenario.id} "
+        + (f"--agent {agent_id} " if agent_id is not None else f"--worker {worker_name} ")
+        + f"--world {args.world} --no-interactive"
+    )
     if args.dry_run:
         payload = _success(
             args,
             scenario_id=str(scenario.id),
-            worker=args.worker,
+            worker=agent_id or worker_name,
             world=args.world,
             intended_output=str(args.output),
+            reproducible_command=reproducible_command if interactive_selection else None,
         )
         _emit(
-            args, payload, [f"validated scenario={scenario.id}", f"intended_output={args.output}"]
+            args,
+            payload,
+            [
+                f"validated scenario={scenario.id}",
+                f"intended_output={args.output}",
+                *([f"reproduce={reproducible_command}"] if interactive_selection else []),
+            ],
         )
         return 0
     world = StubWorld()
     if args.world == "postgres":
         settings = _database_settings(args.database_url)
         world = PostgresWorld(settings, str(scenario.id))  # type: ignore[assignment]
-    record = await Runner(DeterministicGrader()).run(scenario, world, _worker(args.worker))
+    worker = (
+        await config.agent_registry().create(agent_id, os.environ)
+        if agent_id is not None
+        else _worker(worker_name)
+    )
+    record = await Runner(DeterministicGrader()).run(scenario, world, worker)
     reporter = JsonReporter(args.output)
     await reporter.report(record)
     exit_code = 0 if record.passed else 1
@@ -201,6 +286,7 @@ async def _run(args: argparse.Namespace) -> int:
         "verdicts": verdict_lines,
         "record": str(reporter.output_path),
         "cleanup_succeeded": record.cleanup_succeeded,
+        "reproducible_command": reproducible_command if interactive_selection else None,
     }
     _emit(
         args,
@@ -215,9 +301,129 @@ async def _run(args: argparse.Namespace) -> int:
             "verdicts=" + ",".join(verdict_lines),
             f"record={reporter.output_path}",
             f"cleanup_succeeded={str(record.cleanup_succeeded).lower()}",
+            *([f"reproduce={reproducible_command}"] if interactive_selection else []),
         ],
     )
     return exit_code
+
+
+def _select(kind: str, choices: list[tuple[str, str, bool]]) -> str:
+    """Search and select one described, ready choice on an interactive terminal."""
+    if not choices:
+        raise WorkerWorldsError(f"no {kind}s are configured")
+    query = input(f"Search {kind} (blank for all): ").strip().lower()
+    matches = [
+        choice
+        for choice in choices
+        if not query or query in choice[0].lower() or query in choice[1].lower()
+    ]
+    if not matches:
+        raise WorkerWorldsError(f"no {kind}s match {query!r}")
+    for index, (identifier, description, ready) in enumerate(matches, start=1):
+        availability = "ready=true" if ready else "ready=false unavailable"
+        print(f"{index}. {identifier} — {description} — {availability}")
+    raw = input(f"Select {kind} [1-{len(matches)}]: ").strip()
+    try:
+        selected = matches[int(raw) - 1]
+    except (ValueError, IndexError):
+        raise WorkerWorldsError(f"invalid {kind} selection") from None
+    if not selected[2]:
+        raise WorkerWorldsError(f"selected {kind} {selected[0]!r} is not ready")
+    return selected[0]
+
+
+def _scenarios(args: argparse.Namespace) -> int:
+    config, _ = load_config(args.config)
+    scenarios = discover_scenarios(config)
+    if args.scenarios_command == "show":
+        scenario, path = resolve_scenario(config, args.scenario_id)
+        payload = _success(
+            args,
+            scenario_id=str(scenario.id),
+            path=str(path),
+            description=scenario.trigger.content,
+            tags=list(scenario.tags),
+        )
+        _emit(args, payload, [json.dumps(payload, sort_keys=True, indent=2)])
+        return 0
+    query = args.query.lower() if args.scenarios_command == "search" else None
+    items = [
+        {
+            "id": identifier,
+            "path": str(path),
+            "description": scenario.trigger.content,
+        }
+        for identifier, (scenario, path) in scenarios.items()
+        if query is None or query in identifier.lower() or query in scenario.trigger.content.lower()
+    ]
+    payload = _success(args, scenarios=items, count=len(items))
+    _emit(args, payload, [f"{item['id']}\t{item['description']}" for item in items])
+    return 0
+
+
+async def _agent_readiness(
+    config: WorkerWorldsConfig,
+    agent_id: str,
+    database_url: str | None = None,
+    *,
+    check_database: bool = False,
+) -> dict[str, object]:
+    from worker_worlds.agent_registry import AgentRegistry
+
+    registry = config.agent_registry()
+    assert isinstance(registry, AgentRegistry)
+    database_ready = True
+    database_message = "not checked"
+    if check_database:
+        try:
+            settings = _database_settings(database_url)
+            database_ready, database_message = await database_health(settings)
+        except (ValueError, WorkerWorldsError) as exc:
+            database_ready = False
+            database_message = type(exc).__name__
+    readiness = registry.readiness(
+        agent_id,
+        os.environ,
+        database_ready=database_ready,
+        database=database_message,
+    )
+    return {
+        "id": readiness.id,
+        "ready": readiness.ready,
+        "adapter": readiness.adapter.value,
+        "version": readiness.version,
+        "missing_environment": list(readiness.missing_env),
+        "missing_requirements": list(readiness.missing_requirements),
+        "package_ready": readiness.package_ready,
+        "factory_ready": readiness.factory_ready,
+        "database_ready": readiness.database_ready,
+        "database": readiness.database,
+    }
+
+
+async def _agents(args: argparse.Namespace) -> int:
+    config, _ = load_config(args.config)
+    if args.agents_command == "list":
+        items = [await _agent_readiness(config, agent_id) for agent_id in sorted(config.agents)]
+        payload = _success(args, agents=items, count=len(items))
+        _emit(
+            args,
+            payload,
+            [
+                f"{item['id']}\t{item['adapter']}\tready={str(item['ready']).lower()}"
+                for item in items
+            ],
+        )
+        return 0
+    item = await _agent_readiness(
+        config,
+        args.agent_id,
+        getattr(args, "database_url", None),
+        check_database=args.agents_command == "doctor",
+    )
+    payload = _success(args, agent=item)
+    _emit(args, payload, [json.dumps(item, sort_keys=True, indent=2)])
+    return 0 if args.agents_command == "show" or item["ready"] else 1
 
 
 def _database_settings(url: str | None) -> DatabaseSettings:
@@ -632,6 +838,10 @@ def main(argv: list[str] | None = None) -> int:
             return asyncio.run(_compare(args))
         if args.command == "scenario":
             return _scenario(args)
+        if args.command == "scenarios":
+            return _scenarios(args)
+        if args.command == "agents":
+            return asyncio.run(_agents(args))
         if args.command == "version":
             from worker_worlds import __version__
 

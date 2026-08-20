@@ -13,13 +13,18 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: "3.12"}
-      - run: pip install -e '.[dev]'
-      - run: worker-worlds-schema check
-      - run: worker-worlds scenario export scenarios/release --check
-      - run: python scripts/build_docs.py
-      - run: python -m build
-      - run: python scripts/release_artifacts.py
-      - run: python -m venv /tmp/ww-release && /tmp/ww-release/bin/pip install dist/*.whl && /tmp/ww-release/bin/worker-worlds version
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/dashboard/package-lock.json
+      - run: make setup
+      - run: .venv/bin/worker-worlds-schema check
+      - run: .venv/bin/worker-worlds scenario export scenarios/release --check
+      - run: .venv/bin/python scripts/build_docs.py
+      - run: .venv/bin/python -m build
+      - run: .venv/bin/python scripts/release_artifacts.py
+      - run: python -m venv /tmp/ww-release && /tmp/ww-release/bin/pip install 'dist/worker_worlds-1.0.0rc1-py3-none-any.whl[openai-agents,langgraph]' && /tmp/ww-release/bin/worker-worlds version
       - uses: actions/upload-artifact@v4
         with:
           name: worker-worlds-${{ matrix.os }}
@@ -27,3 +32,28 @@ jobs:
             dist
             site
 # Publication is deliberately absent. A maintainer must separately approve PyPI and GitHub release steps.
+  cold-install:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17.6-alpine
+        env:
+          POSTGRES_USER: worker_worlds
+          POSTGRES_PASSWORD: worker_worlds_local
+          POSTGRES_DB: worker_worlds_test
+        ports: ["55432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U worker_worlds -d worker_worlds_test"
+          --health-interval 2s --health-timeout 3s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/dashboard/package-lock.json
+      - run: make setup
+      - run: .venv/bin/python -m build
+      - run: ./scripts/cold_install_acceptance.sh

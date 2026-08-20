@@ -82,11 +82,32 @@ class ScenarioListResponse(ApiModel):
     total: int = Field(ge=0)
 
 
+class AgentSummary(ApiModel):
+    """Credential-free registered-agent identity and readiness."""
+
+    id: str
+    adapter: str
+    version: str
+    model_provider: str | None = None
+    model_name: str | None = None
+    ready: bool
+    missing_requirements: tuple[str, ...] = ()
+    deterministic_test_infrastructure: bool = False
+
+
+class AgentListResponse(ApiModel):
+    """Stable registered-agent collection."""
+
+    agents: tuple[AgentSummary, ...]
+    total: int = Field(ge=0)
+
+
 class CreateRunRequest(ApiModel):
     """Bounded request to run one locally available scenario."""
 
     scenario_id: str = Field(min_length=1, max_length=200)
     worker: Literal["stub", "langgraph-fake", "openai-agents-fake"] = "stub"
+    agent_id: str | None = Field(default=None, min_length=1, max_length=200)
     world: Literal["stub", "postgres"] = "postgres"
 
 

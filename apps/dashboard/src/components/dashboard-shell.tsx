@@ -74,6 +74,7 @@ import {
   loadDashboard,
   loadRun,
   startRun,
+  type Agent,
   type Comparison,
   type DashboardData,
   type Overview,
@@ -224,7 +225,7 @@ function EmptyState({
         <div className="mx-auto grid size-10 place-items-center rounded-full bg-muted">
           <TerminalSquare className="size-4 text-muted-foreground" />
         </div>
-        <h3 className="mt-4 text-sm font-medium">{title}</h3>
+        <h2 className="mt-4 text-sm font-medium">{title}</h2>
         <p className="mx-auto mt-2 max-w-sm text-xs leading-5 text-muted-foreground">
           {description}
         </p>
@@ -568,27 +569,146 @@ function ScenarioPicker({
   );
 }
 
+function AgentPicker({
+  agents,
+  value,
+  onValueChange,
+}: {
+  agents: Agent[];
+  value: string;
+  onValueChange: (value: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const selected = agents.find((agent) => agent.id === value);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          aria-label="Choose a registered agent"
+          className="h-auto min-h-9 w-full justify-between px-3 py-2 text-left font-normal"
+        >
+          {selected ? (
+            <span className="min-w-0">
+              <span className="flex items-center gap-2 text-sm text-foreground">
+                <span className="truncate">{selected.id}</span>
+                <Badge
+                  variant="outline"
+                  className={
+                    selected.ready
+                      ? "border-emerald-500/20 text-emerald-400"
+                      : "border-amber-500/20 text-amber-400"
+                  }
+                >
+                  {selected.ready ? "Ready" : "Unavailable"}
+                </Badge>
+              </span>
+              <span className="mt-0.5 block truncate font-mono text-[10px] text-muted-foreground">
+                {selected.adapter} · {selected.model_provider ?? "local"}/
+                {selected.model_name ?? "deterministic"}
+              </span>
+            </span>
+          ) : (
+            <span className="text-muted-foreground">Choose an agent</span>
+          )}
+          <ChevronsUpDown className="ml-3 size-4 shrink-0 text-muted-foreground" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        className="w-[min(36rem,calc(100vw-2rem))] p-0"
+      >
+        <Command>
+          <CommandInput placeholder="Search by agent, adapter, provider, or model…" />
+          <CommandList className="max-h-80">
+            <CommandEmpty>No matching agents.</CommandEmpty>
+            <CommandGroup heading={`${agents.length} registered agents`}>
+              {agents.map((agent) => (
+                <CommandItem
+                  key={agent.id}
+                  value={`${agent.id} ${agent.adapter} ${agent.model_provider ?? ""} ${agent.model_name ?? ""}`}
+                  disabled={!agent.ready}
+                  aria-disabled={!agent.ready}
+                  className="items-start py-2.5"
+                  onSelect={() => {
+                    if (!agent.ready) return;
+                    onValueChange(agent.id);
+                    setOpen(false);
+                  }}
+                >
+                  <span className="min-w-0">
+                    <span className="flex flex-wrap items-center gap-2 text-sm">
+                      {agent.id}
+                      <Badge
+                        variant="outline"
+                        className={
+                          agent.ready
+                            ? "border-emerald-500/20 text-emerald-400"
+                            : "border-amber-500/20 text-amber-400"
+                        }
+                      >
+                        {agent.ready ? "Ready" : "Unavailable"}
+                      </Badge>
+                    </span>
+                    <span className="mt-1 block font-mono text-[10px] text-muted-foreground">
+                      {agent.adapter} {agent.version} · {agent.model_provider ?? "local"}/
+                      {agent.model_name ?? "deterministic"}
+                    </span>
+                    {agent.deterministic_test_infrastructure ? (
+                      <span className="mt-1 block text-[10px] text-sky-300">
+                        Deterministic test infrastructure — no provider call
+                      </span>
+                    ) : null}
+                    {!agent.ready && agent.missing_requirements.length ? (
+                      <span className="mt-1 block text-[10px] text-amber-300">
+                        Unavailable because: {agent.missing_requirements.join("; ")}
+                      </span>
+                    ) : null}
+                  </span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 function RunsView({
   runs,
   scenarios,
+  agents,
   running,
   onRun,
   onSelect,
 }: {
   runs: RunSummary[];
   scenarios: Scenario[];
+  agents: Agent[];
   running: boolean;
-  onRun: (scenarioId: string, world: "stub" | "postgres") => void;
+  onRun: (
+    scenarioId: string,
+    agentId: string,
+    world: "stub" | "postgres",
+  ) => void;
   onSelect: (run: RunSummary) => void;
 }) {
   const [query, setQuery] = useState("");
   const [scenarioId, setScenarioId] = useState("");
+  const [agentId, setAgentId] = useState("");
   const [world, setWorld] = useState<"stub" | "postgres">("postgres");
   const preferred =
     scenarios.find((item) => item.id === "refund.partial.happy")?.id ??
     scenarios[0]?.id ??
     "";
   const selected = scenarioId || preferred;
+  const preferredAgent = agents.find((agent) => agent.ready)?.id ?? "";
+  const selectedAgentId = agentId || preferredAgent;
+  const selectedAgent = agents.find((agent) => agent.id === selectedAgentId);
   const filtered = useMemo(
     () =>
       runs.filter((run) =>
@@ -614,13 +734,21 @@ function RunsView({
               onValueChange={setScenarioId}
             />
           </div>
+          <div className="min-w-64 flex-1">
+            <p className="mb-2 text-xs text-muted-foreground">Agent</p>
+            <AgentPicker
+              agents={agents}
+              value={selectedAgentId}
+              onValueChange={setAgentId}
+            />
+          </div>
           <div>
             <p className="mb-2 text-xs text-muted-foreground">World</p>
             <Select
               value={world}
               onValueChange={(value) => setWorld(value as "stub" | "postgres")}
             >
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-32" aria-label="Choose a world">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -630,8 +758,8 @@ function RunsView({
             </Select>
           </div>
           <Button
-            disabled={!selected || running}
-            onClick={() => onRun(selected, world)}
+            disabled={!selected || !selectedAgent?.ready || running}
+            onClick={() => onRun(selected, selectedAgentId, world)}
           >
             {running ? (
               <LoaderCircle className="size-4 animate-spin" />
@@ -642,6 +770,16 @@ function RunsView({
           </Button>
         </CardContent>
       </Card>
+      {selectedAgent?.deterministic_test_infrastructure ? (
+        <p className="text-xs text-sky-300" role="status">
+          Selected agent is deterministic test infrastructure and does not call a provider.
+        </p>
+      ) : null}
+      {!agents.some((agent) => agent.ready) ? (
+        <p className="text-xs text-amber-300" role="status">
+          No registered agent is ready. Resolve the displayed requirements before starting a run.
+        </p>
+      ) : null}
       <div className="relative">
         <Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
         <Input
@@ -863,6 +1001,22 @@ function RunDetail({
   loading: boolean;
   close: () => void;
 }) {
+  const providerTurn = record?.turns.findLast(
+    (turn) =>
+      Boolean(turn.model_provider) ||
+      Boolean(turn.provider_response_ids?.length) ||
+      Boolean(turn.provider_request_ids?.length),
+  );
+  const responseIds = record?.turns.flatMap(
+    (turn) => turn.provider_response_ids ?? [],
+  );
+  const requestIds = record?.turns.flatMap(
+    (turn) => turn.provider_request_ids ?? [],
+  );
+  const retries = record?.turns.reduce(
+    (total, turn) => total + (turn.provider_retry_count ?? 0),
+    0,
+  );
   return (
     <div
       className="fixed inset-0 z-50 flex justify-end bg-black/55 backdrop-blur-sm"
@@ -896,7 +1050,61 @@ function RunDetail({
             <LoaderCircle className="size-6 animate-spin text-primary" />
           </div>
         ) : record ? (
-          <Tabs defaultValue="evidence" className="mt-7">
+          <div className="mt-7 space-y-5">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <Metric
+                label="Adapter"
+                value={summary.worker}
+                detail={
+                  providerTurn?.model_provider
+                    ? `${providerTurn.model_provider}/${providerTurn.model_name ?? "unknown"}`
+                    : summary.worker === "stub"
+                      ? "Deterministic test infrastructure"
+                      : "Provider metadata unavailable"
+                }
+                icon={Blocks}
+              />
+              <Metric
+                label="Tokens"
+                value={record.model_tokens?.toLocaleString() ?? "Unsupported"}
+                detail="Normalized model usage"
+                icon={Zap}
+              />
+              <Metric
+                label="Retries"
+                value={String(retries ?? 0)}
+                detail="Provider retry provenance"
+                icon={RefreshCw}
+              />
+              <Metric
+                label="Cost"
+                value={
+                  record.cost_minor === null
+                    ? "Unsupported"
+                    : `${record.cost_minor} minor units`
+                }
+                detail="Recorded provider cost"
+                icon={Activity}
+              />
+            </div>
+            <div className="rounded-md border border-border bg-card p-4">
+              <p className="text-xs font-medium">Provider provenance</p>
+              <dl className="mt-3 grid gap-3 text-[10px] sm:grid-cols-2">
+                <div>
+                  <dt className="text-muted-foreground">Response IDs</dt>
+                  <dd className="mt-1 break-all font-mono">
+                    {responseIds?.length ? responseIds.join(", ") : "Not provided"}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-muted-foreground">Request IDs</dt>
+                  <dd className="mt-1 break-all font-mono">
+                    {requestIds?.length ? requestIds.join(", ") : "Not provided"}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+            <Tabs defaultValue="evidence">
             <TabsList>
               <TabsTrigger value="evidence">Evidence</TabsTrigger>
               <TabsTrigger value="events">
@@ -962,7 +1170,8 @@ function RunDetail({
                 {JSON.stringify(record, null, 2)}
               </pre>
             </TabsContent>
-          </Tabs>
+            </Tabs>
+          </div>
         ) : (
           <EmptyState
             title="Run detail unavailable"
@@ -1044,11 +1253,15 @@ export function DashboardShell() {
   }, []);
 
   const runScenario = useCallback(
-    async (scenarioId: string, world: "stub" | "postgres") => {
+    async (
+      scenarioId: string,
+      agentId: string,
+      world: "stub" | "postgres",
+    ) => {
       setRunning(true);
       setError(null);
       try {
-        await startRun(scenarioId, world);
+        await startRun(scenarioId, agentId, world);
         await refresh();
       } catch (reason) {
         setError(
@@ -1120,7 +1333,11 @@ export function DashboardShell() {
           </header>
           <main className="mx-auto max-w-[1440px] p-4 md:p-7">
             {error ? (
-              <div className="mb-5 flex items-start gap-3 rounded-lg border border-red-500/20 bg-red-500/[0.06] p-4 text-sm">
+              <div
+                className="mb-5 flex items-start gap-3 rounded-lg border border-red-500/20 bg-red-500/[0.06] p-4 text-sm"
+                role="alert"
+                aria-live="assertive"
+              >
                 <AlertCircle className="mt-0.5 size-4 shrink-0 text-red-400" />
                 <div>
                   <p className="font-medium text-red-300">
@@ -1155,8 +1372,11 @@ export function DashboardShell() {
                   <RunsView
                     runs={data.runs}
                     scenarios={data.scenarios}
+                    agents={data.agents}
                     running={running}
-                    onRun={(id, world) => void runScenario(id, world)}
+                    onRun={(scenarioId, agentId, world) =>
+                      void runScenario(scenarioId, agentId, world)
+                    }
                     onSelect={(run) => void selectRun(run)}
                   />
                 ) : null}

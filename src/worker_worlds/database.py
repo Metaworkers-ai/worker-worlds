@@ -176,8 +176,7 @@ async def cleanup_abandoned(settings: DatabaseSettings) -> int:
             async with connection.transaction():
                 await connection.execute(f'DROP SCHEMA IF EXISTS "{namespace}" CASCADE')
                 await connection.execute(
-                    "UPDATE worker_worlds.run_leases SET active=false WHERE run_id=$1",
-                    row["run_id"],
+                    "DELETE FROM worker_worlds.run_leases WHERE run_id=$1", row["run_id"]
                 )
             cleaned += 1
         return cleaned

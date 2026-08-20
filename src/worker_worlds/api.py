@@ -18,6 +18,8 @@ from pydantic import ValidationError
 from worker_worlds import __version__
 from worker_worlds.adapters import LangGraphAdapter, OpenAIAgentsAdapter, refund_fake_runtime
 from worker_worlds.api_models import (
+    AgentListResponse,
+    AgentSummary,
     ComparisonListResponse,
     ComparisonSummary,
     CreateRunRequest,
@@ -28,6 +30,7 @@ from worker_worlds.api_models import (
     ScenarioListResponse,
     ScenarioSummary,
 )
+from worker_worlds.config import WorkerWorldsConfig, load_config
 from worker_worlds.contracts import ComparisonReport, RunRecord, Scenario, VerdictStatus
 from worker_worlds.database import DatabaseSettings, database_health
 from worker_worlds.grading import DeterministicGrader
@@ -121,6 +124,28 @@ def _worker(name: str) -> WorkerAdapter:
     if name == "openai-agents-fake":
         return OpenAIAgentsAdapter(refund_fake_runtime())
     return StubWorkerAdapter()
+
+
+def _config() -> WorkerWorldsConfig:
+    config, _ = load_config()
+    return config
+
+
+def _agent_summary(config: WorkerWorldsConfig, agent_id: str) -> AgentSummary:
+    registry = config.agent_registry()
+    definition = registry.get(agent_id)
+    readiness = registry.readiness(agent_id, os.environ)
+    metadata = definition.model
+    return AgentSummary(
+        id=agent_id,
+        adapter=definition.adapter.value,
+        version=definition.version,
+        model_provider=metadata.provider if metadata else None,
+        model_name=metadata.name if metadata else None,
+        ready=readiness.ready,
+        missing_requirements=readiness.missing_requirements,
+        deterministic_test_infrastructure=definition.adapter.value == "stub",
+    )
 
 
 def _world(name: str, scenario: Scenario) -> World:
@@ -248,6 +273,21 @@ def create_app() -> FastAPI:
         )
         return ScenarioListResponse(scenarios=items, total=len(items))
 
+    @router.get("/agents", response_model=AgentListResponse)
+    async def agents() -> AgentListResponse:
+        config = _config()
+        items = tuple(_agent_summary(config, agent_id) for agent_id in sorted(config.agents))
+        return AgentListResponse(agents=items, total=len(items))
+
+    @router.get("/agents/{agent_id}", response_model=AgentSummary)
+    async def agent_detail(agent_id: str) -> AgentSummary:
+        if not _SAFE_ID.fullmatch(agent_id):
+            raise HTTPException(status_code=404, detail="agent not found")
+        config = _config()
+        if agent_id not in config.agents:
+            raise HTTPException(status_code=404, detail="agent not found")
+        return _agent_summary(config, agent_id)
+
     @router.get("/runs", response_model=RunListResponse)
     async def runs(limit: Annotated[int, Query(ge=1, le=500)] = 100) -> RunListResponse:
         scenarios_by_id = _scenarios()
@@ -276,8 +316,33 @@ def create_app() -> FastAPI:
         if selected is None:
             raise HTTPException(status_code=404, detail="scenario not found")
         scenario = selected[0]
+        worker = _worker(request.worker)
+        if request.agent_id is not None:
+            config = _config()
+            if request.agent_id not in config.agents:
+                raise HTTPException(
+                    status_code=404,
+                    detail={"type": "UnknownAgent", "message": "registered agent not found"},
+                )
+            summary = _agent_summary(config, request.agent_id)
+            if not summary.ready:
+                raise HTTPException(
+                    status_code=409,
+                    detail={
+                        "type": "AgentNotReady",
+                        "message": "registered agent is not ready",
+                        "missing_requirements": list(summary.missing_requirements),
+                    },
+                )
+            try:
+                worker = await config.agent_registry().create(request.agent_id, os.environ)
+            except (TypeError, ValueError, RuntimeError):
+                raise HTTPException(
+                    status_code=409,
+                    detail={"type": "AgentUnavailable", "message": "agent factory is unavailable"},
+                ) from None
         record = await Runner(DeterministicGrader()).run(
-            scenario, _world(request.world, scenario), _worker(request.worker)
+            scenario, _world(request.world, scenario), worker
         )
         await JsonReporter(_artifact_directory() / "runs").report(record)
         return record

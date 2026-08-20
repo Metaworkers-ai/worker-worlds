@@ -8,6 +8,13 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from worker_worlds.agent_registry import (
+    AgentDefinition,
+    AgentFactoryContext,
+    AgentModelMetadata,
+    AgentReadiness,
+    AgentRegistry,
+)
 from worker_worlds.config import WorkerWorldsConfig
 from worker_worlds.contracts import (
     AuthorizationContext,
@@ -61,6 +68,11 @@ MODELS: tuple[type[BaseModel], ...] = (
     ComparisonVerdict,
     ComparisonReport,
     WorkerWorldsConfig,
+    AgentModelMetadata,
+    AgentDefinition,
+    AgentFactoryContext,
+    AgentReadiness,
+    AgentRegistry,
 )
 
 

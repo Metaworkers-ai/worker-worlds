@@ -16,7 +16,7 @@
 | CLI usability | Ready locally | JSON, quiet, verbose, dry-run, overwrite, redaction, and exit behavior tested |
 | Documentation | Ready | user, author, operations, security, and release guides |
 | Packaging | Ready locally | wheel/sdist, metadata, resources, clean installs, rehearsal, and reproducible hashes pass |
-| CI | Pending external | actionlint and local commands pass; hosted-runner execution required |
+| CI | Pending external | workflow contracts and local commands pass; the updated hosted workflows must pass after an authorized push |
 | Licensing/governance | Ready | MIT, contribution, conduct, security, support policy |
 | Rollback/support | Ready | immutable release and version-pin/yank guidance |
 

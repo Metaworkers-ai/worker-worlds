@@ -7,13 +7,15 @@ cleanup() { rm -rf "$acceptance_dir"; }
 trap cleanup EXIT INT TERM
 started=$(date +%s)
 python3.12 -m venv "$acceptance_dir/venv"
-"$acceptance_dir/venv/bin/pip" install --disable-pip-version-check "$repo_root/dist/worker_worlds-1.0.0rc1-py3-none-any.whl" >/dev/null
+"$acceptance_dir/venv/bin/pip" install --disable-pip-version-check "$repo_root/dist/worker_worlds-1.0.0rc1-py3-none-any.whl[openai-agents,langgraph]" >/dev/null
 install_done=$(date +%s)
 cd "$acceptance_dir"
 export WORKER_WORLDS_DATABASE_URL=postgresql://worker_worlds:worker_worlds_local@127.0.0.1:55432/worker_worlds_test
 packaged_example="$acceptance_dir/venv/share/worker-worlds/examples/scenarios/refund_happy.yaml"
 "$acceptance_dir/venv/bin/worker-worlds" migrate >/dev/null
 "$acceptance_dir/venv/bin/worker-worlds" doctor >/dev/null
+"$acceptance_dir/venv/bin/worker-worlds" agents list >/dev/null
+"$acceptance_dir/venv/bin/python" -c 'import agents, langgraph, langchain_openai' >/dev/null
 migrate_done=$(date +%s)
 "$acceptance_dir/venv/bin/worker-worlds" run "$packaged_example" --worker stub --world postgres --output report >/dev/null
 test -s report/*.json

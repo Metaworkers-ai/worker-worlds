@@ -32,8 +32,8 @@ dev = [
   "fastapi[standard]>=0.141,<1",
   "httpx>=0.28,<1",
 ]
-langgraph = ["langgraph>=0.6,<1"]
-openai-agents = ["openai-agents>=0.2,<1"]
+langgraph = ["langgraph==0.6.11", "langchain-openai==1.6.0"]
+openai-agents = ["openai-agents==0.22.0"]
 api = ["fastapi[standard]>=0.141,<1"]
 
 [project.scripts]
@@ -79,3 +79,6 @@ plugins = ["pydantic.mypy"]
 asyncio_mode = "auto"
 testpaths = ["tests"]
 markers = ["live: credential-guarded paid-provider smoke tests disabled by default"]
+filterwarnings = [
+  "ignore:The default value of `allowed_objects` will change:langchain_core._api.deprecation.LangChainPendingDeprecationWarning",
+]

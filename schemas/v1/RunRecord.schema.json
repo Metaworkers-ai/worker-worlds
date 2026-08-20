@@ -513,6 +513,56 @@
           "default": null,
           "title": "Message"
         },
+        "model_input_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Input Tokens"
+        },
+        "model_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Name"
+        },
+        "model_output_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Output Tokens"
+        },
+        "model_provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Provider"
+        },
         "model_tokens": {
           "anyOf": [
             {
@@ -526,11 +576,45 @@
           "default": null,
           "title": "Model Tokens"
         },
+        "model_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Version"
+        },
         "occurred_at": {
           "description": "Timezone-aware UTC timestamp",
           "format": "date-time",
           "title": "Occurred At",
           "type": "string"
+        },
+        "provider_request_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Provider Request Ids",
+          "type": "array"
+        },
+        "provider_response_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Provider Response Ids",
+          "type": "array"
+        },
+        "provider_retry_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Provider Retry Count",
+          "type": "integer"
         },
         "schema_version": {
           "default": "1.0",

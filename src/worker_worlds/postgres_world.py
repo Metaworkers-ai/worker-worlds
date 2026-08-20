@@ -1405,7 +1405,7 @@ class PostgresWorld:
             async with self._connection.transaction():
                 await self._connection.execute(f'DROP SCHEMA IF EXISTS "{namespace}" CASCADE')
                 await self._connection.execute(
-                    "UPDATE worker_worlds.run_leases SET active=false WHERE run_id=$1", self._run_id
+                    "DELETE FROM worker_worlds.run_leases WHERE run_id=$1", self._run_id
                 )
             self.cleanup_succeeded = True
         finally:

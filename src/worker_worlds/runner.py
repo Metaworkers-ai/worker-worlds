@@ -23,6 +23,7 @@ from worker_worlds.contracts import (
 )
 from worker_worlds.errors import AdapterError, InjectionError, ProviderError, ScenarioAuthoringError
 from worker_worlds.ids import prefixed_ulid
+from worker_worlds.native_bridge import NativeBridgePendingError
 from worker_worlds.protocols import Grader, WorkerAdapter, World
 
 
@@ -117,12 +118,22 @@ class Runner:
                 incomplete = True
                 error_type, error_message = type(evidence_exc).__name__, str(evidence_exc)
         except (AdapterError, ProviderError, ScenarioAuthoringError) as exc:
-            terminal = {
-                AdapterError: TerminalReason.ADAPTER_ERROR,
-                ProviderError: TerminalReason.PROVIDER_ERROR,
-                ScenarioAuthoringError: TerminalReason.SCENARIO_ERROR,
-            }[type(exc)]
+            if isinstance(exc, AdapterError):
+                terminal = TerminalReason.ADAPTER_ERROR
+            elif isinstance(exc, ProviderError):
+                terminal = TerminalReason.PROVIDER_ERROR
+            else:
+                terminal = TerminalReason.SCENARIO_ERROR
             error_type, error_message = type(exc).__name__, str(exc)
+            if isinstance(exc, NativeBridgePendingError):
+                incomplete = True
+                await worker.cancel()
+                try:
+                    final = await world.snapshot()
+                    events = await world.events()
+                except Exception as evidence_exc:
+                    error_type = type(evidence_exc).__name__
+                    error_message = str(evidence_exc)
         except Exception as exc:  # runner converts unexpected boundary failures into evidence
             terminal = TerminalReason.INFRASTRUCTURE_ERROR
             incomplete = True
@@ -135,6 +146,10 @@ class Runner:
                 incomplete = True
                 cleanup_succeeded = False
                 error_type, error_message = type(cleanup_exc).__name__, str(cleanup_exc)
+        if bool(getattr(worker, "cancellation_failed", False)):
+            incomplete = True
+            error_type = "NativeCancellationError"
+            error_message = "native runtime cancellation failed"
         ended = datetime.now(UTC)
         tool_results = [turn.tool_result for turn in turns if turn.tool_result is not None]
         token_values = [turn.model_tokens for turn in turns if turn.model_tokens is not None]
@@ -217,6 +232,10 @@ class Runner:
                 call = turn.tool_call.model_copy(update={"run_id": run_id})
                 turn = turn.model_copy(update={"tool_call": call})
             turns.append(turn)
+            if bool(getattr(worker, "incomplete_native_evidence", False)):
+                raise NativeBridgePendingError(
+                    "native provider terminated with pending tool requests"
+                )
             if worker.is_terminal(turn):
                 await Runner._deliver_injections(world, injections, delivered, "before_terminal")
                 if len(delivered) > scenario.limits.injections:
@@ -241,6 +260,8 @@ class Runner:
                 await worker.cancel()
                 return TerminalReason.TOOL_TIMEOUT
             if tool_result.status is ToolResultStatus.ERROR:
+                if bool(getattr(worker, "continues_after_tool_error", False)):
+                    continue
                 turns.append(
                     WorkerTurn(
                         id=turn.id,

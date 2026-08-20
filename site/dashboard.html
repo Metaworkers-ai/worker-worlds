@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Worker Worlds dashboard</title>
+  <style>
+    body{font:16px system-ui;max-width:960px;margin:auto;padding:1rem;line-height:1.5}
+    label{display:block;margin-top:1rem} select,button,input{font:inherit;padding:.5rem;min-width:18rem}
+    button:disabled{opacity:.55} .error{color:#a00} :focus{outline:3px solid #0563c1}
+  </style>
+</head>
+<body>
+<main>
+  <h1>Worker Worlds dashboard</h1>
+  <p id="status" role="status">Loading registered agents…</p>
+  <label for="search">Search agents</label>
+  <input id="search" type="search" autocomplete="off">
+  <label for="agent">Registered agent</label>
+  <select id="agent" aria-describedby="readiness"></select>
+  <p id="readiness"></p>
+  <label for="scenario">Scenario</label>
+  <select id="scenario"></select>
+  <button id="run" disabled>Start run</button>
+  <pre id="result" aria-live="polite"></pre>
+</main>
+<script>
+const api='http://127.0.0.1:8000/api/v1'; let agents=[];
+const agent=document.querySelector('#agent'), scenario=document.querySelector('#scenario');
+function renderAgents(q=''){agent.replaceChildren(...agents.filter(x=>x.id.includes(q)).map(x=>new Option(`${x.id} — ${x.adapter}${x.ready?'':' (not ready)'}`,x.id,false,false))); updateReadiness()}
+function updateReadiness(){const x=agents.find(x=>x.id===agent.value); document.querySelector('#readiness').textContent=x?(x.ready?`Ready · ${x.model_provider||''} ${x.model_name||''}`:`Not ready: ${x.missing_requirements.join(', ')}`):'No matching agents'; document.querySelector('#run').disabled=!x||!x.ready||!scenario.value}
+async function load(){try{const [a,s]=await Promise.all([fetch(`${api}/agents`),fetch(`${api}/scenarios`)]);if(!a.ok||!s.ok)throw Error('API unavailable');agents=(await a.json()).agents;const scenarios=(await s.json()).scenarios;renderAgents();scenario.replaceChildren(...scenarios.map(x=>new Option(`${x.id} — ${x.objective}`,x.id)));document.querySelector('#status').textContent=agents.length?'Agents loaded':'No registered agents';updateReadiness()}catch(e){document.querySelector('#status').textContent='Dashboard disconnected from the Worker Worlds API';document.querySelector('#status').className='error'}}
+document.querySelector('#search').addEventListener('input',e=>renderAgents(e.target.value));agent.addEventListener('change',updateReadiness);scenario.addEventListener('change',updateReadiness);
+document.querySelector('#run').addEventListener('click',async()=>{const out=document.querySelector('#result');out.textContent='Starting…';try{const r=await fetch(`${api}/runs`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario_id:scenario.value,agent_id:agent.value,world:'postgres'})});const body=await r.json();out.textContent=JSON.stringify(body,null,2)}catch(e){out.textContent='Provider or API request failed'}});load();
+</script>
+</body>
+</html>

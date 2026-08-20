@@ -353,7 +353,15 @@ class WorkerTurn(Contract):
     tool_result: ToolResult | None = None
     terminal: bool = False
     model_tokens: Annotated[int, Field(ge=0)] | None = None
+    model_input_tokens: Annotated[int, Field(ge=0)] | None = None
+    model_output_tokens: Annotated[int, Field(ge=0)] | None = None
     cost_minor: Annotated[int, Field(ge=0)] | None = None
+    provider_response_ids: tuple[str, ...] = ()
+    provider_request_ids: tuple[str, ...] = ()
+    provider_retry_count: Annotated[int, Field(ge=0)] = 0
+    model_provider: str | None = None
+    model_name: str | None = None
+    model_version: str | None = None
 
 
 class EvidenceKind(StrEnum):
