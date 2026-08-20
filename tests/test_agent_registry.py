@@ -230,7 +230,7 @@ def test_fresh_wheel_can_import_both_registered_factory_paths(tmp_path: Path) ->
     python = environment / "bin" / "python"
     wheel = next(wheelhouse.glob("*.whl"))
     subprocess.run(
-        [str(python), "-m", "pip", "install", "--no-deps", str(wheel)],
+        [str(python), "-m", "pip", "install", str(wheel)],
         text=True,
         capture_output=True,
         check=True,

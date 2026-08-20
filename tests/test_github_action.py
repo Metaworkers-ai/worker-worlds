@@ -31,6 +31,8 @@ def test_nightly_uses_the_project_virtualenv_and_full_dashboard_gate() -> None:
 
     assert ".venv/bin/worker-worlds suite" in nightly
     assert ".venv/bin/pytest " in nightly
+    assert "127.0.0.1:55432/worker_worlds_dev" in nightly
+    assert "127.0.0.1:55432/worker_worlds_test" not in nightly
     assert "\n      - run: worker-worlds " not in nightly
     assert "\n      - run: pytest " not in nightly
     assert (

@@ -2,10 +2,24 @@ import json
 from pathlib import Path
 
 from worker_worlds.demonstration import generate_demo
+from worker_worlds.grading import DeterministicGrader
+from worker_worlds.reporting import SuiteJsonReporter
+from worker_worlds.runner import Runner
+from worker_worlds.scenarios import load_scenario
+from worker_worlds.stubs import StubWorkerAdapter, StubWorld
+from worker_worlds.suite import SuiteRunner
 
 
 async def test_required_a_b_c_demonstration(tmp_path: Path) -> None:
-    source = Path(".worker-worlds/week2-report/suite.json")
+    scenario = load_scenario(Path("tests/fixtures/successful_partial_refund.yaml"))
+    suite = await SuiteRunner(Runner(DeterministicGrader()), concurrency=3).run(
+        "demonstration-source",
+        [scenario],
+        lambda _scenario: StubWorld(),
+        StubWorkerAdapter,
+        repetitions=5,
+    )
+    source = await SuiteJsonReporter().report(suite, tmp_path / "source")
     baseline, report = await generate_demo(source, tmp_path)
     assert baseline.exists() and report.exists()
     b = json.loads((tmp_path / "candidate-b-comparison/comparison.json").read_text())
