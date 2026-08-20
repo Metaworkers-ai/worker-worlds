@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import type { ReactNode } from "react";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
   description: "See what your AI workers would do before they do it.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
