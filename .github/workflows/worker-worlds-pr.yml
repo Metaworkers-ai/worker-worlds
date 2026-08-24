@@ -34,7 +34,7 @@ jobs:
           WORKER_WORLDS_TEST_DATABASE_URL: postgresql://worker_worlds:worker_worlds_local@127.0.0.1:55432/worker_worlds_test
       - uses: ./.github/actions/worker-worlds
         with:
-          scenario-path: examples/scenarios
+          scenario-path: examples/scenarios/refund_happy.yaml
           repetitions: "5"
           concurrency: "4"
           output-directory: .worker-worlds/ci

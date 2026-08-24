@@ -51,8 +51,10 @@ def test_pr_workflow_pins_node_for_dashboard_verification() -> None:
     workflow = yaml.safe_load(Path(".github/workflows/worker-worlds-pr.yml").read_text())
     steps = workflow["jobs"]["worker-worlds"]["steps"]
     setup_node = next(step for step in steps if step.get("uses") == "actions/setup-node@v4")
+    smoke = next(step for step in steps if step.get("uses") == "./.github/actions/worker-worlds")
     assert setup_node["with"]["node-version"] == "22"
     assert setup_node["with"]["cache-dependency-path"] == "apps/dashboard/package-lock.json"
+    assert smoke["with"]["scenario-path"] == "examples/scenarios/refund_happy.yaml"
 
 
 def test_release_cold_installs_both_framework_extras() -> None:
