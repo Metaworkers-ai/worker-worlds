@@ -43,12 +43,17 @@ Endpoints:
 - `GET /docs` for generated OpenAPI documentation
 
 `POST /api/v1/runs` accepts a scenario ID resolved only from configured scenario
-roots, a supported worker adapter, and `stub` or `postgres` world selection. The
+roots, a supported worker adapter, and `stub`, `postgres`, `supply-chain`, or `insurance` world
+selection. The
 optional `agent_id` selects the same credential-free registry used by the CLI
 and dashboard. Unknown agents return 404; registered but unavailable agents
 return 409 with requirement names only. Environment values are never returned.
-response is the canonical `RunRecord`; it is also persisted under the configured
+The response is the canonical `RunRecord`; it is also persisted under the configured
 artifact directory.
+
+Non-stub registered agents may execute only scenarios marked `live_ready` in the reviewed/generated
+libraries. Demonstration fixtures return the typed `ScenarioNotLiveReady` error rather than making
+a provider call.
 
 `POST /api/v1/suite-jobs` validates a domain, role, immutable suite revision, ready registered
 agent, world, and bounded concurrency before persisting work. Status and per-scenario progress live

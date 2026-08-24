@@ -31,7 +31,8 @@ Locate packaged resources without a source checkout:
 scenario_dir=$(/tmp/worker-worlds-testpypi/bin/python -c \
   'import sys; print(sys.prefix + "/share/worker-worlds/scenarios")')
 /tmp/worker-worlds-testpypi/bin/worker-worlds scenario validate "$scenario_dir"
-/tmp/worker-worlds-testpypi/bin/worker-worlds run "$scenario_dir/refund__partial__happy.yaml" \
+/tmp/worker-worlds-testpypi/bin/worker-worlds run \
+  "$scenario_dir/commerce__refunds-payments__001.yaml" \
   --worker stub --world postgres --output /tmp/worker-worlds-first-run
 ```
 

@@ -47,4 +47,9 @@ Configuration precedence is built-in defaults, `worker-worlds.yaml`, explicit
 by normal commands. Supported runtime: Python 3.12; Postgres 17; tested adapter
 compatibility pins are LangGraph `1.2.10`, LangChain `1.3.14`, LangChain OpenAI
 `1.4.1`, and OpenAI Agents SDK `0.19.4`. Schema major 1 is preserved throughout the 1.x package line.
+
+For local development, copy the checked `.env.example` to the ignored `.env` and source it only into
+the process that needs it. The template contains loopback development values and an empty
+`OPENAI_API_KEY`; never commit a populated key. The Compose service creates `worker_worlds_dev`, not
+a separate `worker_worlds_test` database.
 </pre></main></body></html>

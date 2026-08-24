@@ -4,6 +4,10 @@
 python3.12 -m venv .venv
 .venv/bin/pip install -e &#x27;.[dev]&#x27;
 docker compose up -d --wait postgres
+cp .env.example .env
+set -a
+source .env
+set +a
 .venv/bin/worker-worlds migrate
 .venv/bin/worker-worlds doctor
 .venv/bin/worker-worlds suite examples/scenarios/refund_happy.yaml --worker stub --world postgres --repetitions 1 --output .worker-worlds/quickstart
@@ -16,17 +20,23 @@ gate rejected the candidate. The deterministic fake workers require no paid API.
 
 ## Register and run real agents
 
-Install both optional integrations and keep credentials in the environment:
+Install both optional integrations and keep credentials in the ignored `.env` file. Use a scoped
+test key and authorize paid calls explicitly:
 
 ```bash
 .venv/bin/pip install -e &#x27;.[openai-agents,langgraph]&#x27;
-export OPENAI_API_KEY=&#x27;&lt;scoped-project-key&gt;&#x27;
+set -a; source .env; set +a
 .venv/bin/worker-worlds agents list
 .venv/bin/worker-worlds agents doctor openai-project
-.venv/bin/worker-worlds scenarios search refund
-.venv/bin/worker-worlds run --scenario refund.partial.happy --agent openai-project --world postgres --no-interactive
-.venv/bin/worker-worlds run --scenario refund.partial.happy --agent langgraph-project --world postgres --no-interactive
+.venv/bin/worker-worlds run scenarios/release/commerce__refunds-payments__001.yaml \
+  --agent openai-project --world postgres --no-interactive
+.venv/bin/worker-worlds run scenarios/release/commerce__refunds-payments__001.yaml \
+  --agent langgraph-project --world postgres --no-interactive
 ```
+
+Do not use scenarios under `examples/scenarios` with live adapters. They are deterministic harness
+fixtures retained for stub tests; live adapters are restricted to the 224 reviewed/generated
+scenarios under `scenarios/release` and `scenarios/enterprise`.
 
 Factories use explicit `module:callable` paths in `worker-worlds.yaml`. OpenAI
 Agents factories return an `OpenAIAgentsAdapter(OpenAIAgentsRuntime(agent))`;
@@ -44,6 +54,7 @@ set -a; source .env; set +a
 
 # terminal 2
 cd apps/dashboard
+npm ci
 npm run dev
 ```
 
@@ -54,4 +65,7 @@ completed agent evaluations. Direct scenario execution remains under Advanced cu
 If doctor reports `not ready`, install the named optional extra, verify the
 factory import path, export every listed environment name, and confirm Postgres
 with `docker compose up -d --wait postgres` and `worker-worlds migrate`.
+
+For the complete incoming-engineer setup, module map, evidence locations, and current limitations,
+see the repository-level [HANDOVER.md](../HANDOVER.md).
 </pre></main></body></html>

@@ -4,7 +4,7 @@ A responsive Next.js 16 dashboard for inspecting Worker Worlds runs, evidence,
 scenario coverage, and behavioral comparisons.
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
@@ -12,6 +12,7 @@ Start the Python service from the repository root first:
 
 ```bash
 pip install -e '.[dev,api]'
+set -a; source .env; set +a
 worker-worlds-api
 ```
 
@@ -28,6 +29,9 @@ Run the browser and accessibility contract with:
 ```bash
 npm run test:e2e
 ```
+
+Playwright owns its local development server and runs the ten browser stories serially to avoid
+Turbopack HMR chunk invalidation. Stop any manually running dashboard on port 3000 before the test.
 
 ```bash
 npm run lint

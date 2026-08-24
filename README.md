@@ -44,7 +44,8 @@ Python 3.12 and Docker are required.
 ```bash
 make setup
 docker compose up -d --wait postgres
-export WORKER_WORLDS_TEST_DATABASE_URL=postgresql://worker_worlds:worker_worlds_local@127.0.0.1:55432/worker_worlds_test
+cp .env.example .env
+set -a; source .env; set +a
 make verify
 .venv/bin/worker-worlds migrate
 .venv/bin/worker-worlds doctor
@@ -58,22 +59,46 @@ The safe local development URL is `postgresql://worker_worlds:worker_worlds_loca
 
 ```yaml
 schema_version: "1.0"
-id: refund-happy
-seed: 42
-objective: Refund 2500 USD on the authorized customer's order.
-authorization:
-  actor_id: customer-001
-  scopes: [refund:write]
+id: example.refund.partial
+world:
+  schema_version: "1.0"
+  name: postgres-commerce
+  version: "1.0"
+  seed: 42
+trigger:
+  schema_version: "1.0"
+  type: customer_request
+  actor:
+    customer_id: cus_102
+  content: >-
+    Call `issue_refund` for order `ord_900` with amount_minor 2500,
+    currency USD, and idempotency_key example-refund-1.
 assertions:
-  - kind: state
-    path: orders.order-001.refunded_minor
-    operator: equals
-    expected: 2500
-  - kind: event
-    event_type: refund.issued
+  - schema_version: "1.0"
+    id: example.refund.partial.event
+    type: action_exists
+    severity: critical
+    event: refund.issued
+  - schema_version: "1.0"
+    id: example.refund.partial.tool-result
+    type: tool_result_matches
+    severity: critical
+    parameters:
+      tool_name: issue_refund
+      arguments:
+        order_id: ord_900
+        amount_minor: 2500
+        currency: USD
+        idempotency_key: example-refund-1
+      result_status: success
+      count: 1
 ```
 
-The checked-in release library contains 200 independently readable scenarios in [`scenarios/release`](scenarios/release). Export and validate it with:
+The checked-in library contains 200 generated commerce scenarios in
+[`scenarios/release`](scenarios/release) and 24 supply-chain/insurance scenarios in
+[`scenarios/enterprise`](scenarios/enterprise). All 224 live-ready scenarios require matching tool
+result evidence; the ten fixtures under `examples/scenarios` are stub-only demonstrations. Export
+and validate the generated commerce library with:
 
 ```bash
 worker-worlds scenario export scenarios/release --overwrite
@@ -142,6 +167,7 @@ make scenarios-check
 ```
 
 - [Quickstart](docs/quickstart.md), [concepts](docs/concepts.md), and [scenario authoring](docs/authoring.md)
+- [Engineering handover](HANDOVER.md) for current branch state, module ownership, startup, and next work
 - [Operations](docs/operations.md), [CLI reference](docs/reference.md), and [release process](docs/release.md)
 - [Domain and role catalog](docs/catalog.md) and [local API](docs/api.md)
 - [Threat model](docs/security/threat-model.md), [secure deployment](docs/security/secure-worker-deployment.md), and [live-adapter smoke tests](docs/live-adapter-smoke.md)
@@ -165,7 +191,7 @@ pip install -e '.[dev,api]'
 worker-worlds-api
 
 # terminal 2
-cd apps/dashboard && npm install && npm run dev
+cd apps/dashboard && npm ci && npm run dev
 # then open http://localhost:3000
 ```
 

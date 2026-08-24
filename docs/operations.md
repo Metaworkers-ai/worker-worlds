@@ -23,3 +23,10 @@ Troubleshooting begins with `worker-worlds doctor`. Never aim cleanup at an
 unspecified database. Reference performance and security claims apply only to
 the documented local profile; provider queues and external worker latency are
 separate.
+
+For a fresh handover checkout, copy `.env.example` to the ignored `.env`. The pinned Compose service
+creates only `worker_worlds_dev`; both local runtime and test variables may point to that explicit
+database because every test/run receives a validated isolated schema. Stop manually running API and
+dashboard processes before `make verify`, which owns the database test lifecycle and its Playwright
+server. See [HANDOVER.md](../HANDOVER.md) for the module map, current branch, evidence paths, and
+remaining work.

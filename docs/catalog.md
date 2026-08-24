@@ -22,6 +22,11 @@ shipment/fulfillment cases to fulfillment, ticket cases to support/escalation, a
 to every role whose authority boundary they exercise. Supply-chain and insurance scenarios use
 their dedicated deterministic domain models and tools; they are not relabelled refund scenarios.
 
+The live suite surface contains 224 scenarios: 200 generated commerce scenarios, 12 supply-chain
+scenarios, and 12 insurance scenarios. Ten additional `examples/scenarios` fixtures remain
+classified for compatibility and UI discovery but are excluded from live suites and are permitted
+only with the deterministic local stub.
+
 Run `make catalog-check`, `make schemas-check`, and `make openapi-check` before committing a catalog
 change. Additive labels, descriptions, classifications, and new versioned IDs preserve schema major
 version 1. Reinterpreting an existing ID or changing suite membership requires a suite revision;
