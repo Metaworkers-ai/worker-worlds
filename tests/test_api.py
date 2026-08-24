@@ -115,6 +115,35 @@ async def test_api_rejects_unknown_scenario_and_path_like_run_id(
     assert (await client.get("/api/v1/runs/..%2Fsecret")).status_code == 404
 
 
+def test_contained_path_rejects_traversal_and_symlinks(tmp_path: Path) -> None:
+    root = tmp_path / "artifacts"
+    root.mkdir()
+    regular = root / "regular.json"
+    regular.write_text("{}\n", encoding="utf-8")
+    outside = tmp_path / "outside.json"
+    outside.write_text("{}\n", encoding="utf-8")
+    symlink = root / "linked.json"
+    symlink.symlink_to(outside)
+
+    assert api_module._resolve_contained_path(root, regular) == regular.resolve()
+    assert api_module._resolve_contained_path(root, root / ".." / outside.name) is None
+    assert api_module._resolve_contained_path(root, symlink) is None
+
+
+async def test_api_run_evidence_rejects_symlink(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    client = _client(tmp_path, monkeypatch)
+    runs = tmp_path / "artifacts" / "runs"
+    runs.mkdir(parents=True)
+    outside = tmp_path / "outside.json"
+    outside.write_text("{}\n", encoding="utf-8")
+    (runs / "run_link.json").symlink_to(outside)
+
+    assert (await client.get("/api/v1/runs/run_link")).status_code == 404
+    assert (await client.get("/api/v1/runs")).json()["total"] == 0
+
+
 async def test_cors_allows_dashboard_cancellation(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

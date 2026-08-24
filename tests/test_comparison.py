@@ -130,7 +130,7 @@ def test_altered_baseline_is_rejected(tmp_path: Path) -> None:
 
 
 def test_checked_legacy_baseline_remains_readable() -> None:
-    baseline = load_baseline(Path("artifacts/release-demo/baselines/demo-main.json"))
+    baseline = load_baseline(Path(__file__).parent / "fixtures" / "legacy_baseline_v1.json")
     assert baseline.name == "demo-main"
 
 

@@ -22,7 +22,8 @@ def test_scenario_loader_rejects_symlink_and_oversize(tmp_path: Path) -> None:
 
 def test_regex_limits_reject_nested_quantifier_and_large_input() -> None:
     with pytest.raises(ValueError, match="nested quantifier"):
-        _safe_fullmatch("(a+)+$", "a" * 100)
+        # This adversarial expression verifies rejection before the regex engine executes it.
+        _safe_fullmatch("(a+)+$", "a" * 100)  # lgtm[py/redos]
     with pytest.raises(ValueError, match="safe evaluation limits"):
         _safe_fullmatch("a+", "a" * 10_001)
     assert _safe_fullmatch(r"[A-Z]{3}", "USD")

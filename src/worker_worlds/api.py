@@ -107,6 +107,57 @@ def _display_artifact_directory() -> str:
         return "[external-artifact-directory]"
 
 
+def _resolve_contained_path(root: Path, candidate: Path) -> Path | None:
+    """Resolve an existing path only when it stays below root and uses no symlinks."""
+    safe_root = root.resolve()
+    lexical_candidate = Path(os.path.abspath(candidate))
+    try:
+        relative = lexical_candidate.relative_to(safe_root)
+    except ValueError:
+        return None
+    if not relative.parts:
+        return None
+
+    current = safe_root
+    for part in relative.parts:
+        current /= part
+        if current.is_symlink():
+            return None
+    try:
+        resolved = lexical_candidate.resolve(strict=True)
+    except (OSError, RuntimeError):
+        return None
+    if safe_root not in resolved.parents:
+        return None
+    return resolved
+
+
+def _run_evidence_directory() -> tuple[Path, Path] | None:
+    """Return the validated run-evidence root and directory when available."""
+    root = _artifact_directory()
+    directory = _resolve_contained_path(root, root / "runs")
+    if directory is None or not directory.is_dir():
+        return None
+    return root, directory
+
+
+def _run_evidence_path(run_id: str) -> Path | None:
+    """Find one regular run record without placing the request value in a path expression."""
+    if not _SAFE_ID.fullmatch(run_id):
+        return None
+    resolved_directory = _run_evidence_directory()
+    if resolved_directory is None:
+        return None
+    root, directory = resolved_directory
+    expected_name = f"{run_id}.json"
+    for candidate in directory.glob("*.json"):
+        if candidate.name != expected_name:
+            continue
+        resolved = _resolve_contained_path(root, candidate)
+        return resolved if resolved is not None and resolved.is_file() else None
+    return None
+
+
 def _scenario_roots() -> tuple[Path, ...]:
     configured = os.environ.get("WORKER_WORLDS_SCENARIO_DIR")
     if configured:
@@ -143,11 +194,15 @@ def _scenarios() -> dict[str, tuple[Scenario, Path]]:
 
 
 def _load_runs() -> list[RunRecord]:
-    directory = _artifact_directory() / "runs"
     records: list[RunRecord] = []
-    if not directory.exists():
+    resolved_directory = _run_evidence_directory()
+    if resolved_directory is None:
         return records
-    for path in directory.glob("*.json"):
+    root, directory = resolved_directory
+    for candidate in directory.glob("*.json"):
+        path = _resolve_contained_path(root, candidate)
+        if path is None or not path.is_file():
+            continue
         try:
             records.append(RunRecord.model_validate_json(path.read_text(encoding="utf-8")))
         except (OSError, ValidationError):
@@ -754,10 +809,8 @@ def create_app() -> FastAPI:
 
     @router.get("/runs/{run_id}", response_model=RunRecord)
     async def run_detail(run_id: str) -> RunRecord:
-        if not _SAFE_ID.fullmatch(run_id):
-            raise HTTPException(status_code=404, detail="run not found")
-        path = _artifact_directory() / "runs" / f"{run_id}.json"
-        if not path.is_file():
+        path = _run_evidence_path(run_id)
+        if path is None:
             raise HTTPException(status_code=404, detail="run not found")
         try:
             return RunRecord.model_validate_json(path.read_text(encoding="utf-8"))
