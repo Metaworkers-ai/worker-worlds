@@ -35,14 +35,16 @@ def test_nightly_uses_the_project_virtualenv_and_full_dashboard_gate() -> None:
     assert "127.0.0.1:55432/worker_worlds_test" not in nightly
     assert "\n      - run: worker-worlds " not in nightly
     assert "\n      - run: pytest " not in nightly
-    assert (
-        "verify: lint typecheck schemas-check scenarios-check test docs dashboard-verify build"
-        in makefile
+    verify_target = (
+        "verify: lint typecheck schemas-check openapi-check catalog-check scenarios-check "
+        "test docs dashboard-verify build"
     )
+    assert verify_target in makefile
     assert "npm run lint" in makefile
     assert "npx tsc --noEmit" in makefile
     assert "npm run test:e2e" in makefile
     assert "npm run build" in makefile
+    assert "include-hidden-files: true" in nightly
 
 
 def test_pr_workflow_pins_node_for_dashboard_verification() -> None:

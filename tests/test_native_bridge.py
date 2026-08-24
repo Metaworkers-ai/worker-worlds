@@ -104,6 +104,21 @@ class ExplodingRuntime(EarlyExitRuntime):
             raise RuntimeError("cancel leaked fake-secret-456")
 
 
+class PostToolFailureRuntime:
+    def __init__(self) -> None:
+        self.result: ToolResult | None = None
+
+    async def run_with_tools(
+        self, scenario: Scenario, tools: list[NativeToolHandler]
+    ) -> NativeDecision:
+        del scenario
+        self.result = await tools[0].invoke(_refund(), "call_before_completed_failure")  # type: ignore[arg-type]
+        raise RuntimeError("provider failed after tool completion")
+
+    async def cancel(self) -> None:
+        return None
+
+
 class SlowWorld(StubWorld):
     async def invoke(self, call: ToolCall) -> ToolResult:
         await asyncio.sleep(0.05)
@@ -115,7 +130,8 @@ def _refund(amount: object = 1) -> dict[str, object]:
 
 
 async def _run(
-    scenario: Scenario, runtime: ScriptedBridgeRuntime | EarlyExitRuntime | ExplodingRuntime
+    scenario: Scenario,
+    runtime: ScriptedBridgeRuntime | EarlyExitRuntime | ExplodingRuntime | PostToolFailureRuntime,
 ) -> RunRecord:
     return await Runner(DeterministicGrader()).run(
         scenario,
@@ -225,6 +241,18 @@ async def test_provider_exception_without_pending_is_sanitized_not_incomplete(
     assert not record.incomplete_evidence
     assert record.error_message == "native worker invocation failed (RuntimeError)"
     assert "fake-secret" not in repr(record)
+
+
+async def test_provider_failure_after_tool_keeps_result_snapshot_and_event(
+    happy_scenario: Scenario,
+) -> None:
+    runtime = PostToolFailureRuntime()
+    record = await _run(happy_scenario, runtime)
+    assert record.terminal_reason is TerminalReason.ADAPTER_ERROR
+    assert not record.incomplete_evidence
+    assert any(turn.tool_result is not None for turn in record.turns)
+    assert record.final_snapshot is not None
+    assert len(record.events) == 1
 
 
 async def test_duplicate_ids_mismatched_results_and_idempotent_close() -> None:

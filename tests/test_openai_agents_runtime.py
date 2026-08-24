@@ -5,7 +5,6 @@ import asyncio
 import pytest
 from agents import Agent
 from agents.exceptions import MaxTurnsExceeded, ModelBehaviorError
-from agents.testing.model import ModelStep, ScriptedModel, assistant_message, function_call
 from agents.usage import Usage
 
 from worker_worlds.adapters import OpenAIAgentsAdapter
@@ -13,6 +12,12 @@ from worker_worlds.contracts import Scenario, TerminalReason, ToolResultStatus
 from worker_worlds.errors import AdapterError, ProviderError
 from worker_worlds.grading import DeterministicGrader
 from worker_worlds.openai_agents_runtime import OpenAIAgentsRuntime
+from worker_worlds.openai_testing import (
+    ModelStep,
+    ScriptedModel,
+    assistant_message,
+    function_call,
+)
 from worker_worlds.runner import Runner
 from worker_worlds.stubs import StubWorld
 

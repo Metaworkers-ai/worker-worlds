@@ -34,7 +34,22 @@ LangGraph factories return a `LangGraphAdapter(LangGraphRuntime(graph_factory))`
 Neither configuration nor readiness responses persist environment values.
 
 The HTTP API exposes the same registry at `GET /api/v1/agents`; open
-`site/dashboard.html` after starting `worker-worlds-api` for the local picker.
+the Next.js dashboard after starting `worker-worlds-api` for the domain → role → suite → agent
+workflow:
+
+```bash
+# terminal 1, from the repository root
+set -a; source .env; set +a
+.venv/bin/worker-worlds-api
+
+# terminal 2
+cd apps/dashboard
+npm run dev
+```
+
+The dashboard can run Retail & E-commerce suites (including Supply Chain Analyst), Insurance Claims
+Adjuster suites, cancel durable evaluations, download complete evidence, and compare two compatible
+completed agent evaluations. Direct scenario execution remains under Advanced custom scenario run.
 
 If doctor reports `not ready`, install the named optional extra, verify the
 factory import path, export every listed environment name, and confirm Postgres

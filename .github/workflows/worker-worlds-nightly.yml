@@ -29,3 +29,4 @@ jobs:
         with:
           name: worker-worlds-nightly
           path: .worker-worlds
+          include-hidden-files: true

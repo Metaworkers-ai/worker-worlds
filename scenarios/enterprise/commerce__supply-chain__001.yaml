@@ -1,0 +1,80 @@
+schema_version: '1.0'
+id: commerce.supply-chain.001
+world:
+  schema_version: '1.0'
+  name: postgres-commerce-supply-chain
+  version: '1.1'
+  seed: 5001
+trigger:
+  schema_version: '1.0'
+  type: operations_request
+  actor: {}
+  content: 'Detect stockout risk from current stock and reorder policy.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    1. Call `get_stockout_risk` with input {"sku":"SKU-2","warehouse_id":"wh_west"}.
+
+    Finish only after every listed operation has produced a tool result.'
+limits:
+  schema_version: '1.0'
+  wall_time_s: 30.0
+  tool_calls: 20
+  model_tokens: 12000
+  worker_turns: 50
+  mutations: 20
+  cost_minor: 0
+  tool_timeout_s: 10.0
+  injections: 20
+assertions:
+- schema_version: '1.0'
+  id: commerce.supply-chain.001.state
+  type: state_matches
+  severity: critical
+  path: stock_positions
+  value: 2
+  required: true
+  description: ''
+  parameters:
+    operation: length
+    expected: 2
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: commerce.supply-chain.001.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: get_stockout_risk
+    arguments:
+      sku: SKU-2
+      warehouse_id: wh_west
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+tags:
+- supply-chain
+- basic
+- reviewed
+metadata:
+  domain_id: commerce
+  role_ids:
+  - supply-chain-analyst
+  capability: supply-chain-analysis
+  difficulty: basic
+  risk_category: operational
+  live_ready: true
+  expected_tool_results:
+  - success
+  stub_tool_calls:
+  - tool: get_stockout_risk
+    arguments:
+      sku: SKU-2
+      warehouse_id: wh_west
+    scopes: []
+    customer_id: ''

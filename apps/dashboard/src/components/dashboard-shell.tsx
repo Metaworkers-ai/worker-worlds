@@ -70,17 +70,25 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ComparisonBuilder } from "@/components/comparison-builder";
+import { EvaluationWizard } from "@/components/evaluation-wizard";
 import {
+  cancelSuiteJob,
   loadDashboard,
   loadRun,
+  loadSuiteJob,
+  loadSuiteJobs,
   startRun,
+  startSuiteJob,
   type Agent,
+  type Catalog,
   type Comparison,
   type DashboardData,
   type Overview,
   type RunRecord,
   type RunSummary,
   type Scenario,
+  type SuiteJob,
 } from "@/lib/dashboard-data";
 
 type View = "overview" | "runs" | "scenarios" | "comparisons";
@@ -685,6 +693,10 @@ function RunsView({
   running,
   onRun,
   onSelect,
+  catalog,
+  latestJob,
+  onStartSuite,
+  onCancelSuite,
 }: {
   runs: RunSummary[];
   scenarios: Scenario[];
@@ -696,6 +708,10 @@ function RunsView({
     world: "stub" | "postgres",
   ) => void;
   onSelect: (run: RunSummary) => void;
+  catalog: DashboardData["catalog"];
+  latestJob: SuiteJob | null;
+  onStartSuite: (input: Parameters<typeof startSuiteJob>[0]) => void;
+  onCancelSuite: (jobId: string) => void;
 }) {
   const [query, setQuery] = useState("");
   const [scenarioId, setScenarioId] = useState("");
@@ -724,7 +740,21 @@ function RunsView({
         <p className="text-sm text-muted-foreground">Execution history</p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight">Runs</h1>
       </div>
+      <EvaluationWizard
+        catalog={catalog}
+        agents={agents}
+        running={running}
+        latestJob={latestJob}
+        onStart={onStartSuite}
+        onCancel={onCancelSuite}
+      />
       <Card className="border-primary/20 bg-primary/[0.03] shadow-none">
+        <CardHeader className="pb-0">
+          <CardTitle className="text-sm">Advanced custom scenario run</CardTitle>
+          <CardDescription>
+            Run one exact scenario while authoring or debugging a suite.
+          </CardDescription>
+        </CardHeader>
         <CardContent className="flex flex-wrap items-end gap-3 p-4">
           <div className="min-w-64 flex-1">
             <p className="mb-2 text-xs text-muted-foreground">Scenario</p>
@@ -918,7 +948,7 @@ function ScenariosView({ scenarios }: { scenarios: Scenario[] }) {
   );
 }
 
-function ComparisonsView({ comparisons }: { comparisons: Comparison[] }) {
+function ComparisonsView({ comparisons, catalog }: { comparisons: Comparison[]; catalog: Catalog }) {
   return (
     <div className="space-y-6">
       <div>
@@ -929,6 +959,7 @@ function ComparisonsView({ comparisons }: { comparisons: Comparison[] }) {
           Comparisons
         </h1>
       </div>
+      <ComparisonBuilder catalog={catalog} />
       {comparisons.length ? (
         comparisons.map((comparison) => (
           <Card
@@ -957,6 +988,11 @@ function ComparisonsView({ comparisons }: { comparisons: Comparison[] }) {
               >
                 {comparison.gate}
               </Badge>
+              {comparison.domain_id && comparison.role_id && comparison.suite_id ? (
+                <Badge variant="outline" className="ml-2 font-mono text-[9px]">
+                  {comparison.domain_id} / {comparison.role_id} / {comparison.suite_id}
+                </Badge>
+              ) : null}
             </CardHeader>
             <CardContent className="grid gap-3 sm:grid-cols-3">
               <Metric
@@ -1192,6 +1228,7 @@ export function DashboardShell() {
   const [selected, setSelected] = useState<RunSummary | null>(null);
   const [record, setRecord] = useState<RunRecord | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [latestJob, setLatestJob] = useState<SuiteJob | null>(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -1230,6 +1267,39 @@ export function DashboardShell() {
       .finally(() => {
         if (active) setLoading(false);
       });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    async function restoreSuiteProgress() {
+      try {
+        const jobs = await loadSuiteJobs();
+        let job = jobs[0];
+        if (!active || !job) return;
+        setLatestJob(job);
+        const terminal = ["completed", "failed", "cancelled"];
+        if (!terminal.includes(job.status)) setRunning(true);
+        while (
+          active &&
+          (!terminal.includes(job.status) || !job.suite_record_path)
+        ) {
+          await new Promise((resolve) => window.setTimeout(resolve, 750));
+          job = await loadSuiteJob(job.id);
+          if (active) setLatestJob(job);
+        }
+        if (active) setRunning(false);
+      } catch (reason) {
+        if (active) {
+          setError(
+            reason instanceof Error ? reason.message : "Suite progress could not be restored",
+          );
+        }
+      }
+    }
+    void restoreSuiteProgress();
     return () => {
       active = false;
     };
@@ -1275,6 +1345,41 @@ export function DashboardShell() {
     },
     [refresh],
   );
+
+  const runSuite = useCallback(
+    async (input: Parameters<typeof startSuiteJob>[0]) => {
+      setRunning(true);
+      setError(null);
+      try {
+        let job = await startSuiteJob(input);
+        setLatestJob(job);
+        while (
+          !["completed", "failed", "cancelled"].includes(job.status) ||
+          !job.suite_record_path
+        ) {
+          await new Promise((resolve) => window.setTimeout(resolve, 750));
+          job = await loadSuiteJob(job.id);
+          setLatestJob(job);
+        }
+        await refresh();
+      } catch (reason) {
+        setError(
+          reason instanceof Error ? reason.message : "Evaluation suite failed to start",
+        );
+      } finally {
+        setRunning(false);
+      }
+    },
+    [refresh],
+  );
+
+  const cancelSuite = useCallback(async (jobId: string) => {
+    try {
+      setLatestJob(await cancelSuiteJob(jobId));
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Suite cancellation failed");
+    }
+  }, []);
 
   return (
     <div className="dark min-h-screen bg-background text-foreground">
@@ -1378,13 +1483,17 @@ export function DashboardShell() {
                       void runScenario(scenarioId, agentId, world)
                     }
                     onSelect={(run) => void selectRun(run)}
+                    catalog={data.catalog}
+                    latestJob={latestJob}
+                    onStartSuite={(input) => void runSuite(input)}
+                    onCancelSuite={(jobId) => void cancelSuite(jobId)}
                   />
                 ) : null}
                 {view === "scenarios" ? (
                   <ScenariosView scenarios={data.scenarios} />
                 ) : null}
                 {view === "comparisons" ? (
-                  <ComparisonsView comparisons={data.comparisons} />
+                  <ComparisonsView comparisons={data.comparisons} catalog={data.catalog} />
                 ) : null}
               </>
             ) : (

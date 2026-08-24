@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Worker Worlds 1.0</title><style>body{font:16px system-ui;margin:auto;max-width:1100px;padding:1rem;line-height:1.5}nav a{margin-right:1rem}pre{white-space:pre-wrap;overflow-wrap:anywhere}a:focus{outline:3px solid #0563c1}</style></head><body><header><h1>Worker Worlds <small>1.0.0rc1</small></h1><nav aria-label="Documentation"><a href="quickstart.html">quickstart</a> <a href="concepts.html">concepts</a> <a href="authoring.html">authoring</a> <a href="operations.html">operations</a> <a href="reference.html">reference</a> <a href="release.html">release</a> <a href="api.html">api</a> <a href="live-adapter-smoke.html">live-adapter-smoke</a> <a href="security-threat-model.html">threat-model</a> <a href="security-secure-worker-deployment.html">secure-worker-deployment</a></nav></header><main><pre># Local HTTP API
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Worker Worlds 1.0</title><style>body{font:16px system-ui;margin:auto;max-width:1100px;padding:1rem;line-height:1.5}nav a{margin-right:1rem}pre{white-space:pre-wrap;overflow-wrap:anywhere}a:focus{outline:3px solid #0563c1}</style></head><body><header><h1>Worker Worlds <small>1.0.0rc1</small></h1><nav aria-label="Documentation"><a href="quickstart.html">quickstart</a> <a href="concepts.html">concepts</a> <a href="authoring.html">authoring</a> <a href="operations.html">operations</a> <a href="reference.html">reference</a> <a href="release.html">release</a> <a href="api.html">api</a> <a href="catalog.html">catalog</a> <a href="live-adapter-smoke.html">live-adapter-smoke</a> <a href="security-threat-model.html">threat-model</a> <a href="security-secure-worker-deployment.html">secure-worker-deployment</a></nav></header><main><pre># Local HTTP API
 
 Worker Worlds exposes a versioned local control plane at `/api/v1`. It reuses
 the framework-neutral runner and canonical contracts; domain rules remain in the
@@ -18,6 +18,7 @@ Defaults bind only to `127.0.0.1:8000`. Relevant configuration:
 - `WORKER_WORLDS_ARTIFACT_DIR` (default `.worker-worlds/api`)
 - `WORKER_WORLDS_SCENARIO_DIR`
 - `WORKER_WORLDS_DASHBOARD_ORIGINS`
+- `WORKER_WORLDS_ALLOW_NON_LOOPBACK_API=1` (explicit trusted-network override)
 
 Endpoints:
 
@@ -29,7 +30,16 @@ Endpoints:
 - `POST /api/v1/runs`
 - `GET /api/v1/agents`
 - `GET /api/v1/agents/{agent_id}`
+- `GET /api/v1/catalog`, `/domains`, and `/capabilities`
+- `GET /api/v1/domains/{domain_id}/roles`
+- `GET /api/v1/roles/{role_id}/suites`
+- `GET /api/v1/suites/{suite_id}`
+- `POST /api/v1/suite-jobs`
+- `GET /api/v1/suite-jobs` and `GET /api/v1/suite-jobs/{job_id}`
+- `DELETE /api/v1/suite-jobs/{job_id}`
+- `GET /api/v1/suite-jobs/{job_id}/evidence`
 - `GET /api/v1/comparisons`
+- `POST /api/v1/comparisons/contextual`
 - `GET /docs` for generated OpenAPI documentation
 
 `POST /api/v1/runs` accepts a scenario ID resolved only from configured scenario
@@ -40,7 +50,19 @@ return 409 with requirement names only. Environment values are never returned.
 response is the canonical `RunRecord`; it is also persisted under the configured
 artifact directory.
 
-This API has no authentication and is for a trusted local environment. Do not
-bind it to a public interface. Authentication, organizations, authorization,
-rate limits, durable jobs, and billing are separate hosted-SaaS work.
+`POST /api/v1/suite-jobs` validates a domain, role, immutable suite revision, ready registered
+agent, world, and bounded concurrency before persisting work. Status and per-scenario progress live
+in PostgreSQL. The evidence download is a deterministic ZIP containing the manifest, `SuiteRecord`,
+every recorded `RunRecord`, hashes, JUnit, and offline HTML. Cancellation is durable and produces a
+terminal job plus partial suite evidence.
+
+Contextual comparison accepts two completed suite-job IDs. Domain, role, suite revision, scenario
+hashes, world version, seeds, and budgets must match; incompatibility and incomplete evidence cannot
+pass the gate. The frozen standalone CLI comparison remains available for legacy suite artifacts.
+
+The checked HTTP contract is `schemas/v1/openapi.json`; `make openapi-check` detects drift.
+
+This API has no user authentication and is for a trusted local environment. Do not bind it to a
+public interface. Organizations, user authorization, rate limits, and billing remain hosted-SaaS
+work; suite-job durability is local PostgreSQL-backed execution infrastructure.
 </pre></main></body></html>

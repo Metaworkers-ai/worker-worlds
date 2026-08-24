@@ -144,6 +144,7 @@
         "sequence_before",
         "changed_entities_subset",
         "resource_within",
+        "tool_result_matches",
         "policy"
       ],
       "title": "AssertionType",

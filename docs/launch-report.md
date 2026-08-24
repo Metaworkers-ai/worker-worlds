@@ -4,7 +4,7 @@
 
 Response-only tests miss consequential state transitions. Worker Worlds executes
 deterministic local example workers in isolated seeded commerce worlds, retains
-tool/state/event evidence, grades ten assertion primitives and ten policy rules,
+tool/state/event evidence, grades eleven assertion primitives and ten policy rules,
 and compares semantic outcome distributions.
 
 ## Scope and findings

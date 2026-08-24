@@ -35,7 +35,7 @@ def postgres_settings() -> DatabaseSettings:
 
 @pytest.fixture(autouse=True, scope="session")
 async def migrated(postgres_settings: DatabaseSettings) -> None:
-    assert await migrate(postgres_settings) == "003"
+    assert await migrate(postgres_settings) == "006"
 
 
 def _run_id() -> str:
@@ -68,6 +68,7 @@ def _call(
             scopes=frozenset({"refund:own_order"}),
         ),
         requested_at=datetime.now(UTC),
+        idempotency_key=key,
     )
 
 
@@ -83,6 +84,7 @@ def _mutation_call(
             actor_id="test-worker", customer_id="cus_102", scopes=frozenset(scopes)
         ),
         requested_at=datetime.now(UTC),
+        idempotency_key=str(arguments.get("idempotency_key", "")) or None,
     )
 
 
@@ -177,6 +179,34 @@ async def test_identical_and_conflicting_idempotency(postgres_settings: Database
         await world.close()
 
 
+async def test_idempotency_never_crosses_tool_or_authorization_boundary(
+    postgres_settings: DatabaseSettings,
+) -> None:
+    world, run_id = await _world(postgres_settings)
+    try:
+        first = await world.invoke(_call(run_id, key="bounded"))
+        unauthorized = await world.invoke(_call(run_id, key="bounded", customer="cus_other"))
+        cross_tool = await world.invoke(
+            _mutation_call(
+                run_id,
+                "create_ticket",
+                {
+                    "customer_id": "cus_102",
+                    "order_id": "ord_900",
+                    "subject": "duplicate-key probe",
+                    "idempotency_key": "bounded",
+                },
+                {"ticket:create"},
+            )
+        )
+        assert first.status is ToolResultStatus.SUCCESS
+        assert unauthorized.error_type == "AuthorizationDenied"
+        assert cross_tool.error_type == "IdempotencyConflict"
+        assert len(await world.events()) == 1
+    finally:
+        await world.close()
+
+
 async def test_forced_failure_rolls_back_mutation_and_event(
     postgres_settings: DatabaseSettings,
 ) -> None:
@@ -187,6 +217,33 @@ async def test_forced_failure_rolls_back_mutation_and_event(
         assert result.status is ToolResultStatus.ERROR
         assert result.error_type == "ToolExecutionError"
         assert snapshot_hash(before) == snapshot_hash(await world.snapshot())
+        assert await world.events() == []
+    finally:
+        await world.close()
+
+
+async def test_gateway_rejects_unprivileged_inventory_mutation_and_envelope_mismatch(
+    postgres_settings: DatabaseSettings,
+) -> None:
+    world, run_id = await _world(postgres_settings)
+    try:
+        before = await world.snapshot()
+        unauthorized = await world.invoke(
+            _mutation_call(
+                run_id,
+                "adjust_inventory",
+                {"sku": "SKU-2", "delta": 1, "idempotency_key": "no-authority"},
+                set(),
+            )
+        )
+        mismatched = _call(run_id, key="argument-key").model_copy(
+            update={"idempotency_key": "envelope-key"}
+        )
+        mismatch_result = await world.invoke(mismatched)
+        after = await world.snapshot()
+        assert unauthorized.error_type == "AuthorizationDenied"
+        assert mismatch_result.error_type == "IdempotencyEnvelopeMismatch"
+        assert before.state == after.state
         assert await world.events() == []
     finally:
         await world.close()
@@ -320,7 +377,7 @@ async def test_specialized_mutations_are_atomic_idempotent_and_authorized(
                 run_id,
                 "expire_promotion",
                 {"promotion_code": "SAVE10", "idempotency_key": "promo-1"},
-                set(),
+                {"ticket:update"},
             )
         )
         assert denied.error_type == "AuthorizationDenied"
@@ -421,7 +478,7 @@ async def test_remaining_specialized_mutation_flows(
                 run_id,
                 "update_ticket",
                 {"ticket_id": ticket_id, "status": "closed", "idempotency_key": "close-1"},
-                set(),
+                {"ticket:update"},
             ),
             _mutation_call(
                 run_id,

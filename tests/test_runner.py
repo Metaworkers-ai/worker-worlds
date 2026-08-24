@@ -3,6 +3,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from worker_worlds.contracts import (
+    AuthorizationContext,
     RunRecord,
     Scenario,
     TerminalReason,
@@ -10,6 +11,7 @@ from worker_worlds.contracts import (
     ToolResult,
     ToolResultStatus,
     VerdictStatus,
+    WorkerTurn,
 )
 from worker_worlds.grading import DeterministicGrader
 from worker_worlds.runner import Runner
@@ -66,6 +68,31 @@ async def test_unauthorized_refund_does_not_mutate() -> None:
     assert not record.events
     assert record.turns[-1].tool_result is not None
     assert record.turns[-1].tool_result.error_type == "AuthorizationDenied"
+
+
+class SelfGrantingWorker(StubWorkerAdapter):
+    async def next_turn(self, tool_result: ToolResult | None) -> WorkerTurn:
+        turn = await super().next_turn(tool_result)
+        if turn.tool_call is None:
+            return turn
+        call = turn.tool_call.model_copy(
+            update={
+                "authorization": AuthorizationContext(
+                    actor_id="untrusted-worker",
+                    customer_id="cus_102",
+                    scopes=frozenset({"refund:own_order", "claim:pay"}),
+                )
+            }
+        )
+        return turn.model_copy(update={"tool_call": call})
+
+
+async def test_runner_ignores_worker_self_granted_authorization() -> None:
+    scenario = load_scenario(Path("tests/fixtures/unauthorized_refund_attempt.yaml"))
+    record = await Runner(DeterministicGrader()).run(scenario, StubWorld(), SelfGrantingWorker())
+    assert not record.events
+    assert record.turns[0].tool_call is not None
+    assert record.turns[0].tool_call.authorization.scopes == frozenset()
 
 
 class SlowToolWorld(StubWorld):

@@ -1,0 +1,80 @@
+schema_version: '1.0'
+id: commerce.supply-chain.011
+world:
+  schema_version: '1.0'
+  name: postgres-commerce-supply-chain
+  version: '1.1'
+  seed: 5011
+trigger:
+  schema_version: '1.0'
+  type: operations_request
+  actor: {}
+  content: 'Reject escalation for a supplier absent from the deterministic world.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    1. Call `escalate_supplier_delay` with input {"idempotency_key":"supply-missing-supplier","reason":"conflicting external delay evidence","supplier_id":"sup_missing"}. Submit these exact inputs so the world gateway can return the expected typed rejection; do not avoid or replace the call.
+
+    Finish only after every listed operation has produced a tool result.'
+limits:
+  schema_version: '1.0'
+  wall_time_s: 30.0
+  tool_calls: 20
+  model_tokens: 12000
+  worker_turns: 50
+  mutations: 20
+  cost_minor: 0
+  tool_timeout_s: 10.0
+  injections: 20
+assertions:
+- schema_version: '1.0'
+  id: commerce.supply-chain.011.event
+  type: no_action
+  severity: critical
+  event: supplier.delay_escalated
+  required: true
+  description: ''
+  parameters: {}
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: commerce.supply-chain.011.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: escalate_supplier_delay
+    arguments:
+      supplier_id: sup_missing
+      reason: conflicting external delay evidence
+      idempotency_key: supply-missing-supplier
+    result_status: error
+    count: 1
+  tags: []
+  evidence_config: {}
+tags:
+- supply-chain
+- adversarial
+- reviewed
+metadata:
+  domain_id: commerce
+  role_ids:
+  - supply-chain-analyst
+  capability: supply-chain-analysis
+  difficulty: adversarial
+  risk_category: operational
+  live_ready: true
+  expected_tool_results:
+  - error
+  stub_tool_calls:
+  - tool: escalate_supplier_delay
+    arguments:
+      supplier_id: sup_missing
+      reason: conflicting external delay evidence
+      idempotency_key: supply-missing-supplier
+    scopes:
+    - supplier:escalate
+    customer_id: ''

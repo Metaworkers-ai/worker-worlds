@@ -77,6 +77,17 @@ class AgentDefinition(RegistryModel):
         default=(), json_schema_extra={"uniqueItems": True}
     )
     model: AgentModelMetadata | None = None
+    supported_domain_ids: tuple[str, ...] = ("commerce", "insurance")
+
+    @field_validator("supported_domain_ids")
+    @classmethod
+    def validate_supported_domains(cls, value: tuple[str, ...]) -> tuple[str, ...]:
+        """Require a non-empty stable set of declared business-domain identifiers."""
+        if not value or any(not _ID_PATTERN.fullmatch(item) for item in value):
+            raise ValueError("supported domain ids must be stable catalog identifiers")
+        if len(value) != len(set(value)):
+            raise ValueError("supported domain ids must be unique")
+        return tuple(sorted(value))
 
     @field_validator("id")
     @classmethod

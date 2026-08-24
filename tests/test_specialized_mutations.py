@@ -44,7 +44,7 @@ def specialized_settings() -> DatabaseSettings:
 
 @pytest.fixture(autouse=True, scope="session")
 async def specialized_migrations(specialized_settings: DatabaseSettings) -> None:
-    assert await migrate(specialized_settings) == "003"
+    assert await migrate(specialized_settings) == "006"
 
 
 async def _new_world(settings: DatabaseSettings, flow: str) -> tuple[PostgresWorld, str]:
@@ -147,7 +147,7 @@ async def _prepared_call(
                     "status": "closed",
                     "idempotency_key": key + "-close",
                 },
-                set(),
+                {"ticket:update"},
             )
             assert (await world.invoke(close)).status is ToolResultStatus.SUCCESS
         arguments, scopes = (

@@ -129,6 +129,7 @@ class AssertionType(StrEnum):
     SEQUENCE_BEFORE = "sequence_before"
     CHANGED_ENTITIES_SUBSET = "changed_entities_subset"
     RESOURCE_WITHIN = "resource_within"
+    TOOL_RESULT_MATCHES = "tool_result_matches"
     POLICY = "policy"
 
 
@@ -234,6 +235,17 @@ class AssertionSpec(Contract):
             isinstance(parameters.get(name), dict) for name in ("first", "second")
         ):
             raise ValueError("sequence_before requires first and second event filters")
+        if assertion_type is AssertionType.TOOL_RESULT_MATCHES:
+            if not isinstance(parameters.get("tool_name"), str):
+                raise ValueError("tool_result_matches requires a string tool_name")
+            if parameters.get("result_status") not in {"success", "error"}:
+                raise ValueError("tool_result_matches requires result_status success or error")
+            arguments = parameters.get("arguments", {})
+            if not isinstance(arguments, dict):
+                raise ValueError("tool_result_matches arguments must be an object")
+            count = parameters.get("count", 1)
+            if not isinstance(count, int) or isinstance(count, bool) or count < 1:
+                raise ValueError("tool_result_matches count must be a positive integer")
         if assertion_type is AssertionType.POLICY and not isinstance(parameters.get("rule"), str):
             raise ValueError("policy requires a rule")
         return self

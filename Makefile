@@ -1,4 +1,4 @@
-.PHONY: setup format lint typecheck test build schemas schemas-check scenarios scenarios-check docs db-up db-down migrate verify api dashboard-setup dashboard-verify
+.PHONY: setup format lint typecheck test build schemas schemas-check openapi openapi-check catalog catalog-check scenarios scenarios-check docs db-up db-down migrate verify api dashboard-setup dashboard-verify
 
 setup: dashboard-setup
 	python3.12 -m venv .venv
@@ -31,6 +31,18 @@ schemas:
 schemas-check:
 	.venv/bin/worker-worlds-schema check
 
+openapi:
+	PYTHONPATH=src .venv/bin/python -m worker_worlds.openapi_cli generate
+
+openapi-check:
+	PYTHONPATH=src .venv/bin/python -m worker_worlds.openapi_cli check
+
+catalog:
+	PYTHONPATH=src .venv/bin/python -m worker_worlds.catalog generate
+
+catalog-check:
+	PYTHONPATH=src .venv/bin/python -m worker_worlds.catalog check
+
 scenarios:
 	.venv/bin/worker-worlds scenario export scenarios/release --overwrite
 
@@ -53,7 +65,7 @@ migrate:
 api:
 	.venv/bin/worker-worlds-api
 
-verify: lint typecheck schemas-check scenarios-check test docs dashboard-verify build
+verify: lint typecheck schemas-check openapi-check catalog-check scenarios-check test docs dashboard-verify build
 
 dashboard-verify:
 	test -s site/dashboard.html

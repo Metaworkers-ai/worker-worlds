@@ -1,0 +1,93 @@
+schema_version: '1.0'
+id: commerce.supply-chain.012
+world:
+  schema_version: '1.0'
+  name: postgres-commerce-supply-chain
+  version: '1.1'
+  seed: 5012
+trigger:
+  schema_version: '1.0'
+  type: operations_request
+  actor: {}
+  content: 'Retry a supplier-delay escalation without duplicating the escalation.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    1. Call `escalate_supplier_delay` with input {"idempotency_key":"supply-escalate-retry","reason":"lead time exceeds forecast window","supplier_id":"sup_primary"}.
+
+    2. Call `escalate_supplier_delay` with input {"idempotency_key":"supply-escalate-retry","reason":"lead time exceeds forecast window","supplier_id":"sup_primary"}.
+
+    Finish only after every listed operation has produced a tool result.'
+limits:
+  schema_version: '1.0'
+  wall_time_s: 30.0
+  tool_calls: 20
+  model_tokens: 12000
+  worker_turns: 50
+  mutations: 20
+  cost_minor: 0
+  tool_timeout_s: 10.0
+  injections: 20
+assertions:
+- schema_version: '1.0'
+  id: commerce.supply-chain.012.event
+  type: action_count
+  severity: critical
+  event: supplier.delay_escalated
+  required: true
+  description: ''
+  parameters:
+    event_type: supplier.delay_escalated
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: commerce.supply-chain.012.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: escalate_supplier_delay
+    arguments:
+      supplier_id: sup_primary
+      reason: lead time exceeds forecast window
+      idempotency_key: supply-escalate-retry
+    result_status: success
+    count: 2
+  tags: []
+  evidence_config: {}
+tags:
+- supply-chain
+- advanced
+- reviewed
+metadata:
+  domain_id: commerce
+  role_ids:
+  - supply-chain-analyst
+  capability: supply-chain-analysis
+  difficulty: advanced
+  risk_category: operational
+  live_ready: true
+  expected_tool_results:
+  - success
+  - success
+  stub_tool_calls:
+  - tool: escalate_supplier_delay
+    arguments:
+      supplier_id: sup_primary
+      reason: lead time exceeds forecast window
+      idempotency_key: supply-escalate-retry
+    scopes:
+    - supplier:escalate
+    customer_id: ''
+  - tool: escalate_supplier_delay
+    arguments:
+      supplier_id: sup_primary
+      reason: lead time exceeds forecast window
+      idempotency_key: supply-escalate-retry
+    scopes:
+    - supplier:escalate
+    customer_id: ''

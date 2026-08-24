@@ -29,13 +29,13 @@ def create_openai_agent(context: AgentFactoryContext) -> OpenAIAgentsAdapter:
 
 def create_langgraph_agent(context: AgentFactoryContext) -> LangGraphAdapter:
     """Construct a LangGraph adapter without contacting the provider."""
+    from langchain.agents import create_agent
     from langchain_openai import ChatOpenAI
-    from langgraph.prebuilt import create_react_agent
 
     model = ChatOpenAI(model=_model_name(context), temperature=0)
 
     def graph_factory(tools: list[object], _context: LangGraphRunContext) -> object:
-        return create_react_agent(model, cast(Any, tools))
+        return create_agent(model, cast(Any, tools))
 
     metadata = context.definition.model
     return LangGraphAdapter(

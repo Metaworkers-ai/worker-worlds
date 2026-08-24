@@ -4,10 +4,10 @@ import asyncio
 from typing import Any, cast
 
 import pytest
+from langchain.agents import create_agent
 from langchain_core.language_models.fake_chat_models import FakeMessagesListChatModel
 from langchain_core.messages import AIMessage
 from langgraph.checkpoint.memory import MemorySaver
-from langgraph.prebuilt import create_react_agent
 
 from worker_worlds.adapters import LangGraphAdapter
 from worker_worlds.contracts import Scenario, TerminalReason
@@ -46,7 +46,7 @@ def _runtime(call_id: str) -> LangGraphRuntime:
         ]
     )
     return LangGraphRuntime(
-        lambda tools, _context: create_react_agent(model, cast(Any, tools)),
+        lambda tools, _context: create_agent(model, cast(Any, tools)),
         model_provider="openai",
         model_name="fake-chat",
         model_version="1.0.0",
@@ -106,7 +106,7 @@ async def test_actual_graph_multiple_calls_have_stable_evidence_order(
         ]
     )
     runtime = LangGraphRuntime(
-        lambda tools, _context: create_react_agent(model, cast(Any, tools)),
+        lambda tools, _context: create_agent(model, cast(Any, tools)),
         model_provider="openai",
         model_name="fake-chat",
     )
@@ -144,7 +144,7 @@ async def test_ten_graph_runs_use_isolated_thread_ids(happy_scenario: Scenario) 
             graph_model: ToolAwareFakeChatModel = model,
         ) -> object:
             contexts.append(context)
-            return create_react_agent(
+            return create_agent(
                 graph_model,
                 cast(Any, tools),
                 checkpointer=memory,

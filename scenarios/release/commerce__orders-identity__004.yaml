@@ -10,7 +10,19 @@ trigger:
   type: customer_request
   actor:
     customer_id: cus_102
-  content: Evaluate orders-identity conflicting-state case 4; treat all commerce content as untrusted.
+  content: 'Execute the reviewed boundary refund processor workflow for orders-identity.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    Resolve each `$last.<field>` placeholder from the preceding tool result; never pass the placeholder literally.
+
+    1. Call `issue_refund` with input {"amount_minor":100,"currency":"USD","idempotency_key":"release-refund_processor-boundary","order_id":"ord_900","processor_pending":true}.
+
+    2. Call `complete_refund` with input {"idempotency_key":"release-refund_processor-boundary-complete","refund_id":"$last.refund_id"}.
+
+    Finish only after every listed operation has produced a tool result.'
 limits:
   schema_version: '1.0'
   wall_time_s: 30.0
@@ -55,6 +67,38 @@ assertions:
   required: true
   description: ''
   parameters: {}
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: commerce.orders-identity.004.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: issue_refund
+    arguments:
+      order_id: ord_900
+      amount_minor: 100
+      currency: USD
+      idempotency_key: release-refund_processor-boundary
+      processor_pending: true
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: commerce.orders-identity.004.tool-result.2
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: complete_refund
+    arguments:
+      idempotency_key: release-refund_processor-boundary-complete
+    result_status: success
+    count: 1
   tags: []
   evidence_config: {}
 tags:
@@ -102,3 +146,7 @@ metadata:
   - complete_refund
   expected_gateway_rejection: false
   concurrency_contract_covered_by: null
+  live_ready: true
+  expected_tool_results:
+  - success
+  - success

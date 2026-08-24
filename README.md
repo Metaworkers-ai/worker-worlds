@@ -2,7 +2,7 @@
 
 See what your AI workers would do—before they do it—in deterministic, stateful enterprise simulations.
 
-Worker Worlds runs a worker against an isolated commerce world, records every tool call and mutation, grades final state and event history, and compares behavior between worker versions.
+Worker Worlds runs a worker against isolated Retail & E-commerce or Insurance worlds, records every tool call and mutation, grades final state and event history, and compares behavior between worker versions.
 
 ## What the worker said vs. what the world shows
 
@@ -31,7 +31,7 @@ Framework-neutral runner <---- Worker adapter (stub / LangGraph / Agents SDK)
 Tool gateway ---- authorization + validation + idempotency
        |
        v
-Isolated commerce world ---- atomic state + append-only event log
+Isolated enterprise world --- atomic state + append-only event log
        |
        +---- snapshots / hashes ---- grader ---- RunRecord
                                              \---- JSON / HTML / comparison
@@ -136,11 +136,14 @@ Local deterministic evaluation is designed for parallel execution, but results d
 make setup       # install development dependencies
 make verify      # format, lint, strict typecheck, tests, schemas, scenarios, docs, build
 make schemas-check
+make openapi-check
+make catalog-check
 make scenarios-check
 ```
 
 - [Quickstart](docs/quickstart.md), [concepts](docs/concepts.md), and [scenario authoring](docs/authoring.md)
 - [Operations](docs/operations.md), [CLI reference](docs/reference.md), and [release process](docs/release.md)
+- [Domain and role catalog](docs/catalog.md) and [local API](docs/api.md)
 - [Threat model](docs/security/threat-model.md), [secure deployment](docs/security/secure-worker-deployment.md), and [live-adapter smoke tests](docs/live-adapter-smoke.md)
 - [Domain-review package](docs/domain-review/index.html) and [release checklist](docs/release-checklist.md)
 - [Contributing](CONTRIBUTING.md), [security policy](SECURITY.md), and [changelog](CHANGELOG.md)

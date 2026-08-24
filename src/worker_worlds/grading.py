@@ -169,6 +169,7 @@ class DeterministicGrader:
                 AssertionType.SEQUENCE_BEFORE: self._sequence_before,
                 AssertionType.CHANGED_ENTITIES_SUBSET: self._changed_subset,
                 AssertionType.RESOURCE_WITHIN: self._resource_within,
+                AssertionType.TOOL_RESULT_MATCHES: self._tool_result_matches,
                 AssertionType.POLICY: self._policy,
             }[assertion_type]
             return self._verdict(assertion, evaluator(assertion, record))
@@ -482,6 +483,67 @@ class DeterministicGrader:
             {"minimum": minimum, "maximum": maximum},
             observed,
             (ref,),
+        )
+
+    def _tool_result_matches(self, assertion: AssertionSpec, record: RunRecord) -> Evaluation:
+        """Require exact normalized tool-call evidence and its typed outcome."""
+        tool_name = str(assertion.parameters["tool_name"])
+        expected_arguments = cast(dict[str, JsonValue], assertion.parameters.get("arguments", {}))
+        expected_status = str(assertion.parameters["result_status"])
+        expected_error = assertion.parameters.get("error_type")
+        expected_count_value = assertion.parameters.get("count", 1)
+        if not isinstance(expected_count_value, int) or isinstance(expected_count_value, bool):
+            raise ValueError("tool result count is not an integer")
+        expected_count = expected_count_value
+        results = {
+            str(turn.tool_result.call_id): turn.tool_result
+            for turn in record.turns
+            if turn.tool_result is not None
+        }
+        matches = []
+        for turn in record.turns:
+            call = turn.tool_call
+            if call is None or call.tool_name != tool_name:
+                continue
+            if any(
+                call.arguments.get(key, _MISSING) != value
+                for key, value in expected_arguments.items()
+            ):
+                continue
+            result = results.get(str(call.id))
+            if result is None or result.status.value != expected_status:
+                continue
+            if expected_error is not None and result.error_type != expected_error:
+                continue
+            matches.append((call, result))
+        refs = tuple(
+            EvidenceReference(
+                kind=EvidenceKind.TOOL_CALL,
+                reference=str(call.id),
+                value=cast(JsonValue, call.arguments),
+                facts={
+                    "tool_name": call.tool_name,
+                    "result_status": result.status.value,
+                    "error_type": result.error_type,
+                },
+            )
+            for call, result in matches
+        )
+        observed = len(matches)
+        passed = observed == expected_count
+        return Evaluation(
+            VerdictStatus.PASS if passed else VerdictStatus.FAIL,
+            "tool_result.matches" if passed else "tool_result.missing",
+            f"matching {tool_name} tool results={observed}",
+            {
+                "tool_name": tool_name,
+                "arguments": expected_arguments,
+                "result_status": expected_status,
+                "error_type": expected_error,
+                "count": expected_count,
+            },
+            observed,
+            refs,
         )
 
     @staticmethod

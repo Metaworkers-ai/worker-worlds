@@ -6,10 +6,9 @@ from typing import Any, cast
 
 import pytest
 from agents import Agent
-from agents.testing.model import ScriptedModel, assistant_message, function_call
+from langchain.agents import create_agent
 from langchain_core.language_models.fake_chat_models import FakeMessagesListChatModel
 from langchain_core.messages import AIMessage
-from langgraph.prebuilt import create_react_agent
 
 from worker_worlds.adapters import LangGraphAdapter, OpenAIAgentsAdapter
 from worker_worlds.contracts import Scenario, TerminalReason
@@ -17,6 +16,7 @@ from worker_worlds.database import DatabaseSettings, connect, migrate
 from worker_worlds.grading import DeterministicGrader
 from worker_worlds.langgraph_runtime import LangGraphRuntime
 from worker_worlds.openai_agents_runtime import OpenAIAgentsRuntime
+from worker_worlds.openai_testing import ScriptedModel, assistant_message, function_call
 from worker_worlds.postgres_world import PostgresWorld
 from worker_worlds.protocols import WorkerAdapter
 from worker_worlds.runner import Runner
@@ -32,7 +32,7 @@ def real_adapter_postgres_settings() -> DatabaseSettings:
 
 @pytest.fixture(autouse=True, scope="session")
 async def real_adapter_migrated(real_adapter_postgres_settings: DatabaseSettings) -> None:
-    assert await migrate(real_adapter_postgres_settings) == "003"
+    assert await migrate(real_adapter_postgres_settings) == "006"
 
 
 def _arguments() -> dict[str, object]:
@@ -85,9 +85,7 @@ async def test_real_adapter_contract_against_postgres(
             ]
         )
         adapter = LangGraphAdapter(
-            LangGraphRuntime(
-                lambda tools, _context: create_react_agent(graph_model, cast(Any, tools))
-            )
+            LangGraphRuntime(lambda tools, _context: create_agent(graph_model, cast(Any, tools)))
         )
     world = PostgresWorld(real_adapter_postgres_settings, f"e2e.{adapter_name}")
     record = await Runner(DeterministicGrader()).run(happy_scenario, world, adapter)
@@ -140,9 +138,7 @@ async def test_real_adapter_unauthorized_refund_keeps_postgres_unchanged(
             ]
         )
         adapter = LangGraphAdapter(
-            LangGraphRuntime(
-                lambda tools, _context: create_react_agent(graph_model, cast(Any, tools))
-            )
+            LangGraphRuntime(lambda tools, _context: create_agent(graph_model, cast(Any, tools)))
         )
     world = PostgresWorld(real_adapter_postgres_settings, f"e2e.{adapter_name}-unauthorized")
     record = await Runner(DeterministicGrader()).run(unauthorized, world, adapter)
@@ -198,9 +194,7 @@ async def test_cancel_during_postgres_mutation_cleans_namespace(
             ]
         )
         adapter = LangGraphAdapter(
-            LangGraphRuntime(
-                lambda tools, _context: create_react_agent(graph_model, cast(Any, tools))
-            )
+            LangGraphRuntime(lambda tools, _context: create_agent(graph_model, cast(Any, tools)))
         )
     world = PausedMutationWorld(real_adapter_postgres_settings, f"e2e.cancel.{adapter_name}")
     task = asyncio.create_task(Runner(DeterministicGrader()).run(happy_scenario, world, adapter))

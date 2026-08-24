@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from pathlib import Path
+from typing import Any
 
 from worker_worlds import __version__
 from worker_worlds.contracts import BaselineManifest, SuiteRecord
@@ -57,10 +59,18 @@ def create_baseline(suite_path: Path, name: str, directory: Path) -> Path:
 def load_baseline(path: Path) -> BaselineManifest:
     """Load a baseline and verify its bundled suite and content identities."""
     try:
-        manifest = BaselineManifest.model_validate_json(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError) as exc:
+        raw: Any = json.loads(path.read_text(encoding="utf-8"))
+        manifest = BaselineManifest.model_validate(raw)
+    except (OSError, ValueError, TypeError) as exc:
         raise InfrastructureError(f"unable to load baseline {path}: {exc}") from exc
-    if manifest.suite.canonical_hash() != manifest.suite_hash:
+    raw_suite = raw.get("suite") if isinstance(raw, dict) else None
+    if not isinstance(raw_suite, dict):
+        raise InfrastructureError("baseline suite payload is missing")
+    raw_suite_json = json.dumps(
+        raw_suite, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    )
+    raw_suite_hash = hashlib.sha256(raw_suite_json.encode()).hexdigest()
+    if raw_suite_hash != manifest.suite_hash:
         raise InfrastructureError("baseline suite hash verification failed")
     expected = hashlib.sha256(f"{manifest.name}:{manifest.suite_hash}".encode()).hexdigest()
     if expected != manifest.content_hash:

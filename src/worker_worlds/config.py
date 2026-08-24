@@ -47,7 +47,7 @@ class ReportingConfig(ConfigModel):
 class ExecutionConfig(ConfigModel):
     """Bounded suite execution settings."""
 
-    world: Literal["stub", "postgres"] = "stub"
+    world: Literal["stub", "postgres", "supply-chain", "insurance"] = "stub"
     worker: str = "stub"
     scenario_locations: tuple[str, ...] = ("examples/scenarios",)
     repetitions: int = Field(default=1, gt=0, le=100)
@@ -68,6 +68,7 @@ class WorkerWorldsConfig(ConfigModel):
     reporting: ReportingConfig = Field(default_factory=ReportingConfig)
     baselines_directory: str = ".worker-worlds/baselines"
     comparison: ComparisonConfig = Field(default_factory=ComparisonConfig)
+    catalog_path: str | None = None
     provider: dict[str, str] = Field(default_factory=dict)
     agents: Mapping[AgentId, AgentDefinition] = Field(
         default_factory=dict, json_schema_extra={"additionalProperties": False}

@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Worker Worlds 1.0</title><style>body{font:16px system-ui;margin:auto;max-width:1100px;padding:1rem;line-height:1.5}nav a{margin-right:1rem}pre{white-space:pre-wrap;overflow-wrap:anywhere}a:focus{outline:3px solid #0563c1}</style></head><body><header><h1>Worker Worlds <small>1.0.0rc1</small></h1><nav aria-label="Documentation"><a href="quickstart.html">quickstart</a> <a href="concepts.html">concepts</a> <a href="authoring.html">authoring</a> <a href="operations.html">operations</a> <a href="reference.html">reference</a> <a href="release.html">release</a> <a href="api.html">api</a> <a href="live-adapter-smoke.html">live-adapter-smoke</a> <a href="security-threat-model.html">threat-model</a> <a href="security-secure-worker-deployment.html">secure-worker-deployment</a></nav></header><main><pre># Quickstart
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Worker Worlds 1.0</title><style>body{font:16px system-ui;margin:auto;max-width:1100px;padding:1rem;line-height:1.5}nav a{margin-right:1rem}pre{white-space:pre-wrap;overflow-wrap:anywhere}a:focus{outline:3px solid #0563c1}</style></head><body><header><h1>Worker Worlds <small>1.0.0rc1</small></h1><nav aria-label="Documentation"><a href="quickstart.html">quickstart</a> <a href="concepts.html">concepts</a> <a href="authoring.html">authoring</a> <a href="operations.html">operations</a> <a href="reference.html">reference</a> <a href="release.html">release</a> <a href="api.html">api</a> <a href="catalog.html">catalog</a> <a href="live-adapter-smoke.html">live-adapter-smoke</a> <a href="security-threat-model.html">threat-model</a> <a href="security-secure-worker-deployment.html">secure-worker-deployment</a></nav></header><main><pre># Quickstart
 
 ```bash
 python3.12 -m venv .venv
@@ -34,7 +34,22 @@ LangGraph factories return a `LangGraphAdapter(LangGraphRuntime(graph_factory))`
 Neither configuration nor readiness responses persist environment values.
 
 The HTTP API exposes the same registry at `GET /api/v1/agents`; open
-`site/dashboard.html` after starting `worker-worlds-api` for the local picker.
+the Next.js dashboard after starting `worker-worlds-api` for the domain → role → suite → agent
+workflow:
+
+```bash
+# terminal 1, from the repository root
+set -a; source .env; set +a
+.venv/bin/worker-worlds-api
+
+# terminal 2
+cd apps/dashboard
+npm run dev
+```
+
+The dashboard can run Retail &amp; E-commerce suites (including Supply Chain Analyst), Insurance Claims
+Adjuster suites, cancel durable evaluations, download complete evidence, and compare two compatible
+completed agent evaluations. Direct scenario execution remains under Advanced custom scenario run.
 
 If doctor reports `not ready`, install the named optional extra, verify the
 factory import path, export every listed environment name, and confirm Postgres

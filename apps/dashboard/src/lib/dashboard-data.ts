@@ -39,6 +39,116 @@ export type Agent = ApiEnvelope & {
   ready: boolean;
   missing_requirements: string[];
   deterministic_test_infrastructure: boolean;
+  supported_domain_ids: string[];
+};
+
+export type CapabilityDefinition = ApiEnvelope & {
+  id: string;
+  domain_id: string;
+  version: string;
+  label: string;
+  description: string;
+};
+
+export type RoleDefinition = ApiEnvelope & {
+  id: string;
+  domain_id: string;
+  version: string;
+  label: string;
+  description: string;
+  capability_ids: string[];
+};
+
+export type DomainDefinition = ApiEnvelope & {
+  id: string;
+  version: string;
+  label: string;
+  description: string;
+  world_names: string[];
+  role_ids: string[];
+  capability_ids: string[];
+};
+
+export type SuiteDefinition = ApiEnvelope & {
+  id: string;
+  domain_id: string;
+  role_id: string;
+  revision: string;
+  label: string;
+  tier: "smoke" | "standard" | "full" | "custom";
+  scenario_ids: string[];
+  capability_ids: string[];
+  estimated_duration_s: number;
+  default_limits: {
+    wall_time_s: number;
+    tool_calls: number;
+    model_tokens: number;
+    worker_turns: number;
+    mutations: number;
+    cost_minor: number;
+    tool_timeout_s: number;
+    injections: number;
+  };
+};
+
+export type SuiteBudget = {
+  deadline_s: number;
+  scenarios: number;
+  tool_calls: number;
+  model_tokens: number;
+  mutations: number;
+  cost_minor: number;
+};
+
+export type ScenarioClassification = ApiEnvelope & {
+  scenario_id: string;
+  scenario_hash: string;
+  domain_id: string;
+  role_ids: string[];
+  capability_id: string;
+  difficulty: string;
+  risk_category: string;
+};
+
+export type Catalog = ApiEnvelope & {
+  catalog_version: string;
+  domains: DomainDefinition[];
+  roles: RoleDefinition[];
+  capabilities: CapabilityDefinition[];
+  suites: SuiteDefinition[];
+  classifications: ScenarioClassification[];
+};
+
+export type SuiteScenario = ApiEnvelope & {
+  scenario_id: string;
+  ordinal: number;
+  status: string;
+  attempts: number;
+  run_id: string | null;
+  terminal_reason: string | null;
+};
+
+export type SuiteJob = ApiEnvelope & {
+  id: string;
+  request_key: string;
+  status: "queued" | "running" | "cancelling" | "cancelled" | "completed" | "failed";
+  catalog_version: string;
+  domain_id: string;
+  role_id: string;
+  suite_id: string;
+  suite_revision: string;
+  agent_id: string;
+  world: string;
+  total_scenarios: number;
+  completed_scenarios: number;
+  passed_scenarios: number;
+  failed_scenarios: number;
+  cancel_requested: boolean;
+  revision: number;
+  scenarios: SuiteScenario[];
+  error_type: string | null;
+  error_message: string | null;
+  suite_record_path: string | null;
 };
 
 export type RunSummary = ApiEnvelope & {
@@ -126,6 +236,25 @@ export type Comparison = ApiEnvelope & {
   new_high: number;
   pass_rate_delta: number;
   path: string;
+  domain_id?: string | null;
+  role_id?: string | null;
+  suite_id?: string | null;
+  compatibility?: string | null;
+};
+
+export type ContextualComparison = ApiEnvelope & {
+  id: string;
+  compatibility: "compatible" | "incompatible";
+  compatibility_reasons: string[];
+  passed: boolean;
+  role_summary: {
+    baseline: { pass_rate: number; failures: number; tool_calls: number; duration_ms: number };
+    candidate: { pass_rate: number; failures: number; tool_calls: number; duration_ms: number };
+    pass_rate_delta: number;
+    failure_delta: number;
+    tool_call_delta: number;
+    duration_delta_ms: number;
+  };
 };
 
 export type DashboardData = {
@@ -135,6 +264,7 @@ export type DashboardData = {
   agents: Agent[];
   runs: RunSummary[];
   comparisons: Comparison[];
+  catalog: Catalog;
 };
 
 const API_URL = (
@@ -162,7 +292,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export async function loadDashboard(): Promise<DashboardData> {
-  const [health, overview, scenarioList, agentList, runList, comparisonList] =
+  const [health, overview, scenarioList, agentList, runList, comparisonList, catalog] =
     await Promise.all([
       request<Health>("/health"),
       request<Overview>("/overview"),
@@ -170,6 +300,7 @@ export async function loadDashboard(): Promise<DashboardData> {
       request<ApiEnvelope & { agents: Agent[] }>("/agents"),
       request<ApiEnvelope & { runs: RunSummary[] }>("/runs?limit=100"),
       request<ApiEnvelope & { comparisons: Comparison[] }>("/comparisons"),
+      request<Catalog>("/catalog"),
     ]);
   return {
     health,
@@ -178,6 +309,7 @@ export async function loadDashboard(): Promise<DashboardData> {
     agents: agentList.agents,
     runs: runList.runs,
     comparisons: comparisonList.comparisons,
+    catalog,
   };
 }
 
@@ -199,4 +331,69 @@ export function startRun(
       world,
     }),
   });
+}
+
+export function startSuiteJob(input: {
+  requestKey: string;
+  domainId: string;
+  roleId: string;
+  suiteId: string;
+  agentId: string;
+  world: "stub" | "postgres" | "supply-chain" | "insurance";
+  concurrency: number;
+  scenarioIds?: string[];
+  seed?: number;
+  limits?: SuiteDefinition["default_limits"];
+  budget?: SuiteBudget;
+}): Promise<SuiteJob> {
+  return request<SuiteJob>("/suite-jobs", {
+    method: "POST",
+    body: JSON.stringify({
+      schema_version: "1.0",
+      request_key: input.requestKey,
+      domain_id: input.domainId,
+      role_id: input.roleId,
+      suite_id: input.suiteId,
+      agent_id: input.agentId,
+      world: input.world,
+      concurrency: input.concurrency,
+      scenario_ids: input.scenarioIds ?? [],
+      seed: input.seed,
+      limits: input.limits,
+      budget: input.budget,
+    }),
+  });
+}
+
+export function loadSuiteJob(jobId: string): Promise<SuiteJob> {
+  return request<SuiteJob>(`/suite-jobs/${encodeURIComponent(jobId)}`);
+}
+
+export function cancelSuiteJob(jobId: string): Promise<SuiteJob> {
+  return request<SuiteJob>(`/suite-jobs/${encodeURIComponent(jobId)}`, {
+    method: "DELETE",
+  });
+}
+
+export async function loadSuiteJobs(): Promise<SuiteJob[]> {
+  const response = await request<ApiEnvelope & { jobs: SuiteJob[] }>("/suite-jobs?limit=200");
+  return response.jobs;
+}
+
+export function compareSuiteJobs(
+  baselineJobId: string,
+  candidateJobId: string,
+): Promise<ContextualComparison> {
+  return request<ContextualComparison>("/comparisons/contextual", {
+    method: "POST",
+    body: JSON.stringify({
+      schema_version: "1.0",
+      baseline_job_id: baselineJobId,
+      candidate_job_id: candidateJobId,
+    }),
+  });
+}
+
+export function suiteEvidenceUrl(jobId: string): string {
+  return `${API_URL}/suite-jobs/${encodeURIComponent(jobId)}/evidence`;
 }

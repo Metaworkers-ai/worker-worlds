@@ -18,6 +18,7 @@ from worker_worlds.contracts import (
     TerminalReason,
     ToolResult,
     ToolResultStatus,
+    TurnId,
     WorkerTurn,
     WorldSnapshot,
 )
@@ -25,6 +26,34 @@ from worker_worlds.errors import AdapterError, InjectionError, ProviderError, Sc
 from worker_worlds.ids import prefixed_ulid
 from worker_worlds.native_bridge import NativeBridgePendingError
 from worker_worlds.protocols import Grader, WorkerAdapter, World
+from worker_worlds.scenario_identity import scenario_content_hash
+
+_TOOL_SCOPE_POLICY = {
+    "refund_order": "refund:own_order",
+    "issue_refund": "refund:own_order",
+    "create_ticket": "ticket:create",
+    "update_ticket": "ticket:update",
+    "adjust_inventory": "inventory:write",
+    "send_email": "email:send",
+    "escalate": "ticket:escalate",
+    "create_replacement": "replacement:create",
+    "resolve_backorder": "inventory:write",
+    "update_shipment": "shipment:write",
+    "expire_promotion": "promotion:write",
+    "disambiguate_customer": "customer:disambiguate",
+    "transfer_inventory": "inventory:write",
+    "cancel_order": "order:cancel",
+    "complete_refund": "refund:process",
+    "reopen_ticket": "ticket:reopen",
+    "create_purchase_order": "purchase_order:write",
+    "execute_transfer": "inventory:transfer",
+    "escalate_supplier_delay": "supplier:escalate",
+    "request_evidence": "claim:evidence",
+    "add_adjuster_note": "claim:note",
+    "decide_claim": "claim:decide",
+    "escalate_investigation": "claim:investigate",
+    "issue_claim_payment": "claim:pay",
+}
 
 
 class Runner:
@@ -61,11 +90,7 @@ class Runner:
             await self._deliver_injections(world, injections, delivered, "before_worker")
             if len(delivered) > scenario.limits.injections:
                 raise InjectionError("injection budget exceeded")
-            context = AuthorizationContext(
-                actor_id=worker.name,
-                customer_id=str(scenario.trigger.actor.get("customer_id", "")) or None,
-                scopes=frozenset({"refund:own_order"}),
-            )
+            context = self._authorization(scenario, worker.name)
             tools = await world.tools(context)
             await worker.start(scenario, tools)
             terminal = await asyncio.wait_for(
@@ -78,6 +103,7 @@ class Runner:
                     {tool.name for tool in tools if tool.mutation},
                     injections,
                     delivered,
+                    context,
                 ),
                 timeout=scenario.limits.wall_time_s,
             )
@@ -86,7 +112,10 @@ class Runner:
         except TimeoutError as exc:
             terminal = TerminalReason.TIMEOUT
             error_type, error_message = type(exc).__name__, "worker exceeded wall-time budget"
-            await worker.cancel()
+            cancellation_error = await self._cancel_for_evidence(worker)
+            if cancellation_error is not None:
+                incomplete = True
+                error_type, error_message = cancellation_error
             try:
                 final = await world.snapshot()
                 events = await world.events()
@@ -97,7 +126,10 @@ class Runner:
         except asyncio.CancelledError as exc:
             terminal = TerminalReason.CANCELLED
             error_type, error_message = type(exc).__name__, "run was cancelled"
-            await worker.cancel()
+            cancellation_error = await self._cancel_for_evidence(worker)
+            if cancellation_error is not None:
+                incomplete = True
+                error_type, error_message = cancellation_error
             try:
                 final = await world.snapshot()
                 events = await world.events()
@@ -127,13 +159,16 @@ class Runner:
             error_type, error_message = type(exc).__name__, str(exc)
             if isinstance(exc, NativeBridgePendingError):
                 incomplete = True
-                await worker.cancel()
-                try:
-                    final = await world.snapshot()
-                    events = await world.events()
-                except Exception as evidence_exc:
-                    error_type = type(evidence_exc).__name__
-                    error_message = str(evidence_exc)
+                cancellation_error = await self._cancel_for_evidence(worker)
+                if cancellation_error is not None:
+                    error_type, error_message = cancellation_error
+            try:
+                final = await world.snapshot()
+                events = await world.events()
+            except Exception as evidence_exc:
+                incomplete = True
+                error_type = type(evidence_exc).__name__
+                error_message = str(evidence_exc)
         except Exception as exc:  # runner converts unexpected boundary failures into evidence
             terminal = TerminalReason.INFRASTRUCTURE_ERROR
             incomplete = True
@@ -192,10 +227,27 @@ class Runner:
             cleanup_succeeded=cleanup_succeeded,
             scenario_trigger=scenario.trigger.model_dump(mode="json"),
             scenario_tags=scenario.tags,
-            scenario_hash=scenario.canonical_hash(),
+            scenario_hash=scenario_content_hash(scenario),
         )
         verdicts = await self._grader.grade(scenario, record)
         return record.model_copy(update={"verdicts": tuple(verdicts)})
+
+    @staticmethod
+    async def _cancel_for_evidence(worker: WorkerAdapter) -> tuple[str, str] | None:
+        """Bound cancellation so a broken adapter cannot hang evidence finalization."""
+        try:
+            await asyncio.wait_for(worker.cancel(), timeout=2.0)
+        except TimeoutError:
+            return "WorkerCancellationTimeout", "worker cancellation exceeded 2 seconds"
+        except Exception as exc:
+            return type(exc).__name__, str(exc)
+        return None
+
+    @staticmethod
+    async def _cancel_or_raise(worker: WorkerAdapter) -> None:
+        error = await Runner._cancel_for_evidence(worker)
+        if error is not None:
+            raise AdapterError(f"worker cancellation failed: {error[0]}: {error[1]}")
 
     @staticmethod
     def _snapshot_hash(snapshot: WorldSnapshot) -> str:
@@ -212,6 +264,7 @@ class Runner:
         mutation_tools: set[str],
         injections: tuple[ScheduledInjection, ...],
         delivered: set[str],
+        authorization: AuthorizationContext,
     ) -> TerminalReason:
         tool_result: ToolResult | None = None
         tool_calls = 0
@@ -219,17 +272,34 @@ class Runner:
         model_tokens = 0
         cost_minor = 0
         for _ in range(scenario.limits.worker_turns):
-            turn = await worker.next_turn(tool_result)
+            try:
+                turn = await worker.next_turn(tool_result)
+            except (AdapterError, ProviderError):
+                if tool_result is not None:
+                    turns.append(
+                        WorkerTurn(
+                            id=TurnId(prefixed_ulid("turn")),
+                            index=(turns[-1].index + 1) if turns else 0,
+                            occurred_at=tool_result.ended_at,
+                            tool_result=tool_result,
+                        )
+                    )
+                raise
             model_tokens += turn.model_tokens or 0
             cost_minor += turn.cost_minor or 0
             if model_tokens > scenario.limits.model_tokens or (
                 scenario.limits.cost_minor > 0 and cost_minor > scenario.limits.cost_minor
             ):
-                await worker.cancel()
+                await Runner._cancel_or_raise(worker)
                 turns.append(turn)
                 return TerminalReason.BUDGET_EXCEEDED
             if turn.tool_call is not None:
-                call = turn.tool_call.model_copy(update={"run_id": run_id})
+                call_authorization = Runner._authorization(
+                    scenario, authorization.actor_id, turn.tool_call.tool_name
+                )
+                call = turn.tool_call.model_copy(
+                    update={"run_id": run_id, "authorization": call_authorization}
+                )
                 turn = turn.model_copy(update={"tool_call": call})
             turns.append(turn)
             if bool(getattr(worker, "incomplete_native_evidence", False)):
@@ -245,11 +315,11 @@ class Runner:
                 return TerminalReason.WORKER_ERROR
             tool_calls += 1  # noqa: SIM113 - only tool-bearing turns consume this budget
             if tool_calls > scenario.limits.tool_calls:
-                await worker.cancel()
+                await Runner._cancel_or_raise(worker)
                 return TerminalReason.BUDGET_EXCEEDED
             if turn.tool_call.tool_name in mutation_tools:
                 if mutations >= scenario.limits.mutations:
-                    await worker.cancel()
+                    await Runner._cancel_or_raise(worker)
                     return TerminalReason.BUDGET_EXCEEDED
                 mutations += 1
             try:
@@ -257,7 +327,7 @@ class Runner:
                     world.invoke(turn.tool_call), timeout=scenario.limits.tool_timeout_s
                 )
             except TimeoutError:
-                await worker.cancel()
+                await Runner._cancel_or_raise(worker)
                 return TerminalReason.TOOL_TIMEOUT
             if tool_result.status is ToolResultStatus.ERROR:
                 if bool(getattr(worker, "continues_after_tool_error", False)):
@@ -291,8 +361,43 @@ class Runner:
             )
             if len(delivered) > scenario.limits.injections:
                 raise InjectionError("injection budget exceeded")
-        await worker.cancel()
+        await Runner._cancel_or_raise(worker)
         return TerminalReason.BUDGET_EXCEEDED
+
+    @staticmethod
+    def _authorization(
+        scenario: Scenario, actor_id: str, tool_name: str | None = None
+    ) -> AuthorizationContext:
+        """Derive trusted least-privilege authority from scenario configuration."""
+        scripted = scenario.metadata.get("stub_tool_calls")
+        scopes: set[str] = set()
+        required_scope = _TOOL_SCOPE_POLICY.get(tool_name or "")
+        if isinstance(scripted, list):
+            for item in scripted:
+                if not isinstance(item, dict):
+                    continue
+                if tool_name is None or item.get("tool") != tool_name:
+                    continue
+                raw_scopes = item.get("scopes", [])
+                if (
+                    required_scope is not None
+                    and isinstance(raw_scopes, list)
+                    and (
+                        required_scope in {str(scope) for scope in raw_scopes}
+                        or tool_name == "update_ticket"
+                    )
+                ):
+                    scopes.add(required_scope)
+        elif (
+            scenario.metadata.get("stub_behavior") != "unauthorized"
+            and required_scope == "refund:own_order"
+        ):
+            scopes.add(required_scope)
+        return AuthorizationContext(
+            actor_id=actor_id,
+            customer_id=str(scenario.trigger.actor.get("customer_id", "")) or None,
+            scopes=frozenset(scopes),
+        )
 
     @staticmethod
     def _scheduled_injections(scenario: Scenario) -> tuple[ScheduledInjection, ...]:

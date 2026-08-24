@@ -5,7 +5,10 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from worker_worlds.contracts import Limits
+from worker_worlds.suite_jobs import SuiteBudget, SuiteJobRecord
 
 
 class ApiModel(BaseModel):
@@ -93,6 +96,7 @@ class AgentSummary(ApiModel):
     ready: bool
     missing_requirements: tuple[str, ...] = ()
     deterministic_test_infrastructure: bool = False
+    supported_domain_ids: tuple[str, ...] = ("commerce", "insurance")
 
 
 class AgentListResponse(ApiModel):
@@ -108,7 +112,48 @@ class CreateRunRequest(ApiModel):
     scenario_id: str = Field(min_length=1, max_length=200)
     worker: Literal["stub", "langgraph-fake", "openai-agents-fake"] = "stub"
     agent_id: str | None = Field(default=None, min_length=1, max_length=200)
-    world: Literal["stub", "postgres"] = "postgres"
+    world: Literal["stub", "postgres", "supply-chain", "insurance"] = "postgres"
+    domain_id: str | None = Field(default=None, min_length=1, max_length=100)
+    role_id: str | None = Field(default=None, min_length=1, max_length=100)
+    suite_id: str | None = Field(default=None, min_length=1, max_length=200)
+
+
+class CreateSuiteJobRequest(ApiModel):
+    """Bounded request for a durable catalog suite evaluation."""
+
+    request_key: str = Field(min_length=1, max_length=200)
+    domain_id: str = Field(min_length=1, max_length=100)
+    role_id: str = Field(min_length=1, max_length=100)
+    suite_id: str = Field(min_length=1, max_length=200)
+    agent_id: str = Field(min_length=1, max_length=200)
+    world: Literal["stub", "postgres", "supply-chain", "insurance"] = "postgres"
+    concurrency: int = Field(default=4, ge=1, le=16)
+    scenario_ids: tuple[str, ...] = Field(default=(), max_length=200)
+    seed: int | None = Field(default=None, ge=0)
+    limits: Limits | None = None
+    budget: SuiteBudget | None = None
+
+    @field_validator("scenario_ids")
+    @classmethod
+    def unique_scenarios(cls, value: tuple[str, ...]) -> tuple[str, ...]:
+        """Reject duplicate custom scenarios before persistence."""
+        if len(value) != len(set(value)):
+            raise ValueError("custom scenario IDs must be unique")
+        return value
+
+
+class SuiteJobListResponse(ApiModel):
+    """Stable newest-first collection of durable suite jobs."""
+
+    jobs: tuple[SuiteJobRecord, ...]
+    total: int = Field(ge=0)
+
+
+class CreateContextualComparisonRequest(ApiModel):
+    """Request a comparison between two completed compatible suite jobs."""
+
+    baseline_job_id: str = Field(min_length=1, max_length=200)
+    candidate_job_id: str = Field(min_length=1, max_length=200)
 
 
 class ComparisonSummary(ApiModel):
@@ -122,6 +167,10 @@ class ComparisonSummary(ApiModel):
     new_high: int = Field(ge=0)
     pass_rate_delta: float
     path: str
+    domain_id: str | None = None
+    role_id: str | None = None
+    suite_id: str | None = None
+    compatibility: str | None = None
 
 
 class ComparisonListResponse(ApiModel):

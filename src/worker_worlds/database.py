@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import os
 import re
+from contextlib import suppress
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -29,6 +30,10 @@ class DatabaseSettings:
     lease_seconds: float = 3600
     lease_renewal_seconds: float = 300
     snapshot_max_bytes: int = 10_000_000
+
+    def __post_init__(self) -> None:
+        """Validate direct construction as well as environment-based construction."""
+        self.validate()
 
     @classmethod
     def from_env(cls, *, require_explicit: bool = False) -> DatabaseSettings:
@@ -89,6 +94,7 @@ def migration_files() -> list[Path]:
 
 async def connect(settings: DatabaseSettings) -> asyncpg.Connection[asyncpg.Record]:
     """Connect with a clear infrastructure error."""
+    settings.validate()
     try:
         return await asyncpg.connect(settings.url, timeout=5)
     except (OSError, asyncpg.PostgresError, TimeoutError) as exc:
@@ -100,8 +106,10 @@ async def connect(settings: DatabaseSettings) -> asyncpg.Connection[asyncpg.Reco
 
 async def migrate(settings: DatabaseSettings) -> str:
     """Apply checksummed forward-only SQL migrations."""
+    settings.validate()
     connection = await connect(settings)
     try:
+        await connection.execute("SELECT pg_advisory_lock(hashtext('worker_worlds:migrations'))")
         await connection.execute(
             "CREATE SCHEMA IF NOT EXISTS worker_worlds; "
             "CREATE TABLE IF NOT EXISTS worker_worlds.schema_migrations ("
@@ -131,6 +139,10 @@ async def migrate(settings: DatabaseSettings) -> str:
         )
         return f"{int(latest):03d}"
     finally:
+        with suppress(asyncpg.PostgresError):
+            await connection.execute(
+                "SELECT pg_advisory_unlock(hashtext('worker_worlds:migrations'))"
+            )
         await connection.close()
 
 
@@ -166,14 +178,17 @@ async def cleanup_abandoned(settings: DatabaseSettings) -> int:
     connection = await connect(settings)
     cleaned = 0
     try:
-        rows = await connection.fetch(
-            "SELECT run_id, namespace FROM worker_worlds.run_leases "
-            "WHERE active AND expires_at < $1",
-            datetime.now(UTC),
-        )
-        for row in rows:
-            namespace = validate_namespace(str(row["namespace"]))
+        while True:
             async with connection.transaction():
+                row = await connection.fetchrow(
+                    "SELECT run_id, namespace FROM worker_worlds.run_leases "
+                    "WHERE active AND expires_at < $1 ORDER BY expires_at "
+                    "FOR UPDATE SKIP LOCKED LIMIT 1",
+                    datetime.now(UTC),
+                )
+                if row is None:
+                    break
+                namespace = validate_namespace(str(row["namespace"]))
                 await connection.execute(f'DROP SCHEMA IF EXISTS "{namespace}" CASCADE')
                 await connection.execute(
                     "DELETE FROM worker_worlds.run_leases WHERE run_id=$1", row["run_id"]

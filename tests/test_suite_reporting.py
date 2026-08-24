@@ -24,6 +24,7 @@ async def test_five_run_aggregate_preserves_records() -> None:
     suite = await _suite()
     assert len(suite.runs) == 5
     assert [record.repetition for record in suite.runs] == [0, 1, 2, 3, 4]
+    assert {record.seed for record in suite.runs} == {10, 11, 12, 13, 14}
     aggregate = suite.aggregates[0]
     assert aggregate.completed_repetitions == 5
     assert aggregate.passed == 5

@@ -116,8 +116,8 @@ def test_optional_live_provider_smoke(adapter_name: str) -> None:
                 await runtime.cancel()
             return
 
+        from langchain.agents import create_agent
         from langchain_openai import ChatOpenAI
-        from langgraph.prebuilt import create_react_agent
 
         from worker_worlds.langgraph_runtime import LangGraphRuntime
         from worker_worlds.scenarios import load_scenario
@@ -130,7 +130,7 @@ def test_optional_live_provider_smoke(adapter_name: str) -> None:
             temperature=0,
         )
         langgraph_runtime = LangGraphRuntime(
-            lambda tools, _context: create_react_agent(chat_model, tools),
+            lambda tools, _context: create_agent(chat_model, tools),
             model_provider="openai",
             model_name=model,
         )

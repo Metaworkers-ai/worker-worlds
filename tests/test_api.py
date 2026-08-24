@@ -1,19 +1,60 @@
 """HTTP API contract and real runner integration tests."""
 
+import asyncio
 import importlib.util
+import os
+import sys
 from pathlib import Path
 
 import pytest
 from httpx import ASGITransport, AsyncClient
 
 import worker_worlds.api as api_module
-from worker_worlds.api import create_app
+from worker_worlds.api import create_app, main
+from worker_worlds.catalog import load_catalog
+from worker_worlds.database import DatabaseSettings, connect
+from worker_worlds.ids import prefixed_ulid
 
 
 def _client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> AsyncClient:
     monkeypatch.setenv("WORKER_WORLDS_ARTIFACT_DIR", str(tmp_path / "artifacts"))
     monkeypatch.setenv("WORKER_WORLDS_SCENARIO_DIR", str(Path("examples/scenarios").resolve()))
     return AsyncClient(transport=ASGITransport(app=create_app()), base_url="http://test")
+
+
+def test_source_checkout_scenarios_precede_stale_editable_install(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.delenv("WORKER_WORLDS_SCENARIO_DIR", raising=False)
+    workspace = tmp_path / "workspace"
+    expected = tuple(
+        workspace / relative
+        for relative in ("examples/scenarios", "scenarios/release", "scenarios/enterprise")
+    )
+    for root in expected:
+        root.mkdir(parents=True)
+    package_share = tmp_path / "venv" / "share" / "worker-worlds" / "scenarios"
+    package_share.mkdir(parents=True)
+    monkeypatch.chdir(workspace)
+    monkeypatch.setattr(sys, "prefix", str(tmp_path / "venv"))
+
+    assert api_module._scenario_roots() == expected
+
+
+def test_default_scenario_roots_cover_every_catalog_suite(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("WORKER_WORLDS_SCENARIO_DIR", raising=False)
+    available = set(api_module._scenarios())
+    catalog = load_catalog()
+
+    missing = {
+        str(scenario_id)
+        for suite in catalog.suites
+        for scenario_id in suite.scenario_ids
+        if str(scenario_id) not in available
+    }
+    assert not missing
 
 
 async def test_api_lists_real_scenarios_and_empty_workspace(
@@ -74,6 +115,21 @@ async def test_api_rejects_unknown_scenario_and_path_like_run_id(
     assert (await client.get("/api/v1/runs/..%2Fsecret")).status_code == 404
 
 
+async def test_cors_allows_dashboard_cancellation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    client = _client(tmp_path, monkeypatch)
+    response = await client.options(
+        "/api/v1/suite-jobs/suitejob_test",
+        headers={
+            "Origin": "http://localhost:3000",
+            "Access-Control-Request-Method": "DELETE",
+        },
+    )
+    assert response.status_code == 200
+    assert "DELETE" in response.headers["access-control-allow-methods"]
+
+
 async def test_health_is_redacted(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     client = _client(tmp_path, monkeypatch)
 
@@ -85,6 +141,13 @@ async def test_health_is_redacted(tmp_path: Path, monkeypatch: pytest.MonkeyPatc
     assert payload["status"] == "ready"
     assert "postgresql://" not in str(payload)
     assert payload["artifact_directory"] == "[external-artifact-directory]"
+
+
+def test_api_refuses_accidental_public_bind(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("WORKER_WORLDS_API_HOST", "0.0.0.0")
+    monkeypatch.delenv("WORKER_WORLDS_ALLOW_NON_LOOPBACK_API", raising=False)
+    with pytest.raises(SystemExit, match="refusing non-loopback"):
+        main()
 
 
 async def test_api_agents_are_registry_backed_and_redacted(
@@ -170,3 +233,127 @@ async def test_api_agent_errors_are_typed_and_strict(
         json={"scenario_id": "refund.partial.happy", "world": "stub", "unknown": True},
     )
     assert extra.status_code == 422
+
+
+async def test_api_rejects_demonstration_scenario_for_live_adapter(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "fake-not-a-real-key")
+    client = _client(tmp_path, monkeypatch)
+    response = await client.post(
+        "/api/v1/runs",
+        json={
+            "scenario_id": "refund.partial.happy",
+            "agent_id": "openai-project",
+            "world": "stub",
+        },
+    )
+    assert response.status_code == 409
+    assert response.json()["detail"] == {
+        "type": "ScenarioNotLiveReady",
+        "message": "selected scenario is not approved for live adapters",
+        "scenario_count": 1,
+    }
+
+
+async def test_catalog_endpoints_are_versioned_and_deterministic(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    client = _client(tmp_path, monkeypatch)
+    first = await client.get("/api/v1/catalog")
+    second = await client.get("/api/v1/catalog")
+    assert first.status_code == 200
+    assert first.content == second.content
+    payload = first.json()
+    assert payload["catalog_version"] == "1.0.0"
+    assert payload["domains"][0]["id"] == "commerce"
+    roles = await client.get("/api/v1/domains/commerce/roles")
+    assert len(roles.json()) == 7
+    suites = await client.get("/api/v1/roles/refund-specialist/suites")
+    assert {item["tier"] for item in suites.json()} == {"smoke", "standard", "full", "custom"}
+    assert (await client.get("/api/v1/domains/missing/roles")).status_code == 404
+
+
+async def test_context_selection_is_validated_and_persisted_as_sidecar(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    client = _client(tmp_path, monkeypatch)
+    monkeypatch.setenv("WORKER_WORLDS_SCENARIO_DIR", str(Path("scenarios/release").resolve()))  # noqa: ASYNC240
+    payload = {
+        "scenario_id": "commerce.refunds-payments.001",
+        "worker": "stub",
+        "world": "stub",
+        "domain_id": "commerce",
+        "role_id": "refund-specialist",
+        "suite_id": "commerce.refund-specialist.smoke",
+    }
+    response = await client.post("/api/v1/runs", json=payload)
+    assert response.status_code == 201, response.text
+    run_id = response.json()["id"]
+    manifest = tmp_path / "artifacts" / "contexts" / f"{run_id}.json"
+    assert manifest.is_file()
+    assert '"role_id":"refund-specialist"' in manifest.read_text(encoding="utf-8")
+    mismatch = await client.post(
+        "/api/v1/runs", json={**payload, "role_id": "inventory-controller"}
+    )
+    assert mismatch.status_code == 409
+    assert mismatch.json()["detail"]["type"] == "IncompatibleEvaluationSelection"
+    world_mismatch = await client.post("/api/v1/runs", json={**payload, "world": "insurance"})
+    assert world_mismatch.status_code == 409
+    assert world_mismatch.json()["detail"]["type"] == "IncompatibleWorldSelection"
+
+
+async def test_custom_suite_api_runs_and_downloads_evidence(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    url = os.environ.get("WORKER_WORLDS_TEST_DATABASE_URL")
+    if not url:
+        pytest.skip("WORKER_WORLDS_TEST_DATABASE_URL is not explicitly set")
+    monkeypatch.setenv("WORKER_WORLDS_DATABASE_URL", url)
+    client = _client(tmp_path, monkeypatch)
+    monkeypatch.setenv("WORKER_WORLDS_SCENARIO_DIR", str(Path("scenarios/release").resolve()))  # noqa: ASYNC240
+    response = await client.post(
+        "/api/v1/suite-jobs",
+        json={
+            "request_key": prefixed_ulid("request"),
+            "domain_id": "commerce",
+            "role_id": "refund-specialist",
+            "suite_id": "commerce.refund-specialist.custom",
+            "agent_id": "local-stub",
+            "world": "stub",
+            "concurrency": 1,
+            "scenario_ids": ["commerce.refunds-payments.001"],
+            "seed": 3001,
+            "budget": {
+                "deadline_s": 30,
+                "scenarios": 1,
+                "tool_calls": 10,
+                "model_tokens": 1000,
+                "mutations": 10,
+                "cost_minor": 0,
+            },
+        },
+    )
+    assert response.status_code == 202, response.text
+    assert response.json()["configuration"]["seed_override"] == 3001
+    assert response.json()["configuration"]["suite_budget"]["scenarios"] == 1
+    job_id = response.json()["id"]
+    try:
+        for _ in range(100):
+            detail = await client.get(f"/api/v1/suite-jobs/{job_id}")
+            if (
+                detail.json()["status"] in {"completed", "failed", "cancelled"}
+                and detail.json()["suite_record_path"]
+            ):
+                break
+            await asyncio.sleep(0.01)
+        assert detail.json()["status"] == "completed"
+        evidence = await client.get(f"/api/v1/suite-jobs/{job_id}/evidence")
+        assert evidence.status_code == 200
+        assert evidence.headers["content-type"] == "application/zip"
+    finally:
+        connection = await connect(DatabaseSettings(url=url))
+        try:
+            await connection.execute("DELETE FROM worker_worlds.suite_jobs WHERE id=$1", job_id)
+        finally:
+            await connection.close()

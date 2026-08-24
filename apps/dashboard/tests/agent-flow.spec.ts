@@ -59,6 +59,164 @@ const scenarioList = {
   ],
 };
 
+const catalog = {
+  schema_version: "1.0",
+  catalog_version: "1.0.0",
+  domains: [
+    {
+      schema_version: "1.0",
+      id: "commerce",
+      version: "1.0.0",
+      label: "Retail & E-commerce",
+      description: "Commerce evaluations",
+      world_names: ["postgres-commerce"],
+      role_ids: ["refund-specialist"],
+      capability_ids: ["refund-resolution"],
+    },
+    {
+      schema_version: "1.0",
+      id: "insurance",
+      version: "1.0.0",
+      label: "Insurance",
+      description: "Claims evaluations",
+      world_names: ["postgres-insurance"],
+      role_ids: ["claims-adjuster"],
+      capability_ids: ["claims-adjustment"],
+    },
+  ],
+  roles: [
+    {
+      schema_version: "1.0",
+      id: "refund-specialist",
+      domain_id: "commerce",
+      version: "1.0.0",
+      label: "Refund Specialist",
+      description: "Refund evaluations",
+      capability_ids: ["refund-resolution"],
+    },
+    {
+      schema_version: "1.0",
+      id: "claims-adjuster",
+      domain_id: "insurance",
+      version: "1.0.0",
+      label: "Claims Adjuster",
+      description: "Claims evaluations",
+      capability_ids: ["claims-adjustment"],
+    },
+  ],
+  capabilities: [
+    {
+      schema_version: "1.0",
+      id: "refund-resolution",
+      domain_id: "commerce",
+      version: "1.0.0",
+      label: "Refund resolution",
+      description: "Resolve refunds safely",
+    },
+    {
+      schema_version: "1.0",
+      id: "claims-adjustment",
+      domain_id: "insurance",
+      version: "1.0.0",
+      label: "Claims adjustment",
+      description: "Resolve claims safely",
+    },
+  ],
+  suites: [
+    {
+      schema_version: "1.0",
+      id: "commerce.refund-specialist.smoke",
+      domain_id: "commerce",
+      role_id: "refund-specialist",
+      revision: "1.0.0",
+      label: "Refund Specialist Smoke",
+      tier: "smoke",
+      scenario_ids: ["refund.partial.happy"],
+      capability_ids: ["refund-resolution"],
+      estimated_duration_s: 3,
+      default_limits: {
+        schema_version: "1.0",
+        wall_time_s: 30,
+        tool_calls: 20,
+        model_tokens: 12000,
+        worker_turns: 50,
+        mutations: 20,
+        cost_minor: 0,
+        tool_timeout_s: 10,
+        injections: 20,
+      },
+    },
+    {
+      schema_version: "1.0",
+      id: "commerce.refund-specialist.custom",
+      domain_id: "commerce",
+      role_id: "refund-specialist",
+      revision: "1.0.0",
+      label: "Refund Specialist Custom",
+      tier: "custom",
+      scenario_ids: [],
+      capability_ids: ["refund-resolution"],
+      estimated_duration_s: 0,
+      default_limits: {
+        schema_version: "1.0",
+        wall_time_s: 30,
+        tool_calls: 20,
+        model_tokens: 12000,
+        worker_turns: 50,
+        mutations: 20,
+        cost_minor: 0,
+        tool_timeout_s: 10,
+        injections: 20,
+      },
+    },
+    {
+      schema_version: "1.0",
+      id: "insurance.claims-adjuster.smoke",
+      domain_id: "insurance",
+      role_id: "claims-adjuster",
+      revision: "1.0.0",
+      label: "Claims Adjuster Smoke",
+      tier: "smoke",
+      scenario_ids: ["insurance.claims.001"],
+      capability_ids: ["claims-adjustment"],
+      estimated_duration_s: 4,
+      default_limits: {
+        schema_version: "1.0",
+        wall_time_s: 30,
+        tool_calls: 20,
+        model_tokens: 12000,
+        worker_turns: 50,
+        mutations: 20,
+        cost_minor: 0,
+        tool_timeout_s: 10,
+        injections: 20,
+      },
+    },
+  ],
+  classifications: [
+    {
+      schema_version: "1.0",
+      scenario_id: "refund.partial.happy",
+      scenario_hash: "a".repeat(64),
+      domain_id: "commerce",
+      role_ids: ["refund-specialist"],
+      capability_id: "refund-resolution",
+      difficulty: "basic",
+      risk_category: "financial",
+    },
+    {
+      schema_version: "1.0",
+      scenario_id: "insurance.claims.001",
+      scenario_hash: "b".repeat(64),
+      domain_id: "insurance",
+      role_ids: ["claims-adjuster"],
+      capability_id: "claims-adjustment",
+      difficulty: "basic",
+      risk_category: "financial",
+    },
+  ],
+};
+
 const runRecord = {
   schema_version: "1.0",
   id: "run_browser_test",
@@ -108,6 +266,7 @@ function providerRunRecord(adapter: string) {
 async function mockDashboardApi(
   page: Page,
   postRun: (body: Record<string, unknown>) => Promise<void> | void,
+  postSuite?: (body: Record<string, unknown>) => Promise<void> | void,
 ) {
   await page.route("**/api/v1/**", async (route) => {
     const request = route.request();
@@ -115,6 +274,41 @@ async function mockDashboardApi(
     if (path === "/api/v1/runs" && request.method() === "POST") {
       await postRun(request.postDataJSON() as Record<string, unknown>);
       await route.fulfill({ status: 201, json: runRecord });
+      return;
+    }
+    if (path === "/api/v1/suite-jobs" && request.method() === "POST") {
+      await postSuite?.(request.postDataJSON() as Record<string, unknown>);
+      await route.fulfill({
+        status: 202,
+        json: {
+          schema_version: "1.0",
+          id: "suitejob_browser",
+          request_key: "browser-request",
+          status: "completed",
+          catalog_version: "1.0.0",
+          domain_id: "commerce",
+          role_id: "refund-specialist",
+          suite_id: "commerce.refund-specialist.smoke",
+          suite_revision: "1.0.0",
+          agent_id: "local-stub",
+          world: "postgres",
+          configuration: {},
+          total_scenarios: 1,
+          completed_scenarios: 1,
+          passed_scenarios: 1,
+          failed_scenarios: 0,
+          cancel_requested: false,
+          revision: 2,
+          scenarios: [],
+          error_type: null,
+          error_message: null,
+          suite_record_path: "suitejob_browser/suite.json",
+          created_at: "2026-08-20T00:00:00Z",
+          updated_at: "2026-08-20T00:00:01Z",
+          started_at: "2026-08-20T00:00:00Z",
+          ended_at: "2026-08-20T00:00:01Z",
+        },
+      });
       return;
     }
     const responses: Record<string, unknown> = {
@@ -145,10 +339,171 @@ async function mockDashboardApi(
         comparisons: [],
         total: 0,
       },
+      "/api/v1/catalog": catalog,
     };
     await route.fulfill({ status: 200, json: responses[path] });
   });
 }
+
+test("completes the domain-role-suite-agent wizard with real catalog values", async ({
+  page,
+}) => {
+  let submitted: Record<string, unknown> | null = null;
+  await mockDashboardApi(
+    page,
+    () => undefined,
+    (body) => {
+      submitted = body;
+    },
+  );
+  await page.goto("/");
+  await page.getByRole("button", { name: "Run evaluation" }).click();
+  await expect(page.getByLabel("Choose domain")).toHaveValue("commerce");
+  await expect(page.getByLabel("Choose job role")).toHaveValue("refund-specialist");
+  await expect(page.getByLabel("Choose evaluation suite")).toHaveValue(
+    "commerce.refund-specialist.smoke",
+  );
+  await expect(page.getByText("Risk coverage: financial")).toBeVisible();
+  await page.getByRole("button", { name: "Start evaluation suite" }).click();
+  await expect.poll(() => submitted).not.toBeNull();
+  expect(submitted).toMatchObject({
+    schema_version: "1.0",
+    domain_id: "commerce",
+    role_id: "refund-specialist",
+    suite_id: "commerce.refund-specialist.smoke",
+    agent_id: "local-stub",
+    world: "postgres",
+  });
+  await expect(page.getByText("Suite completed")).toBeVisible();
+});
+
+test("selects insurance and submits advanced deterministic budgets", async ({ page }) => {
+  let submitted: Record<string, unknown> | null = null;
+  await mockDashboardApi(page, () => undefined, (body) => {
+    submitted = body;
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Run evaluation" }).click();
+  await page.getByLabel("Choose domain").selectOption("insurance");
+  await expect(page.getByLabel("Choose job role")).toHaveValue("claims-adjuster");
+  await expect(page.getByLabel("Suite world")).toHaveValue("insurance");
+  await page.getByText("Advanced controls").click();
+  await page.getByLabel("Seed override").fill("7001");
+  await page.getByLabel("Suite deadline (seconds)").fill("45");
+  await page.getByLabel("Suite token budget").fill("5000");
+  await page.getByLabel("Suite mutation budget").fill("3");
+  await page.getByLabel("Injections per scenario").fill("2");
+  await page.getByRole("button", { name: "Start evaluation suite" }).click();
+  await expect.poll(() => submitted).not.toBeNull();
+  expect(submitted).toMatchObject({
+    domain_id: "insurance",
+    role_id: "claims-adjuster",
+    suite_id: "insurance.claims-adjuster.smoke",
+    world: "insurance",
+    seed: 7001,
+    limits: { injections: 2 },
+    budget: {
+      deadline_s: 45,
+      scenarios: 1,
+      model_tokens: 5000,
+      mutations: 3,
+    },
+  });
+});
+
+test("builds a custom role suite without exposing internal database choices", async ({ page }) => {
+  let submitted: Record<string, unknown> | null = null;
+  await mockDashboardApi(page, () => undefined, (body) => {
+    submitted = body;
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Run evaluation" }).click();
+  await page.getByLabel("Choose evaluation suite").selectOption(
+    "commerce.refund-specialist.custom",
+  );
+  await page.getByText("refund.partial.happy", { exact: true }).click();
+  await page.getByRole("button", { name: "Start evaluation suite" }).click();
+  await expect.poll(() => submitted).not.toBeNull();
+  expect(submitted).toMatchObject({
+    suite_id: "commerce.refund-specialist.custom",
+    scenario_ids: ["refund.partial.happy"],
+    world: "postgres",
+  });
+});
+
+test("compares two completed agents only inside the selected evaluation context", async ({
+  page,
+}) => {
+  await mockDashboardApi(page, () => undefined);
+  const job = (id: string, agentId: string) => ({
+    schema_version: "1.0",
+    id,
+    request_key: `request-${id}`,
+    status: "completed",
+    catalog_version: "1.0.0",
+    domain_id: "commerce",
+    role_id: "refund-specialist",
+    suite_id: "commerce.refund-specialist.smoke",
+    suite_revision: "1.0.0",
+    agent_id: agentId,
+    world: "postgres",
+    configuration: {},
+    total_scenarios: 1,
+    completed_scenarios: 1,
+    passed_scenarios: 1,
+    failed_scenarios: 0,
+    cancel_requested: false,
+    revision: 2,
+    scenarios: [],
+    error_type: null,
+    error_message: null,
+    suite_record_path: `${id}/suite.json`,
+    created_at: "2026-08-22T00:00:00Z",
+    updated_at: "2026-08-22T00:01:00Z",
+    started_at: "2026-08-22T00:00:01Z",
+    ended_at: "2026-08-22T00:01:00Z",
+  });
+  const baseline = job("suitejob_baseline", "openai-project-v1");
+  const candidate = job("suitejob_candidate", "openai-project-v2");
+  let submitted: Record<string, unknown> | null = null;
+  await page.route("**/api/v1/suite-jobs?limit=200", (route) =>
+    route.fulfill({
+      status: 200,
+      json: { schema_version: "1.0", jobs: [baseline, candidate], total: 2 },
+    }),
+  );
+  await page.route("**/api/v1/comparisons/contextual", async (route) => {
+    submitted = route.request().postDataJSON();
+    await route.fulfill({
+      status: 201,
+      json: {
+        schema_version: "1.0",
+        id: "context-comparison_test",
+        compatibility: "compatible",
+        compatibility_reasons: [],
+        passed: true,
+        role_summary: {
+          baseline: { pass_rate: 1, failures: 0, tool_calls: 6, duration_ms: 100 },
+          candidate: { pass_rate: 1, failures: 0, tool_calls: 5, duration_ms: 90 },
+          pass_rate_delta: 0,
+          failure_delta: 0,
+          tool_call_delta: -1,
+          duration_delta_ms: -10,
+        },
+      },
+    });
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Comparisons" }).click();
+  await expect(page.getByLabel("Choose comparison domain")).toHaveValue("commerce");
+  await page.getByRole("button", { name: "Compare completed suites" }).click();
+  await expect.poll(() => submitted).not.toBeNull();
+  expect(submitted).toMatchObject({
+    baseline_job_id: "suitejob_baseline",
+    candidate_job_id: "suitejob_candidate",
+  });
+  await expect(page.getByText("Regression gate passed")).toBeVisible();
+});
 
 test("selects a ready agent, disables unavailable agents, and submits agent_id", async ({
   page,
@@ -280,6 +635,7 @@ for (const agent of [
           total: created ? 1 : 0,
         },
         "/api/v1/comparisons": { schema_version: "1.0", comparisons: [], total: 0 },
+        "/api/v1/catalog": catalog,
       };
       await route.fulfill({ status: 200, json: responses[path] });
     });
@@ -334,6 +690,7 @@ test("shows loading, degraded, empty, and no-ready-agent states", async ({ page 
       },
       "/api/v1/runs": { schema_version: "1.0", runs: [], total: 0 },
       "/api/v1/comparisons": { schema_version: "1.0", comparisons: [], total: 0 },
+      "/api/v1/catalog": catalog,
     };
     await route.fulfill({ status: 200, json: responses[path] });
   });

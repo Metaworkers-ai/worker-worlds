@@ -1,0 +1,460 @@
+{
+  "$defs": {
+    "CapabilityDefinition": {
+      "additionalProperties": false,
+      "description": "One independently versioned business capability.",
+      "properties": {
+        "description": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "domain_id": {
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+          "title": "Domain Id",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "domain_id",
+        "version",
+        "label",
+        "description"
+      ],
+      "title": "CapabilityDefinition",
+      "type": "object"
+    },
+    "Difficulty": {
+      "description": "Bounded scenario difficulty.",
+      "enum": [
+        "basic",
+        "intermediate",
+        "advanced",
+        "adversarial"
+      ],
+      "title": "Difficulty",
+      "type": "string"
+    },
+    "DomainDefinition": {
+      "additionalProperties": false,
+      "description": "A deterministic enterprise world offered by Worker Worlds.",
+      "properties": {
+        "capability_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "type": "string"
+          },
+          "title": "Capability Ids",
+          "type": "array"
+        },
+        "description": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "role_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "type": "string"
+          },
+          "title": "Role Ids",
+          "type": "array"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "title": "Version",
+          "type": "string"
+        },
+        "world_names": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "type": "string"
+          },
+          "title": "World Names",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "label",
+        "description",
+        "world_names",
+        "role_ids",
+        "capability_ids"
+      ],
+      "title": "DomainDefinition",
+      "type": "object"
+    },
+    "EvaluationSuiteDefinition": {
+      "additionalProperties": false,
+      "description": "Immutable deterministic membership for a role evaluation.",
+      "properties": {
+        "capability_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "type": "string"
+          },
+          "title": "Capability Ids",
+          "type": "array"
+        },
+        "default_limits": {
+          "$ref": "#/$defs/Limits"
+        },
+        "domain_id": {
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+          "title": "Domain Id",
+          "type": "string"
+        },
+        "estimated_duration_s": {
+          "minimum": 0,
+          "title": "Estimated Duration S",
+          "type": "integer"
+        },
+        "id": {
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "revision": {
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "title": "Revision",
+          "type": "string"
+        },
+        "role_id": {
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+          "title": "Role Id",
+          "type": "string"
+        },
+        "scenario_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Scenario Ids",
+          "type": "array"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "tier": {
+          "$ref": "#/$defs/SuiteTier"
+        }
+      },
+      "required": [
+        "id",
+        "domain_id",
+        "role_id",
+        "revision",
+        "label",
+        "tier",
+        "scenario_ids",
+        "capability_ids",
+        "estimated_duration_s"
+      ],
+      "title": "EvaluationSuiteDefinition",
+      "type": "object"
+    },
+    "Limits": {
+      "additionalProperties": false,
+      "description": "Execution budgets for a scenario.",
+      "properties": {
+        "cost_minor": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Cost Minor",
+          "type": "integer"
+        },
+        "injections": {
+          "default": 20,
+          "minimum": 0,
+          "title": "Injections",
+          "type": "integer"
+        },
+        "model_tokens": {
+          "default": 12000,
+          "minimum": 0,
+          "title": "Model Tokens",
+          "type": "integer"
+        },
+        "mutations": {
+          "default": 20,
+          "minimum": 0,
+          "title": "Mutations",
+          "type": "integer"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "tool_calls": {
+          "default": 20,
+          "minimum": 0,
+          "title": "Tool Calls",
+          "type": "integer"
+        },
+        "tool_timeout_s": {
+          "default": 10,
+          "exclusiveMinimum": 0,
+          "title": "Tool Timeout S",
+          "type": "number"
+        },
+        "wall_time_s": {
+          "default": 30,
+          "exclusiveMinimum": 0,
+          "title": "Wall Time S",
+          "type": "number"
+        },
+        "worker_turns": {
+          "default": 50,
+          "exclusiveMinimum": 0,
+          "title": "Worker Turns",
+          "type": "integer"
+        }
+      },
+      "title": "Limits",
+      "type": "object"
+    },
+    "RiskCategory": {
+      "description": "Bounded enterprise risk category.",
+      "enum": [
+        "financial",
+        "authorization",
+        "operational",
+        "safety",
+        "reliability"
+      ],
+      "title": "RiskCategory",
+      "type": "string"
+    },
+    "RoleDefinition": {
+      "additionalProperties": false,
+      "description": "A business role and the capabilities it is evaluated against.",
+      "properties": {
+        "capability_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "type": "string"
+          },
+          "title": "Capability Ids",
+          "type": "array"
+        },
+        "description": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "domain_id": {
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+          "title": "Domain Id",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "domain_id",
+        "version",
+        "label",
+        "description",
+        "capability_ids"
+      ],
+      "title": "RoleDefinition",
+      "type": "object"
+    },
+    "ScenarioClassification": {
+      "additionalProperties": false,
+      "description": "External taxonomy for one immutable scenario definition.",
+      "properties": {
+        "capability_id": {
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+          "title": "Capability Id",
+          "type": "string"
+        },
+        "difficulty": {
+          "$ref": "#/$defs/Difficulty"
+        },
+        "domain_id": {
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+          "title": "Domain Id",
+          "type": "string"
+        },
+        "risk_category": {
+          "$ref": "#/$defs/RiskCategory"
+        },
+        "role_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "type": "string"
+          },
+          "title": "Role Ids",
+          "type": "array"
+        },
+        "scenario_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Scenario Hash",
+          "type": "string"
+        },
+        "scenario_id": {
+          "title": "Scenario Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scenario_id",
+        "scenario_hash",
+        "domain_id",
+        "role_ids",
+        "capability_id",
+        "difficulty",
+        "risk_category"
+      ],
+      "title": "ScenarioClassification",
+      "type": "object"
+    },
+    "SuiteTier": {
+      "description": "Supported deterministic suite sizes.",
+      "enum": [
+        "smoke",
+        "standard",
+        "full",
+        "custom"
+      ],
+      "title": "SuiteTier",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Validated immutable aggregate for every catalog reference.",
+  "properties": {
+    "capabilities": {
+      "items": {
+        "$ref": "#/$defs/CapabilityDefinition"
+      },
+      "title": "Capabilities",
+      "type": "array"
+    },
+    "catalog_version": {
+      "default": "1.0.0",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "title": "Catalog Version",
+      "type": "string"
+    },
+    "classifications": {
+      "items": {
+        "$ref": "#/$defs/ScenarioClassification"
+      },
+      "title": "Classifications",
+      "type": "array"
+    },
+    "domains": {
+      "items": {
+        "$ref": "#/$defs/DomainDefinition"
+      },
+      "title": "Domains",
+      "type": "array"
+    },
+    "roles": {
+      "items": {
+        "$ref": "#/$defs/RoleDefinition"
+      },
+      "title": "Roles",
+      "type": "array"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "suites": {
+      "items": {
+        "$ref": "#/$defs/EvaluationSuiteDefinition"
+      },
+      "title": "Suites",
+      "type": "array"
+    }
+  },
+  "required": [
+    "domains",
+    "roles",
+    "capabilities",
+    "suites",
+    "classifications"
+  ],
+  "title": "Catalog",
+  "type": "object"
+}

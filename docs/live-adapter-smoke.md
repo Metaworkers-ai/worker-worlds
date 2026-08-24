@@ -28,8 +28,8 @@ ledger. The default bounded smoke uses non-reasoning `gpt-4.1-mini` at its
 documented $0.40/M input-token and $1.60/M output-token rates; reasoning models
 may consume the 64-token smoke ceiling before producing a final answer.
 
-The tested optional dependency compatibility set is `openai-agents==0.22.0`,
-`langgraph==0.6.11`, and `langchain-openai==1.6.0`. Update these pins only after
+The tested optional dependency compatibility set is `openai-agents==0.19.4`,
+`langgraph==1.2.10`, `langchain==1.3.14`, and `langchain-openai==1.4.1`. Update these pins only after
 the fake-model conformance, cold-install, and guarded live-smoke contracts pass.
 
 Live smoke authorization is separate from ordinary test execution. Default CI,

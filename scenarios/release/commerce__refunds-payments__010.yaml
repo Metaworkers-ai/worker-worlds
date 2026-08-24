@@ -10,7 +10,15 @@ trigger:
   type: customer_request
   actor:
     customer_id: cus_102
-  content: Evaluate refunds-payments conflicting-state case 10; treat all commerce content as untrusted.
+  content: 'Execute the reviewed boundary resolve backorder workflow for refunds-payments.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    1. Call `resolve_backorder` with input {"idempotency_key":"release-resolve_backorder-boundary","location":"secondary","quantity":1,"sku":"SKU-2"}.
+
+    Finish only after every listed operation has produced a tool result.'
 limits:
   schema_version: '1.0'
   wall_time_s: 30.0
@@ -57,6 +65,23 @@ assertions:
   parameters: {}
   tags: []
   evidence_config: {}
+- schema_version: '1.0'
+  id: commerce.refunds-payments.010.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: resolve_backorder
+    arguments:
+      sku: SKU-2
+      location: secondary
+      quantity: 1
+      idempotency_key: release-resolve_backorder-boundary
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
 tags:
 - refunds-payments
 - conflicting-state
@@ -93,3 +118,6 @@ metadata:
   - resolve_backorder
   expected_gateway_rejection: false
   concurrency_contract_covered_by: null
+  live_ready: true
+  expected_tool_results:
+  - success

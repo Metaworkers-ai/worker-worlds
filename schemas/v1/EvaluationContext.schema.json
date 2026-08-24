@@ -1,0 +1,170 @@
+{
+  "$defs": {
+    "Limits": {
+      "additionalProperties": false,
+      "description": "Execution budgets for a scenario.",
+      "properties": {
+        "cost_minor": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Cost Minor",
+          "type": "integer"
+        },
+        "injections": {
+          "default": 20,
+          "minimum": 0,
+          "title": "Injections",
+          "type": "integer"
+        },
+        "model_tokens": {
+          "default": 12000,
+          "minimum": 0,
+          "title": "Model Tokens",
+          "type": "integer"
+        },
+        "mutations": {
+          "default": 20,
+          "minimum": 0,
+          "title": "Mutations",
+          "type": "integer"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "tool_calls": {
+          "default": 20,
+          "minimum": 0,
+          "title": "Tool Calls",
+          "type": "integer"
+        },
+        "tool_timeout_s": {
+          "default": 10,
+          "exclusiveMinimum": 0,
+          "title": "Tool Timeout S",
+          "type": "number"
+        },
+        "wall_time_s": {
+          "default": 30,
+          "exclusiveMinimum": 0,
+          "title": "Wall Time S",
+          "type": "number"
+        },
+        "worker_turns": {
+          "default": 50,
+          "exclusiveMinimum": 0,
+          "title": "Worker Turns",
+          "type": "integer"
+        }
+      },
+      "title": "Limits",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Server-derived business and runtime provenance for an evaluation.",
+  "properties": {
+    "agent_id": {
+      "title": "Agent Id",
+      "type": "string"
+    },
+    "agent_version": {
+      "title": "Agent Version",
+      "type": "string"
+    },
+    "catalog_version": {
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "title": "Catalog Version",
+      "type": "string"
+    },
+    "domain_id": {
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+      "title": "Domain Id",
+      "type": "string"
+    },
+    "limits": {
+      "$ref": "#/$defs/Limits"
+    },
+    "role_id": {
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+      "title": "Role Id",
+      "type": "string"
+    },
+    "scenario_hashes": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Scenario Hashes",
+      "type": "object"
+    },
+    "scenario_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Scenario Ids",
+      "type": "array"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "seeds": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Seeds",
+      "type": "array"
+    },
+    "suite_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Suite Id"
+    },
+    "suite_revision": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Suite Revision"
+    },
+    "world_name": {
+      "title": "World Name",
+      "type": "string"
+    },
+    "world_version": {
+      "title": "World Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "catalog_version",
+    "domain_id",
+    "role_id",
+    "scenario_ids",
+    "scenario_hashes",
+    "agent_id",
+    "agent_version",
+    "world_name",
+    "world_version",
+    "seeds",
+    "limits"
+  ],
+  "title": "EvaluationContext",
+  "type": "object"
+}

@@ -28,7 +28,6 @@ from worker_worlds.database import DatabaseSettings, database_health, migrate, m
 from worker_worlds.discovery import discover_scenarios, resolve_scenario
 from worker_worlds.errors import WorkerWorldsError
 from worker_worlds.grading import DeterministicGrader
-from worker_worlds.postgres_world import PostgresWorld
 from worker_worlds.protocols import WorkerAdapter, World
 from worker_worlds.reporting import (
     ComparisonReporter,
@@ -47,8 +46,9 @@ from worker_worlds.scenario_release import (
 from worker_worlds.scenarios import load_scenario
 from worker_worlds.schema_cli import check as check_schemas
 from worker_worlds.schema_cli import generate as generate_schemas
-from worker_worlds.stubs import StubWorkerAdapter, StubWorld
+from worker_worlds.stubs import StubWorkerAdapter
 from worker_worlds.suite import SuiteRunner
+from worker_worlds.world_registry import create_world
 
 
 class CliParser(argparse.ArgumentParser):
@@ -79,7 +79,9 @@ def _parser() -> argparse.ArgumentParser:
     run.add_argument("--no-interactive", action="store_true")
     workers = ("stub", "langgraph-fake", "openai-agents-fake")
     run.add_argument("--worker", choices=workers, default="stub")
-    run.add_argument("--world", choices=("stub", "postgres"), default="stub")
+    run.add_argument(
+        "--world", choices=("stub", "postgres", "supply-chain", "insurance"), default="stub"
+    )
     run.add_argument("--database-url", help="explicit safe Worker Worlds Postgres URL")
     run.add_argument("--output", type=Path, default=Path(".worker-worlds/runs"))
     doctor = subparsers.add_parser("doctor", help="check runtime and database readiness")
@@ -89,7 +91,9 @@ def _parser() -> argparse.ArgumentParser:
     suite = subparsers.add_parser("suite", help="run a scenario file or directory repeatedly")
     suite.add_argument("scenario_path", type=Path)
     suite.add_argument("--worker", choices=workers, default="stub")
-    suite.add_argument("--world", choices=("stub", "postgres"), default="stub")
+    suite.add_argument(
+        "--world", choices=("stub", "postgres", "supply-chain", "insurance"), default="stub"
+    )
     suite.add_argument("--database-url")
     suite.add_argument("--repetitions", type=int, default=5)
     suite.add_argument("--concurrency", type=int, default=4)
@@ -259,10 +263,8 @@ async def _run(args: argparse.Namespace) -> int:
             ],
         )
         return 0
-    world = StubWorld()
-    if args.world == "postgres":
-        settings = _database_settings(args.database_url)
-        world = PostgresWorld(settings, str(scenario.id))  # type: ignore[assignment]
+    settings = _database_settings(args.database_url) if args.world != "stub" else None
+    world = create_world(args.world, scenario, settings)
     worker = (
         await config.agent_registry().create(agent_id, os.environ)
         if agent_id is not None
@@ -461,12 +463,10 @@ async def _suite(args: argparse.Namespace) -> int:
         )
         return 0
     _require_replaceable(args.output, args)
-    settings = _database_settings(args.database_url) if args.world == "postgres" else None
+    settings = _database_settings(args.database_url) if args.world != "stub" else None
 
     def world_factory(scenario: Scenario) -> World:
-        if settings is not None:
-            return PostgresWorld(settings, str(scenario.id))
-        return StubWorld()
+        return create_world(args.world, scenario, settings)
 
     suite = await SuiteRunner(
         Runner(DeterministicGrader()),

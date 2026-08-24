@@ -45,5 +45,5 @@ the run evidence incomplete.
 Configuration precedence is built-in defaults, `worker-worlds.yaml`, explicit
 `WORKER_WORLDS_*` variables, then CLI arguments. Database URLs are never emitted
 by normal commands. Supported runtime: Python 3.12; Postgres 17; tested adapter
-compatibility pins are LangGraph `0.6.11`, LangChain OpenAI `1.6.0`, and OpenAI
-Agents SDK `0.22.0`. Schema major 1 is preserved throughout the 1.x package line.
+compatibility pins are LangGraph `1.2.10`, LangChain `1.3.14`, LangChain OpenAI
+`1.4.1`, and OpenAI Agents SDK `0.19.4`. Schema major 1 is preserved throughout the 1.x package line.
