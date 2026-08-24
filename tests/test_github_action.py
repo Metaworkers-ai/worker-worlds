@@ -23,3 +23,44 @@ def test_composite_action_and_workflows_are_valid_local_contracts() -> None:
     assert "${{ secrets." not in action_text
     assert Path("scripts/build_docs.py").exists()
     assert Path("scripts/release_artifacts.py").exists()
+
+
+def test_nightly_uses_the_project_virtualenv_and_full_dashboard_gate() -> None:
+    nightly = Path(".github/workflows/worker-worlds-nightly.yml").read_text()
+    makefile = Path("Makefile").read_text()
+
+    assert ".venv/bin/worker-worlds suite" in nightly
+    assert ".venv/bin/pytest " in nightly
+    assert "127.0.0.1:55432/worker_worlds_dev" in nightly
+    assert "127.0.0.1:55432/worker_worlds_test" not in nightly
+    assert "\n      - run: worker-worlds " not in nightly
+    assert "\n      - run: pytest " not in nightly
+    verify_target = (
+        "verify: lint typecheck schemas-check openapi-check catalog-check scenarios-check "
+        "test docs dashboard-verify build"
+    )
+    assert verify_target in makefile
+    assert "npm run lint" in makefile
+    assert "npx tsc --noEmit" in makefile
+    assert "npm run test:e2e" in makefile
+    assert "npm run build" in makefile
+    assert "include-hidden-files: true" in nightly
+
+
+def test_pr_workflow_pins_node_for_dashboard_verification() -> None:
+    workflow = yaml.safe_load(Path(".github/workflows/worker-worlds-pr.yml").read_text())
+    steps = workflow["jobs"]["worker-worlds"]["steps"]
+    setup_node = next(step for step in steps if step.get("uses") == "actions/setup-node@v4")
+    smoke = next(step for step in steps if step.get("uses") == "./.github/actions/worker-worlds")
+    assert setup_node["with"]["node-version"] == "22"
+    assert setup_node["with"]["cache-dependency-path"] == "apps/dashboard/package-lock.json"
+    assert smoke["with"]["scenario-path"] == "examples/scenarios/refund_happy.yaml"
+
+
+def test_release_cold_installs_both_framework_extras() -> None:
+    release = Path(".github/workflows/worker-worlds-release.yml").read_text()
+
+    assert "[openai-agents,langgraph]" in release
+    assert "./scripts/cold_install_acceptance.sh" in release
+    assert "cold-install:" in release
+    assert release.count("actions/setup-node@v4") == 2

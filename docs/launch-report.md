@@ -3,17 +3,20 @@
 ## Problem and method
 
 Response-only tests miss consequential state transitions. Worker Worlds executes
-deterministic local example workers in isolated seeded commerce worlds, retains
-tool/state/event evidence, grades ten assertion primitives and ten policy rules,
+deterministic local example workers in isolated seeded enterprise worlds, retains
+tool/state/event evidence, grades eleven assertion primitives and ten policy rules,
 and compares semantic outcome distributions.
 
 ## Scope and findings
 
-The world covers customers, orders, products, inventory, refunds, shipments,
-tickets, email, escalation, messy facts, controlled time, and specialized release
-mutations. The release corpus is 200 YAML scenarios across seven risk families.
-Only deterministic fake/local LangGraph and OpenAI Agents SDK paths were tested;
-no provider model and no paid API was used. The purpose-built unauthorized-refund
+The implemented worlds cover commerce customers, orders, products, inventory, refunds, shipments,
+tickets, email, and escalation plus supply-chain and insurance claims workflows. The live corpus is
+224 YAML scenarios: 200 commerce, 12 supply-chain, and 12 insurance. Ten legacy demonstration
+fixtures are stub-only. Deterministic fake/local LangGraph and OpenAI Agents SDK paths are covered by
+the release gate. One explicitly authorized pre-hardening OpenAI insurance run passed 6 of 12 and
+revealed prompts that allowed clarification or inaction; it is not a current release result. All 224
+live prompts and assertions were subsequently hardened, and a paid post-hardening replay remains
+pending explicit authorization. The purpose-built unauthorized-refund
 candidate is expected to produce a new critical signature and fail regardless of
 sample size. Exact measured performance is recorded in `artifacts/` after final
 validation; no broader performance or statistical claim is made.

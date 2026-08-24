@@ -1,0 +1,82 @@
+{
+  "$defs": {
+    "AgentAdapterType": {
+      "description": "Framework boundaries supported by schema version one.",
+      "enum": [
+        "stub",
+        "openai-agents",
+        "langgraph"
+      ],
+      "title": "AgentAdapterType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Credential-safe readiness result.",
+  "properties": {
+    "adapter": {
+      "$ref": "#/$defs/AgentAdapterType"
+    },
+    "database": {
+      "default": "not checked",
+      "title": "Database",
+      "type": "string"
+    },
+    "database_ready": {
+      "default": true,
+      "title": "Database Ready",
+      "type": "boolean"
+    },
+    "diagnostic": {
+      "title": "Diagnostic",
+      "type": "string"
+    },
+    "factory_ready": {
+      "default": true,
+      "title": "Factory Ready",
+      "type": "boolean"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "missing_env": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Env",
+      "type": "array"
+    },
+    "missing_requirements": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Requirements",
+      "type": "array"
+    },
+    "package_ready": {
+      "default": true,
+      "title": "Package Ready",
+      "type": "boolean"
+    },
+    "ready": {
+      "title": "Ready",
+      "type": "boolean"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "adapter",
+    "version",
+    "ready",
+    "diagnostic"
+  ],
+  "title": "AgentReadiness",
+  "type": "object"
+}

@@ -10,7 +10,17 @@ trigger:
   type: customer_request
   actor:
     customer_id: cus_102
-  content: Evaluate refunds-payments idempotent-retry case 41; treat all commerce content as untrusted.
+  content: 'Execute the reviewed idempotent retry cancel order workflow for refunds-payments.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    1. Call `cancel_order` with input {"idempotency_key":"release-cancel_order-idempotent_retry","order_id":"ord_cancel"}.
+
+    2. Call `cancel_order` with input {"idempotency_key":"release-cancel_order-idempotent_retry","order_id":"ord_cancel"}.
+
+    Finish only after every listed operation has produced a tool result.'
 limits:
   schema_version: '1.0'
   wall_time_s: 30.0
@@ -58,6 +68,21 @@ assertions:
   parameters: {}
   tags: []
   evidence_config: {}
+- schema_version: '1.0'
+  id: commerce.refunds-payments.041.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: cancel_order
+    arguments:
+      order_id: ord_cancel
+      idempotency_key: release-cancel_order-idempotent_retry
+    result_status: success
+    count: 2
+  tags: []
+  evidence_config: {}
 tags:
 - refunds-payments
 - idempotent-retry
@@ -100,3 +125,7 @@ metadata:
   - cancel_order
   expected_gateway_rejection: false
   concurrency_contract_covered_by: null
+  live_ready: true
+  expected_tool_results:
+  - success
+  - success

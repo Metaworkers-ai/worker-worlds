@@ -4,6 +4,8 @@ import asyncio
 import hashlib
 import html
 import json
+import os
+import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import cast
@@ -11,6 +13,21 @@ from typing import cast
 from worker_worlds.contracts import ComparisonReport, RunRecord, SuiteRecord, VerdictStatus
 
 _SECRET_KEYS = frozenset({"secret", "password", "api_key", "access_token", "authorization_token"})
+
+
+def _atomic_write(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary_name = tempfile.mkstemp(prefix=f".{path.name}-", dir=path.parent)
+    temporary = Path(temporary_name)
+    try:
+        with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+            handle.write(content)
+            handle.flush()
+            os.fsync(handle.fileno())
+        temporary.replace(path)
+    except Exception:
+        temporary.unlink(missing_ok=True)
+        raise
 
 
 def _redact(value: object) -> object:
@@ -43,11 +60,8 @@ class JsonReporter:
 
     async def report(self, record: RunRecord) -> None:
         """Persist canonical JSON without reinterpreting verdicts."""
-        self.output_directory.mkdir(parents=True, exist_ok=True)
         self.output_path = self.output_directory / f"{record.id}.json"
-        await asyncio.to_thread(
-            self.output_path.write_text, _canonical_redacted(record) + "\n", encoding="utf-8"
-        )
+        await asyncio.to_thread(_atomic_write, self.output_path, _canonical_redacted(record) + "\n")
 
 
 class SuiteJsonReporter:
@@ -60,16 +74,14 @@ class SuiteJsonReporter:
         await asyncio.to_thread(run_directory.mkdir, exist_ok=True)
         for record in suite.runs:
             await asyncio.to_thread(
-                (run_directory / f"{record.id}.json").write_text,
+                _atomic_write,
+                run_directory / f"{record.id}.json",
                 _canonical_redacted(record) + "\n",
-                encoding="utf-8",
             )
         references = {str(record.id): f"runs/{record.id}.json" for record in suite.runs}
         enriched = suite.model_copy(update={"artifact_references": references})
         path = output_directory / "suite.json"
-        await asyncio.to_thread(
-            path.write_text, _canonical_redacted(enriched) + "\n", encoding="utf-8"
-        )
+        await asyncio.to_thread(_atomic_write, path, _canonical_redacted(enriched) + "\n")
         return path
 
 

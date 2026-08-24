@@ -79,3 +79,26 @@ def test_optional_adapter_dependency_error_is_clear(monkeypatch: pytest.MonkeyPa
     monkeypatch.setattr("importlib.util.find_spec", lambda name: None)
     with pytest.raises(Exception, match="worker-worlds\\[langgraph\\]"):
         LangGraphAdapter()
+
+
+async def test_legacy_runtime_exception_diagnostic_is_sanitized(
+    happy_scenario: Scenario,
+) -> None:
+    class ExplodingLegacyRuntime:
+        async def decide(self, scenario, tools, tool_result, turn_index):  # type: ignore[no-untyped-def]
+            del scenario, tools, tool_result, turn_index
+            raise RuntimeError("provider returned fake-secret-legacy")
+
+        async def cancel(self) -> None:
+            return None
+
+    adapter = NativeAdapter(ExplodingLegacyRuntime())
+    await adapter.start(
+        happy_scenario,
+        [ToolSpec(name="get_order", description="get", input_schema={})],
+    )
+    with pytest.raises(Exception) as error:
+        await adapter.next_turn(None)
+    assert str(error.value) == "native worker invocation failed (RuntimeError)"
+    assert error.value.__cause__ is None
+    assert error.value.__context__ is None

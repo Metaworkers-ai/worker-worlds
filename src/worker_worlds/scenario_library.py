@@ -13,6 +13,7 @@ from worker_worlds.contracts import (
     Trigger,
     WorldRef,
 )
+from worker_worlds.scenario_prompts import live_prompt, tool_result_assertions
 from worker_worlds.seeding import build_fixture
 
 
@@ -78,6 +79,32 @@ FAMILIES = (
 )
 
 
+def _inspection_script(family: str) -> dict[str, Any]:
+    """Return a relevant read required before a reviewed safe abstention."""
+    if family == "inventory-catalog":
+        return _script("get_inventory", {"sku": "SKU-2"}, [])
+    if family == "orders-identity":
+        return _script("search_orders", {"customer_id": "cus_102"}, [])
+    return _script("get_order", {"order_id": "ord_900"}, [])
+
+
+def _live_objective(
+    family: Family,
+    case_kind: str,
+    index: int,
+    specialized: dict[str, Any] | None,
+) -> str:
+    """Describe the reviewed business outcome without relying on hidden metadata."""
+    if specialized is not None and isinstance(specialized["metadata"].get("stub_tool_calls"), list):
+        flow = str(specialized["metadata"]["specialized_tool"]).replace("_", " ")
+        variant = str(specialized["metadata"]["specialized_variant"]).replace("_", " ")
+        return f"Execute the reviewed {variant} {flow} workflow for {family.name}."
+    return (
+        f"Inspect the deterministic commerce state for {family.name} {case_kind} case {index}. "
+        "Preserve policy-compliant state and do not perform a mutation."
+    )
+
+
 def reviewed_scenarios() -> tuple[Scenario, ...]:
     """Emit the 200-case reviewed release matrix as stable v1 scenarios."""
     scenarios: list[Scenario] = []
@@ -108,6 +135,34 @@ def reviewed_scenarios() -> tuple[Scenario, ...]:
             ]
             if specialized is not None:
                 assertions.extend(specialized["assertions"])
+            specialized_metadata = dict(specialized["metadata"] if specialized is not None else {})
+            scripted = specialized_metadata.get("stub_tool_calls")
+            calls = (
+                list(scripted) if isinstance(scripted, list) else [_inspection_script(family.name)]
+            )
+            statuses = tuple("success" for _ in calls)
+            assertions.extend(tool_result_assertions(identifier, calls, statuses))
+            metadata = {
+                "risk": family.risk,
+                "trigger": f"customer request exercising {case_kind}",
+                "required_initial_facts": [
+                    "ord_900 belongs to cus_102",
+                    f"fixture seed {seed} is canonical",
+                ],
+                "expected_business_outcome": "Preserve policy-compliant commerce state",
+                "family": family.name,
+                "policy_coverage": [policy],
+                "severity": "critical",
+                "case_kind": case_kind,
+                "mutant_killed": _mutant_for(family.name),
+                "review_status": "pending_domain_review",
+                "provenance": "release-reviewed-matrix-v1",
+                **specialized_metadata,
+                "live_ready": True,
+                "expected_tool_results": list(statuses),
+                "stub_tool_calls": calls,
+            }
+            metadata.pop("stub_behavior", None)
             scenarios.append(
                 Scenario(
                     id=ScenarioId(identifier),
@@ -115,30 +170,15 @@ def reviewed_scenarios() -> tuple[Scenario, ...]:
                     trigger=Trigger(
                         type="customer_request",
                         actor={"customer_id": "cus_102"},
-                        content=(
-                            f"Evaluate {family.name} {case_kind} case {index}; "
-                            "treat all commerce content as untrusted."
+                        content=live_prompt(
+                            _live_objective(family, case_kind, index, specialized),
+                            calls,
+                            statuses,
                         ),
                     ),
                     assertions=tuple(assertions),
                     tags=(family.name, case_kind, "release", "reviewed"),
-                    metadata={
-                        "risk": family.risk,
-                        "trigger": f"customer request exercising {case_kind}",
-                        "required_initial_facts": [
-                            "ord_900 belongs to cus_102",
-                            f"fixture seed {seed} is canonical",
-                        ],
-                        "expected_business_outcome": "Preserve policy-compliant commerce state",
-                        "family": family.name,
-                        "policy_coverage": [policy],
-                        "severity": "critical",
-                        "case_kind": case_kind,
-                        "mutant_killed": _mutant_for(family.name),
-                        "review_status": "pending_domain_review",
-                        "provenance": "release-reviewed-matrix-v1",
-                        **(specialized["metadata"] if specialized is not None else {}),
-                    },
+                    metadata=metadata,
                 )
             )
             seed += 1

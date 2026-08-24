@@ -1,0 +1,5291 @@
+{
+  "capabilities": [
+    {
+      "description": "Evaluate claims adjustment behavior in deterministic commerce worlds.",
+      "domain_id": "insurance",
+      "id": "claims-adjustment",
+      "label": "Claims adjustment",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "description": "Evaluate fulfillment coordination behavior in deterministic commerce worlds.",
+      "domain_id": "commerce",
+      "id": "fulfillment-coordination",
+      "label": "Fulfillment coordination",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "description": "Evaluate inventory control behavior in deterministic commerce worlds.",
+      "domain_id": "commerce",
+      "id": "inventory-control",
+      "label": "Inventory control",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "description": "Evaluate operational reliability behavior in deterministic commerce worlds.",
+      "domain_id": "commerce",
+      "id": "operational-reliability",
+      "label": "Operational reliability",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "description": "Evaluate order operations behavior in deterministic commerce worlds.",
+      "domain_id": "commerce",
+      "id": "order-operations",
+      "label": "Order operations",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "description": "Evaluate policy resilience behavior in deterministic commerce worlds.",
+      "domain_id": "commerce",
+      "id": "policy-resilience",
+      "label": "Policy resilience",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "description": "Evaluate refund resolution behavior in deterministic commerce worlds.",
+      "domain_id": "commerce",
+      "id": "refund-resolution",
+      "label": "Refund resolution",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "description": "Evaluate supply-chain analysis behavior in deterministic commerce worlds.",
+      "domain_id": "commerce",
+      "id": "supply-chain-analysis",
+      "label": "Supply-chain analysis",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "description": "Evaluate support escalation behavior in deterministic commerce worlds.",
+      "domain_id": "commerce",
+      "id": "support-escalation",
+      "label": "Support escalation",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    }
+  ],
+  "catalog_version": "1.0.0",
+  "classifications": [
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "b8db4469b11b37ce5b6441f13061db9e61c8ad5ee87b740d0f10c008dc99167d",
+      "scenario_id": "commerce.adversarial-conflicts.001",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "efa2c5254244469d9b9bbbb4b7e775fb338c705237e890efbf221bbc5d374b07",
+      "scenario_id": "commerce.adversarial-conflicts.002",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "5bea395a9781ab8c11c65b20afe4459ceebddcbf3125744700f4b0d5dbd22abf",
+      "scenario_id": "commerce.adversarial-conflicts.003",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "22a8ce3464b12cc8aac079b1b8c14ec3e006597e1ee6c03755861b5e0428cf3d",
+      "scenario_id": "commerce.adversarial-conflicts.004",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "53ec8c2811bec9bf96777d3338e79f53117c20856676adf7c953b78b46d01769",
+      "scenario_id": "commerce.adversarial-conflicts.005",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "2354208b304bb15796d359262a6e203b0e88fdc4d61b2bd4ada0aa0fbb7291a9",
+      "scenario_id": "commerce.adversarial-conflicts.006",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "d2fb0cfda2df5e8cd977dd8d3b979dba2ad05b6be954a9e4693bec78fb2703d8",
+      "scenario_id": "commerce.adversarial-conflicts.007",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "2ed6f45435ae951932fc64dfba948277d4661468301fb80f790e667a718c6b0c",
+      "scenario_id": "commerce.adversarial-conflicts.008",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "abda87cfeaba47e75b23baa70135f0fb7ebff51d2938d0fbd851f957b5ece4ae",
+      "scenario_id": "commerce.adversarial-conflicts.009",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "4208696a540f89af0db8d4b9d78d0441c75558b09c48cda5ff7ca519b3160764",
+      "scenario_id": "commerce.adversarial-conflicts.010",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "a5f0582f6afa2b32e246199cc73f2991fdcc4f92a16ec6ce7c7915a070a0e6d0",
+      "scenario_id": "commerce.adversarial-conflicts.011",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "62311a01a384a009961ed81dbc854765dd46951150c1f803ac01a19bde7d5bd9",
+      "scenario_id": "commerce.adversarial-conflicts.012",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "9ddb0de359858c0ba7599a8de69ed78e3bae6ffcbcc56200b841c16b017d0f85",
+      "scenario_id": "commerce.adversarial-conflicts.013",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "d7f6002d1a4b6715f86127fc4d5776307697c3aca528d8a97cdc55eb71a800aa",
+      "scenario_id": "commerce.adversarial-conflicts.014",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "7fae2db0e4394a430126753557f56fc60de2a349f0e18e3bcb30425d2fff998f",
+      "scenario_id": "commerce.adversarial-conflicts.015",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "2fb88a2f095f2d4c59df3583a6de865649c5a4da37df1dc726be6273e005b0ef",
+      "scenario_id": "commerce.adversarial-conflicts.016",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "e11273d383bee3edb87d067714a62f803266d157b0a746ad408fc3ccdad17725",
+      "scenario_id": "commerce.adversarial-conflicts.017",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "1d2b411a06dbc57ebaa61d5071b95603285e947e4ce744b52ab80fd3a85e39eb",
+      "scenario_id": "commerce.adversarial-conflicts.018",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "ecdd7d63b1cf928edc2d6857a4d4096aa47c6d17705b6a68159270a02d46738f",
+      "scenario_id": "commerce.adversarial-conflicts.019",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "485ef2b07997a8cbe0646ad1251b53593fb9a43b52a81bac69e23bf16c137796",
+      "scenario_id": "commerce.adversarial-conflicts.020",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "cc0c2346ae1c44e5756342390d1034566088629ae5e2b5de2c7cb3f70142b02d",
+      "scenario_id": "commerce.adversarial-conflicts.021",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "7c8e8294ec8927c77faaf2f88dbf001305ca2a2bc08b35bf2e7bb57a7dafc422",
+      "scenario_id": "commerce.adversarial-conflicts.022",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "8cf2038b9f2c8016b6e2e665eadda86f95ffe2b7c245b6523f62c75fe2d5ab61",
+      "scenario_id": "commerce.adversarial-conflicts.023",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "efc0556dff6e5a71dd894c0fc45811aab87a7947c064730b6c38ef8c3983359b",
+      "scenario_id": "commerce.adversarial-conflicts.024",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "f5a47d228e09061630dcee8471efdea078a414f75860aa337b2aeb91b783ba24",
+      "scenario_id": "commerce.adversarial-conflicts.025",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "c87a276fe09a450d9f33b50965d3bb71ad5d4eefb5d3ef2ba0b6e44d85c9acff",
+      "scenario_id": "commerce.adversarial-conflicts.026",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "4084d492db840f7c9e4d3a16b3a4c410b8f8798aad91553fbce7520acef127f0",
+      "scenario_id": "commerce.adversarial-conflicts.027",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "0704cce7d933ca9faefc8d3e78e9e91d1de6b8fb2036b54e85629ad3c6e0420d",
+      "scenario_id": "commerce.adversarial-conflicts.028",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "00b253aeb01a238b241d41fd202f6e4ba7b62c1c11a09a1b8490e1bf36876efc",
+      "scenario_id": "commerce.adversarial-conflicts.029",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "8d2ad044a3fc1de9ef7dffd65b1e397f8052dfad922bf71da5912458abd88527",
+      "scenario_id": "commerce.adversarial-conflicts.030",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "0719d6b9e14289a426e07558052c48dd8417f82a1f0bfa2a801dd2223db12c08",
+      "scenario_id": "commerce.adversarial-conflicts.031",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "994413208b343f6abfbf2437c7ef9faef802ebbfd59f8e2a5bec26ef3d89c573",
+      "scenario_id": "commerce.adversarial-conflicts.032",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "2438144b27a6eeb6a56d98417976753325c3904fbe78a11115c18963254a5a85",
+      "scenario_id": "commerce.adversarial-conflicts.033",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "c12915e191cca6012126d2233e2dc5ab3bd3b41193d70f17556a5ffd75f09fbb",
+      "scenario_id": "commerce.adversarial-conflicts.034",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "27b8128b7662da28a96fae1e4311fb4261dcf691c213ff76b5810b94b3508a05",
+      "scenario_id": "commerce.adversarial-conflicts.035",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "c11312271c82f11e721916243584f5707e27ac7cf3da561454fee4d4571c2ea9",
+      "scenario_id": "commerce.adversarial-conflicts.036",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "080bad13b4399328d53a74c0580f182340c9b05b62240916d5f219af8c2a4e08",
+      "scenario_id": "commerce.adversarial-conflicts.037",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-resilience",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "d7686fb24dff216ebc1e8cda3a390cf890455e1bbae37a2efcd98b4df1896d24",
+      "scenario_id": "commerce.adversarial-conflicts.038",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "2a1cdabbc0e7b24bcc292a75ac13c36fa228cac0977bb37f7cddd3e619785159",
+      "scenario_id": "commerce.inventory-catalog.001",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "13547feb001e729ba521ac745859de4006eb904d85468c575cbe47007b572fad",
+      "scenario_id": "commerce.inventory-catalog.002",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "8e57ef137365d6175984326913570fad8afba5c44f3e5cb0caeba4fd924eada3",
+      "scenario_id": "commerce.inventory-catalog.003",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "8559b164bc9eaef1bce79957ad01a8b1239929b3891f9810478f55061ca0afa3",
+      "scenario_id": "commerce.inventory-catalog.004",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "46a8870bc0077b029d938e6acb94e1b4c9a59fcc9802b1a6c1486a8aa2efa253",
+      "scenario_id": "commerce.inventory-catalog.005",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "396cc19c7a65bf25e44c6e93f6d2f80ef9338f5fa5bc4eeca8a7b68909be8f32",
+      "scenario_id": "commerce.inventory-catalog.006",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "32a8be77f88f5bdd45dd292f18ba4b76dcab1a502013e8225a660642e2c75969",
+      "scenario_id": "commerce.inventory-catalog.007",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "13db5ac969e8be0fee47c7ffa8f97ed9a61fd48be8b3077450515dd091672228",
+      "scenario_id": "commerce.inventory-catalog.008",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "243041a26dc645447d93502292e7d776f7a7ff6ebce087d8d4af44284be7255a",
+      "scenario_id": "commerce.inventory-catalog.009",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "3eb8bb19dea1f0756e97cd0071637fcd163a2eaba203489626ba88a01254ac1b",
+      "scenario_id": "commerce.inventory-catalog.010",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "1adf5a7eb3d07dd5a60764011d116542d9a2cdde694db09f9ef85b03dc732572",
+      "scenario_id": "commerce.inventory-catalog.011",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "4a31f0779e5672d258551742dcb3afe1c6636ca8ac880085168d24758473cdba",
+      "scenario_id": "commerce.inventory-catalog.012",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "4307be88dad7208eee84f4452efd216740ba3319351b2657d0494d88e2d5e74d",
+      "scenario_id": "commerce.inventory-catalog.013",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "64fb928e3dee3986ccf0e25e590e5bbd2aa0ae9248b4181efd898d3699b7adad",
+      "scenario_id": "commerce.inventory-catalog.014",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "9f3085288507686875c33570c942094f1f349d62422541fe6c17c901fc8b1cb5",
+      "scenario_id": "commerce.inventory-catalog.015",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "06141a9cf6e87d36a7882cda3c63b51d55cd041f267c29a9c244f4a716b3110d",
+      "scenario_id": "commerce.inventory-catalog.016",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "087422fc93b0a48b01941ab2861532a02add907bc1eeef41a7ff5f4a66618ce4",
+      "scenario_id": "commerce.inventory-catalog.017",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "639f861581574f856444b97a44b236c27c7905af980c6d8274c5866a6f5d82dd",
+      "scenario_id": "commerce.inventory-catalog.018",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "bec44773b361924422abfc30bff9b8b7e9083967a6666e498e1a0975fba4d0c7",
+      "scenario_id": "commerce.inventory-catalog.019",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "e9d6c8858ea04e7bff99974935537d772abfa30fc911008f69de2437ab44a15d",
+      "scenario_id": "commerce.inventory-catalog.020",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "a2b8cf163cc4cf2758ffec67371071611c46ea73ec954e4503bd56b1c2529498",
+      "scenario_id": "commerce.inventory-catalog.021",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "032a7702d2e434bf46bb7dd282d58900b57a1623a3fa83afc05f661c7ecd2118",
+      "scenario_id": "commerce.inventory-catalog.022",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "b3698e9a506a7702d6c693c52b5ee179cbb22c5b6c3dca5f5ceca1ef57868261",
+      "scenario_id": "commerce.inventory-catalog.023",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "04dd4aa83d013f8a4c798543ac8895b3e19d7bf60d197b1e34e89bfbd0ec2772",
+      "scenario_id": "commerce.inventory-catalog.024",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "d412b05172fb38984f5cf64b675cd111755c33c4017c4a86f29151af50fe2bd9",
+      "scenario_id": "commerce.orders-identity.001",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "2c4e3a7b7756dfccec621f6b7363649bdd70db9f6121878349140dadf30dc8e6",
+      "scenario_id": "commerce.orders-identity.002",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "a9a0e01b8b802762da1db548859457184ae4d4dbf64996c4d2925a358e4bb702",
+      "scenario_id": "commerce.orders-identity.003",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "32bf121ea8b291ab9ee9f3682ae66bb607f52375af662b7769296fd53a525f58",
+      "scenario_id": "commerce.orders-identity.004",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "5590322600ebd9ea273a0237923f4695f36eb3519556904108cf51fb35a346ec",
+      "scenario_id": "commerce.orders-identity.005",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "54724b094f43499fdc2fa31bc12b03b42b33a74db7208a0a151864f2dd0bdba8",
+      "scenario_id": "commerce.orders-identity.006",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "086f8fafcf6776bb589c8681cfdcea498484277cfa0522f9eb6fade705fe6851",
+      "scenario_id": "commerce.orders-identity.007",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "b81afefee76714dffc45f3d05b8224b084b478ea2a336704ad8052514b005a0a",
+      "scenario_id": "commerce.orders-identity.008",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "606f53c8b8593ee86a8d09fba75540544c464d024444bd49a3687216fead1e28",
+      "scenario_id": "commerce.orders-identity.009",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "02c9a1c7c34d3f9698e1f13418e817b7c2dc71791e33f9e74caf86d5b69f7d93",
+      "scenario_id": "commerce.orders-identity.010",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "778576bbff851a8e37194796075f19de314c1f65ae399d976e016d1efe75b4fe",
+      "scenario_id": "commerce.orders-identity.011",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "34a44b7d06e42f3fc867b1c79823e6800e0e0ed8ba539770723acad13d0dd85a",
+      "scenario_id": "commerce.orders-identity.012",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "deb104a80b5f7a44b9df9926a121cda788033724f4064f07763f179830983ff9",
+      "scenario_id": "commerce.orders-identity.013",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "a6b5c0e5f3b969f24f74094874109599d97f3f3f546cf4ce6dc9cfb6ce8c7a86",
+      "scenario_id": "commerce.orders-identity.014",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "8f8fb40887561d541ae24dd06f23dd601555d23c0b0d6b251c0bdc02bd5979df",
+      "scenario_id": "commerce.orders-identity.015",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "68b7d5037bf4b5fe35418d480a1f2d43195fc49170312b62b50dfd58f8642f22",
+      "scenario_id": "commerce.orders-identity.016",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "ae67d4605f15569b087567e64b88f10fe0c380078af97c1f8e71f1e00e826ccf",
+      "scenario_id": "commerce.orders-identity.017",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "f2035f72f8a168b0c3bb4750d80dd900983b99bd5493377e921256620a3211a0",
+      "scenario_id": "commerce.orders-identity.018",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "84c72ebc512b3177cfb315be7717a78b540713c0de117dd0ea9cd32605f5acb2",
+      "scenario_id": "commerce.orders-identity.019",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "e6c94894694c78b676d3d1cb94223b10596c3e1407bafef59fd725d661d214c6",
+      "scenario_id": "commerce.orders-identity.020",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "df0ca1fa3d57c6479100b954c614b7f806cba5c7db2c30d5fea72217bd53cc99",
+      "scenario_id": "commerce.orders-identity.021",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "557ba413af94894479a8223e403627465d643874af9e5a3b55720697a19bd999",
+      "scenario_id": "commerce.orders-identity.022",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "ea1e904e627e7cea39250aee35bc8496d53eb772caa50763a85067ff864f84d0",
+      "scenario_id": "commerce.orders-identity.023",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "order-operations",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "authorization",
+      "role_ids": [
+        "customer-support-agent",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "15146c9e3335996dd4fa7e93ef627dc15c6771f544298a3cb29a5c57de67f767",
+      "scenario_id": "commerce.orders-identity.024",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "d34560b55aab5aeb4827d94a735c5428179edd5799991576ef96ff893906a78c",
+      "scenario_id": "commerce.refunds-payments.001",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "f88993de0e37004f11a4555e2c3590b726a18f468acecc9d1d083c755514a51b",
+      "scenario_id": "commerce.refunds-payments.002",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "416b4cec5b85aadb37ef6c2a062798bcc384e0e9c161ea3a82b0ddeb54e10a5b",
+      "scenario_id": "commerce.refunds-payments.003",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "ccf01e11186e2eb00f248bab5e0cf3504fe65ba1ce6d9afc38d90e5008b78074",
+      "scenario_id": "commerce.refunds-payments.004",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "9b3892e18a4bcf35cecf00d77f3c304ae0cf2e2784d4722ccee54cb41317658f",
+      "scenario_id": "commerce.refunds-payments.005",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "89cd8637330ddd52a4d9b7a4d002b4446e1e32edde43f0b00eb3274d95579f56",
+      "scenario_id": "commerce.refunds-payments.006",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "88cb08d80e2b506f6fd5466fef9f6cd13488efef427a2edfc4fdf0adb50b4797",
+      "scenario_id": "commerce.refunds-payments.007",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "6b8aaf9187d36477af6105e8267b7cd34c651ec3959927016c02c4d10b3b74bc",
+      "scenario_id": "commerce.refunds-payments.008",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "b49f6d3ce20560a8cdfd498183046b607eab30bc74527b1ac411356555337acc",
+      "scenario_id": "commerce.refunds-payments.009",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "700e886516fa9d8b0422bc6cb44c7fdcef2efb9fce8ea0f86b112fd94b496b9f",
+      "scenario_id": "commerce.refunds-payments.010",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "0a0f6a4742d2ada916759b70a2cb4ebbef958a900eaa8de14db8974b68e36f6d",
+      "scenario_id": "commerce.refunds-payments.011",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "cfc0bde53679d1ae22f4b835c4faf21284e1d4e08a07fbac9bb004ff6f873c6c",
+      "scenario_id": "commerce.refunds-payments.012",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "372a917109fda5938639980c7974f82ddd82e9d3c1e832a8c921f1c809a78950",
+      "scenario_id": "commerce.refunds-payments.013",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "1933003702715e13fe781d4eaa9130d08e7a397254bfcb0ee88ead612194d897",
+      "scenario_id": "commerce.refunds-payments.014",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "044d3c6972e048ca60f56f5a9050939ecd1c54de81fb52b689566fdb0f508dbe",
+      "scenario_id": "commerce.refunds-payments.015",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "da016b7c08c323ca1a1d40416ea6f681aa1e72338c0aba7da3cd33c3ec2a516e",
+      "scenario_id": "commerce.refunds-payments.016",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "563cd54bed4b98177fa509f3790279f7ddc810c106bfd027dfe0fc12ae502340",
+      "scenario_id": "commerce.refunds-payments.017",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "70facea05149771513756770973c8ac63474dabbf899b536f2c5287bdcee50ca",
+      "scenario_id": "commerce.refunds-payments.018",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "4187959af6211561ff1a80ca9391e9b443148e03561bfa5f0646c9e5709a2b88",
+      "scenario_id": "commerce.refunds-payments.019",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "1956c238c8912d2c6a1d17ca1a57898529652622263758c3db0483c6936dc1d9",
+      "scenario_id": "commerce.refunds-payments.020",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "7c93469b0751cdf8a84b30310078b38d34de68a8a1acbce5dd46c6e85c773118",
+      "scenario_id": "commerce.refunds-payments.021",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "9dcd9610c1ae32ab8f4defa4f681963663d3a5ebf268f9a1a80bd0c085190001",
+      "scenario_id": "commerce.refunds-payments.022",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "f1035828234b89bcb6701993d1f48d95ad43e533f7b3fabac8b1dc0db1155a15",
+      "scenario_id": "commerce.refunds-payments.023",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "377108449028868e3d3fa8476751d908863edba390ab01f63d1a533ef2ecd94d",
+      "scenario_id": "commerce.refunds-payments.024",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "4b82185e86f2a3357988d3c7c84c40fa7e5e42e08d8d846ab6eeb29a880f43cd",
+      "scenario_id": "commerce.refunds-payments.025",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "4fa4a9408719ec3d38123d9d096774e9ecef274638919b50e72268bd82dd02a7",
+      "scenario_id": "commerce.refunds-payments.026",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "c4a5550ab7125b394afbdf4aac957b6d77348e680a89c3ca88af574ca70f1198",
+      "scenario_id": "commerce.refunds-payments.027",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "9369080f548f0c427a5bfdd3aa7e6f251930d226741ef0234df1c02f53239585",
+      "scenario_id": "commerce.refunds-payments.028",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "0e17817ee80a22310f853ddf63150b3cc29825588fa7eac6eb0bb167da1f871d",
+      "scenario_id": "commerce.refunds-payments.029",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "ca4c417f5af194c2a171925fa3c92dd3c256b476a5e9728fa8dbaca5c44c79c4",
+      "scenario_id": "commerce.refunds-payments.030",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "a3c451adadb6f7a83aa0e54a3f916f79a22e47ad92c8bd3ad8511c00e3e02372",
+      "scenario_id": "commerce.refunds-payments.031",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "bf64828266d439d4d9422dc1aea52ac530372656317ff163b92f35b84e575a02",
+      "scenario_id": "commerce.refunds-payments.032",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "c8f9f3b2d5d81b56ef2f58135c85ba098c2e135cdc2350d4c452aafa4ae5b9e1",
+      "scenario_id": "commerce.refunds-payments.033",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "d6e4d9fc2a26f4cc1e4ef9de519d058301db937e721d5bae6009df49a5ae66a2",
+      "scenario_id": "commerce.refunds-payments.034",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "5d3f5c331b856d019b63d939b8af8549a33bb4be0bc2ea396b61c06f7025444a",
+      "scenario_id": "commerce.refunds-payments.035",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "c13207b08a9aafe343efdd462e1da2b1c6315496607e96c00296468659b008a2",
+      "scenario_id": "commerce.refunds-payments.036",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "dc45b52f241ee5df398bb6c37bcec9b0a3b212d4162ed54adde49126d7a23b9f",
+      "scenario_id": "commerce.refunds-payments.037",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "59103d380584617efe1be5daafb4c7323baa14eeaf5ce17d03579b92ea27a9b5",
+      "scenario_id": "commerce.refunds-payments.038",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "775ac1ff3e98030dc1d9472943aa4e8e304be787d8d5398eedf6181745dfc685",
+      "scenario_id": "commerce.refunds-payments.039",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "3620171583b746c46697646834a304d5eaea4f365ca840f495d3a51865a727a0",
+      "scenario_id": "commerce.refunds-payments.040",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "911c3c8e4be32bdf0ed1dbf21b772d325ce369eb6086392d46cf4e54804eaeec",
+      "scenario_id": "commerce.refunds-payments.041",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "5d8d49530fd84d174940231a7cfa2b92309568a54a2fb201e3c9534c14c38c60",
+      "scenario_id": "commerce.refunds-payments.042",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "7e7b1b0d2824f85178a8b7d3e62e26922bfa63d44bfdeaa425ce89270d79b84e",
+      "scenario_id": "commerce.reliability-injection.001",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "a31d0618600de3efe339913c72836a3880993215471d694f77824c9728d0daa8",
+      "scenario_id": "commerce.reliability-injection.002",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "29b309028738e742a1b4f4eee8bc600437c3202d94c04fde131a9b308122ec63",
+      "scenario_id": "commerce.reliability-injection.003",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "82fa20fb9285bea501272363031fd757b4b64d8d7ee23112a3a46ca214549397",
+      "scenario_id": "commerce.reliability-injection.004",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "2dd9c7bedca865757e9ec2ae05137e11338e704d1fe1e41df6ed9b3868bb5929",
+      "scenario_id": "commerce.reliability-injection.005",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "b0ed877fa1dc80bf9dd92278e01a326f9f7876d920612b604b00eea6a9343707",
+      "scenario_id": "commerce.reliability-injection.006",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "32023cc2affcd33f35e3b6b7893bf5130afb2c2bd7fd5d716cecfa464b09e852",
+      "scenario_id": "commerce.reliability-injection.007",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "dcb423f9322517a094cd1833e30a1950da1c7e16bd607a45f599619648143513",
+      "scenario_id": "commerce.reliability-injection.008",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "cd1250d3c72d0d60d88ea6dd6033804841a4e524412bc84fb9d2bd9c3d23f65f",
+      "scenario_id": "commerce.reliability-injection.009",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "6ba302472563cc6151e9fddcff9e6764f5c5c52f4d3148ff0b0b460736fc1d1c",
+      "scenario_id": "commerce.reliability-injection.010",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "2b4e8a78a9cb23f91cd08587c257ebc50f5063f8f454dfef9ad95d141a5700b5",
+      "scenario_id": "commerce.reliability-injection.011",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "29aca1355d08fabfbb936dde6481362b22a9758e75237a9da2b4771363a8221c",
+      "scenario_id": "commerce.reliability-injection.012",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "e3d535913bd9fabe3d58f88adf4feafa51dac423efa4d9703b4cd61fff721b63",
+      "scenario_id": "commerce.reliability-injection.013",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "420f5ab7749c79f30512c9068ce1509ab1806058364bb08151d244729db7aa92",
+      "scenario_id": "commerce.reliability-injection.014",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "ee1a032144e1d2b0776f3e1ca17d65ff8e6638df280590101ff19032da1773f3",
+      "scenario_id": "commerce.reliability-injection.015",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "ebf08eda863be4400e3c5ae330b29a5ea9f10de5f1df55909a536a823ddb449a",
+      "scenario_id": "commerce.reliability-injection.016",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "ca28cfcd98de314e4502569c965945f1804fa6561ab28cceece42a34f900cd58",
+      "scenario_id": "commerce.reliability-injection.017",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "7a69cc5180d894b61a6c059cc200ccb2eb9f11167914aca7fd8ecc36d16a978c",
+      "scenario_id": "commerce.reliability-injection.018",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "5d27d43e96206907689fc4153e46052df83395d779718b1be9db7badb78284dd",
+      "scenario_id": "commerce.reliability-injection.019",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "c1b3e48aedb6c6cf9b16eddfa987c97aad75933ac36ea839e52d16a1897241ea",
+      "scenario_id": "commerce.reliability-injection.020",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "cd3e7d93be61d7cd47587a780b1bfffa0965bfb80a5a4da95b828a7384bba38e",
+      "scenario_id": "commerce.reliability-injection.021",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "c17bb1fcb7723ee1e77c2746b99e48b6fc4fb8074f5445dd15130ee314b3f536",
+      "scenario_id": "commerce.reliability-injection.022",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "b983a28a1205a41d62ecd016cfb2bfd0d8067d11e87904740ea1e12a6ca7f449",
+      "scenario_id": "commerce.reliability-injection.023",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "baa11adb16febbca6c8ab2149775a2f8f82d3ceb068345000f0c772d7f5d94ab",
+      "scenario_id": "commerce.reliability-injection.024",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "7873e02c5b3ed5c9ff43d0ede6fa46d1f97b872677f8d1955c6117a2f533b5eb",
+      "scenario_id": "commerce.shipping-fulfillment.001",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "a607f41072d3b7a0492c958ff069154768c7d865d1ccce31f93885c00bfb1fdd",
+      "scenario_id": "commerce.shipping-fulfillment.002",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "638b7bb952aa59babecdb22b2463f16a13a0a31d9cfd933aaa618961a902a1d8",
+      "scenario_id": "commerce.shipping-fulfillment.003",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "a422c1a12a3434e213d118b4e228146071dde0d945d00bb666094acc88c04700",
+      "scenario_id": "commerce.shipping-fulfillment.004",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "f31b4f4278bc4bb8fb604aae3a1dc51023aff9602f0b5190367f56b81843b4f3",
+      "scenario_id": "commerce.shipping-fulfillment.005",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "c5adeeaac00783230f3b82b2fdaaa388d7e51379cd03ce57be2b619f251ad067",
+      "scenario_id": "commerce.shipping-fulfillment.006",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "be28f8dcfc4b2379e537a5bf2f69bbdcf7fe556d528a68adf3e20e6df6ab5d26",
+      "scenario_id": "commerce.shipping-fulfillment.007",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "2b632d2ae9c49f688c6e6ffeb38feae29b79b60f0bc10df72e47fb37e1997849",
+      "scenario_id": "commerce.shipping-fulfillment.008",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "b50b55a8cb49fdb5559fa4439c8a2157be382a9a5348a1d6e2bf021c0c16ad23",
+      "scenario_id": "commerce.shipping-fulfillment.009",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "c8582d60b294456f8ea45402264e2128a3b34eaa49af5ce7c4aa888ed38503e0",
+      "scenario_id": "commerce.shipping-fulfillment.010",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "8ae2cf51a943729f113460401c72c92cf067845164cf7d20ccab608f97a73896",
+      "scenario_id": "commerce.shipping-fulfillment.011",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "98effbdfce7f8e9b02148d168984fe642a1320ee779ba7313ce0be050c6eadbf",
+      "scenario_id": "commerce.shipping-fulfillment.012",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "b656e7e942911cf657186679a6043050e1ded5ab060a03687f11d00abb92fed1",
+      "scenario_id": "commerce.shipping-fulfillment.013",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "893e8133def16052672e16f7ea89d64853fb151a31450b4fcda969a2737b815d",
+      "scenario_id": "commerce.shipping-fulfillment.014",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "7f3b02e394236fc11d1985fb8e2196ab691b80fd0e1d098df369f2d35ff31025",
+      "scenario_id": "commerce.shipping-fulfillment.015",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "4d8103a3a8cb1af17de11dd2530aa4281fe25cf5493fd239a0123ddc98382e72",
+      "scenario_id": "commerce.shipping-fulfillment.016",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "306d54c957b1fd76b9b3a72626d52fa87e0faf5611609c16c09be561141c07dd",
+      "scenario_id": "commerce.shipping-fulfillment.017",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "2903b60b3882c6e6be8f43c603d0432b56cac2e22706ec2b58bafbc0044148f3",
+      "scenario_id": "commerce.shipping-fulfillment.018",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "bff6eebbd4677ddd05037d28fd3e48e126e9436598c9e91400a04768a951b860",
+      "scenario_id": "commerce.shipping-fulfillment.019",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "0f350a0427d212ae95fd6c9cef322d8cff2d315c0470e9f6288e7b9245851c27",
+      "scenario_id": "commerce.shipping-fulfillment.020",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "7057e0d12558bff0526c810b82d87f1769b6e97330efbcf3cd6844dcbc8e57fd",
+      "scenario_id": "commerce.shipping-fulfillment.021",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "da97ad64994f6bba307f23bf8c576e3e3cd3b3ecff40ffc14c6eb931e1b97959",
+      "scenario_id": "commerce.shipping-fulfillment.022",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "72a1bd4271f057c21a17278bd071c9c5c0a587825070d9dd28e1c07b3190cfc5",
+      "scenario_id": "commerce.shipping-fulfillment.023",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fulfillment-coordination",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "fulfillment-coordinator",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "bec14aba923f154e2c965163199b59203d224a41e32f26a396a49454a9e058f3",
+      "scenario_id": "commerce.shipping-fulfillment.024",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "supply-chain-analysis",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "supply-chain-analyst"
+      ],
+      "scenario_hash": "ac465476478fde78412a98615875afd9f8579c7c07c4e10774f2cb7706c0c0eb",
+      "scenario_id": "commerce.supply-chain.001",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "supply-chain-analysis",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "supply-chain-analyst"
+      ],
+      "scenario_hash": "f93ed085b0d131f755738c77fbe31625eae9bafee5b5100c8490375a5ed97cd7",
+      "scenario_id": "commerce.supply-chain.002",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "supply-chain-analysis",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "supply-chain-analyst"
+      ],
+      "scenario_hash": "ad87858cbc40119104555923cbe060793e9835cbeb6b16d3de62de024e6960f2",
+      "scenario_id": "commerce.supply-chain.003",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "supply-chain-analysis",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "supply-chain-analyst"
+      ],
+      "scenario_hash": "48b1a7698b565e35199ab957391472d4b66c8da7535acea746bddbf88f9349f2",
+      "scenario_id": "commerce.supply-chain.004",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "supply-chain-analysis",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "supply-chain-analyst"
+      ],
+      "scenario_hash": "acdfe5bac9b697d7924899861983e56a3286b63803a6fe3913d1ae5c915d90f4",
+      "scenario_id": "commerce.supply-chain.005",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "supply-chain-analysis",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "supply-chain-analyst"
+      ],
+      "scenario_hash": "0bd16106acc2aaf4f60a7ac1f5f8e6ddddea479d570d4ba8e78780115452345f",
+      "scenario_id": "commerce.supply-chain.006",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "supply-chain-analysis",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "supply-chain-analyst"
+      ],
+      "scenario_hash": "82ca5346e8f9e81b8c972cc3a1aec5b2f168e108835da81fa90ad9e03c40e90f",
+      "scenario_id": "commerce.supply-chain.007",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "supply-chain-analysis",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "supply-chain-analyst"
+      ],
+      "scenario_hash": "a4693853650218d8c97f8f031601817060b1bb934ea3642377c01ba70d4076bd",
+      "scenario_id": "commerce.supply-chain.008",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "supply-chain-analysis",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "supply-chain-analyst"
+      ],
+      "scenario_hash": "741e2b519a4c5fc15292b30d29feab8d4b0fc5a3f0db8a93f633fef43fcca660",
+      "scenario_id": "commerce.supply-chain.009",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "supply-chain-analysis",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "supply-chain-analyst"
+      ],
+      "scenario_hash": "cba90ff878359b1510c57dab495e6c6748b007afa939073ce383ed1409391224",
+      "scenario_id": "commerce.supply-chain.010",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "supply-chain-analysis",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "supply-chain-analyst"
+      ],
+      "scenario_hash": "6621688f74c6b13ef50ef5f4b0c0e8e28268337c8b458153876dbc728f7e4cf6",
+      "scenario_id": "commerce.supply-chain.011",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "supply-chain-analysis",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "supply-chain-analyst"
+      ],
+      "scenario_hash": "ebd5eaf89a10ee795f1f76599db1303fe5ee86cf4d706a4e8b840f81907b7449",
+      "scenario_id": "commerce.supply-chain.012",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "e59373e83a8f5424d5b06f9eec81ea8214ba10114aa9ffd4c60e10c111c7111a",
+      "scenario_id": "commerce.tickets-escalation.001",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "d6a8fd1904031772f42f9b288c4c2b00bdcfd83611b53ead7efc233b882bf4da",
+      "scenario_id": "commerce.tickets-escalation.002",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "b76ba0d4d7540b58c93078c85e17462b741f2d4ce07d9d56633c4554ec5dbde5",
+      "scenario_id": "commerce.tickets-escalation.003",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "dd662dde461800b982d096e47c9774482c2d27cba3f423539a5fd9771d58aa76",
+      "scenario_id": "commerce.tickets-escalation.004",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "711783f30b2842c6708dd24366efa27dce4f4c4297f7e465f47d3a1542b5c0cb",
+      "scenario_id": "commerce.tickets-escalation.005",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "988c63f27351ae4824f65e49440ee8cb20be97289bd080b61fe4d6bd6dc712fe",
+      "scenario_id": "commerce.tickets-escalation.006",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "85ba01e0dfed04dedb28f0d97f12b458d0240fdc96a3e4f812d268d5c843d4ef",
+      "scenario_id": "commerce.tickets-escalation.007",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "dff2226252fbb4fba736429386a40125998563f9c5e67517a29faf3e5054bebe",
+      "scenario_id": "commerce.tickets-escalation.008",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "4276e3aa8c0ec5b2574a0b9a448b723ecfa9ea4a76e130ba9d831fa9ab10050c",
+      "scenario_id": "commerce.tickets-escalation.009",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "1c0132946ad15e8af77157553e9c9cafee83615cc580d293d07e5aed9e9e30b3",
+      "scenario_id": "commerce.tickets-escalation.010",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "b1cb634d6d1515b9350ca88e2954b94587bd9a45a3eddad1e3acf7a3c163f72c",
+      "scenario_id": "commerce.tickets-escalation.011",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "fbf32a68f900ad82793240059183283249085f5ac0ddb3de2e22e6f4f298d796",
+      "scenario_id": "commerce.tickets-escalation.012",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "626fe1fc3edce5371c95e713c815880af32d93f945c350429fb954e3c1b40e2b",
+      "scenario_id": "commerce.tickets-escalation.013",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "e02172bb10b6b7507f3bfa2efe22ff73c2abe762bae7c4fcc6f1545656d3bdee",
+      "scenario_id": "commerce.tickets-escalation.014",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "d18abcfb5419ea5b95ac71405f4c3df73c371d9123e070e94b4d534d41a4dd4c",
+      "scenario_id": "commerce.tickets-escalation.015",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "656e7815503a40d5b1c8bab81e9d562cbc966d6a0261c8a7a5110dc1942df635",
+      "scenario_id": "commerce.tickets-escalation.016",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "a7bf7d883f8d0d8132e28e774f2ac64332c843825d9cd8a68398806951df541c",
+      "scenario_id": "commerce.tickets-escalation.017",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "c98ba35e1a559e5327cfbac40c8a2d537d6a466f836102d4df761edd90df7d01",
+      "scenario_id": "commerce.tickets-escalation.018",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "c139f349302aa7a9a00a4bf801eb2f51a2c3f0f519b531ebfc59d95dbe2385a6",
+      "scenario_id": "commerce.tickets-escalation.019",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "79cc385f1f7873548a76b349e051e07e4cb46d4d5ab3f882ffe087f20d9600b1",
+      "scenario_id": "commerce.tickets-escalation.020",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "cc7716cc2e0847d7116ee5d722335b2645e5f37f0ecd705b456b6d64919feb92",
+      "scenario_id": "commerce.tickets-escalation.021",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "fd035a2662ed714545f7ad547c3fc155029aab97f690762d83b4ad2068ea64b5",
+      "scenario_id": "commerce.tickets-escalation.022",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "intermediate",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "bc0928b9b102e4dfcd7f4f6e592c301121044cbcd2d96d6b17d8432a6fc0f974",
+      "scenario_id": "commerce.tickets-escalation.023",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "d152d3b35c908d885d23563d54d1243634e6c389b92fa96449c173eef6c6adfa",
+      "scenario_id": "commerce.tickets-escalation.024",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "6035561489794565a94160a4585ec5096327bb324cf1c0db5f928268cafcc8e2",
+      "scenario_id": "insurance.claims.001",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "5a480391ded19e810b259ff294045bce876c91e2995d51fbdc45d4cb27d95fd2",
+      "scenario_id": "insurance.claims.002",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "f69add3588381da64c27804450b9d23a29576b2f184abe3692bafb31157a851e",
+      "scenario_id": "insurance.claims.003",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "e5501f75fb102d4645ffd13fc62722686a21b83ced93100bf05b88fb511d8cd8",
+      "scenario_id": "insurance.claims.004",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "8cdc4e3c6bb3189e829fdccaa06b3ef48a82209c9917f588ea0bb46718391a61",
+      "scenario_id": "insurance.claims.005",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "859a7b36a29d3edd27ed9454a45e8a4a6b9e6a484a163d1f200f7eb0874e5a40",
+      "scenario_id": "insurance.claims.006",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "680b04de51cd2a0822e1da7428f6e2b750dce207a9386e3b83734e29a5c1c10b",
+      "scenario_id": "insurance.claims.007",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "83011d7785d3e03f8109a0cee5bdb5041e5e710201d1e5175388df2977ce4605",
+      "scenario_id": "insurance.claims.008",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "0f1213801d1aa10118a0f14c96214900e3c651b0ffb4c9fc4dac3273a18b00c1",
+      "scenario_id": "insurance.claims.009",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "9cd94c0238011cb69a83e8acd315249ed2538d89a1cf342f7fae8f323a3bab19",
+      "scenario_id": "insurance.claims.010",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "9af804960aece263e32e6394566e12178de165f467e2c99302fd18c5d44da543",
+      "scenario_id": "insurance.claims.011",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "e61174e0f17dad483bacad11eebdc118d6a635336001de1030b5a9585cbf5b0c",
+      "scenario_id": "insurance.claims.012",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "inventory-control",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "inventory-controller",
+        "order-operations-specialist"
+      ],
+      "scenario_hash": "aa842430a92322db7e1bbb91df750ff63214ae371b070ed787b18054308ade10",
+      "scenario_id": "inventory.unchanged",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "d4d8fd4dba228c09cfb97ac5707127b71829b7a193bf45c761df06f498bb2035",
+      "scenario_id": "refund.duplicate",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "334b81b7551a5e2edaaaf71a1de14eabf1ac05574d61d80dea896f1b76b06c87",
+      "scenario_id": "refund.excessive",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "adversarial",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "3728cdd7fb947af270fd1d2d52acf594213b4bfdea21cebc6e45c9cee6e556ec",
+      "scenario_id": "refund.partial.happy",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "6bededd2c63b209f1df5b63585c3f995d834b685e4a6d5b193b9ec4812e3f8e7",
+      "scenario_id": "refund.unauthorized",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "refund-resolution",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "financial",
+      "role_ids": [
+        "customer-support-agent",
+        "refund-specialist"
+      ],
+      "scenario_hash": "7a6a2674694f1d1a4099f858a53eec4c360a6f0d4ffc1812bc8de8d044a9fc3f",
+      "scenario_id": "refund.unsafe_intermediate",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "212892338915dfdb9a702e93e64ba7d2e0e4c4ccbefa9b46d82f5b3b45eeed53",
+      "scenario_id": "resource.missing_usage",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "operational-reliability",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "reliability",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "dc67636adc1cc449a904377d71f689ad1ee511c47697ca0188c5a01626088340",
+      "scenario_id": "resource.tool_budget",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "12b84f3c9ccce7764cf9f38d3034d42c33435e022c1e1cc2faf7e1e573c8422a",
+      "scenario_id": "ticket.escalation.required",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "support-escalation",
+      "difficulty": "basic",
+      "domain_id": "commerce",
+      "risk_category": "safety",
+      "role_ids": [
+        "customer-support-agent",
+        "support-escalation-manager"
+      ],
+      "scenario_hash": "fc3b29a9936e9148549c62c4f87439c9587561749800c9388beb1f2cd18fa0e6",
+      "scenario_id": "ticket.resolution.required",
+      "schema_version": "1.0"
+    }
+  ],
+  "domains": [
+    {
+      "capability_ids": [
+        "fulfillment-coordination",
+        "inventory-control",
+        "operational-reliability",
+        "order-operations",
+        "policy-resilience",
+        "refund-resolution",
+        "supply-chain-analysis",
+        "support-escalation"
+      ],
+      "description": "Orders, refunds, support, inventory, and fulfillment operations.",
+      "id": "commerce",
+      "label": "Retail & E-commerce",
+      "role_ids": [
+        "customer-support-agent",
+        "fulfillment-coordinator",
+        "inventory-controller",
+        "order-operations-specialist",
+        "refund-specialist",
+        "supply-chain-analyst",
+        "support-escalation-manager"
+      ],
+      "schema_version": "1.0",
+      "version": "1.0.0",
+      "world_names": [
+        "postgres-commerce",
+        "postgres-commerce-supply-chain",
+        "stub-commerce"
+      ]
+    },
+    {
+      "capability_ids": [
+        "claims-adjustment"
+      ],
+      "description": "Policies, coverage, claims, evidence, investigations, and payments.",
+      "id": "insurance",
+      "label": "Insurance",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "schema_version": "1.0",
+      "version": "1.0.0",
+      "world_names": [
+        "postgres-insurance"
+      ]
+    }
+  ],
+  "roles": [
+    {
+      "capability_ids": [
+        "claims-adjustment"
+      ],
+      "description": "Evaluate policy, evidence, claim decision, investigation, and payment work.",
+      "domain_id": "insurance",
+      "id": "claims-adjuster",
+      "label": "Claims Adjuster",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "capability_ids": [
+        "operational-reliability",
+        "order-operations",
+        "policy-resilience",
+        "refund-resolution",
+        "support-escalation"
+      ],
+      "description": "Evaluate an AI worker acting as a customer support agent.",
+      "domain_id": "commerce",
+      "id": "customer-support-agent",
+      "label": "Customer Support Agent",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "capability_ids": [
+        "fulfillment-coordination",
+        "operational-reliability",
+        "policy-resilience"
+      ],
+      "description": "Evaluate an AI worker acting as a fulfillment coordinator.",
+      "domain_id": "commerce",
+      "id": "fulfillment-coordinator",
+      "label": "Fulfillment Coordinator",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "capability_ids": [
+        "inventory-control",
+        "operational-reliability",
+        "policy-resilience"
+      ],
+      "description": "Evaluate an AI worker acting as a inventory controller.",
+      "domain_id": "commerce",
+      "id": "inventory-controller",
+      "label": "Inventory Controller",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "capability_ids": [
+        "fulfillment-coordination",
+        "inventory-control",
+        "operational-reliability",
+        "order-operations",
+        "policy-resilience"
+      ],
+      "description": "Evaluate an AI worker acting as a order operations specialist.",
+      "domain_id": "commerce",
+      "id": "order-operations-specialist",
+      "label": "Order Operations Specialist",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "capability_ids": [
+        "operational-reliability",
+        "policy-resilience",
+        "refund-resolution"
+      ],
+      "description": "Evaluate an AI worker acting as a refund specialist.",
+      "domain_id": "commerce",
+      "id": "refund-specialist",
+      "label": "Refund Specialist",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "capability_ids": [
+        "supply-chain-analysis"
+      ],
+      "description": "Evaluate inventory risk, replenishment, transfers, and supplier delay.",
+      "domain_id": "commerce",
+      "id": "supply-chain-analyst",
+      "label": "Supply Chain Analyst",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "capability_ids": [
+        "operational-reliability",
+        "policy-resilience",
+        "support-escalation"
+      ],
+      "description": "Evaluate an AI worker acting as a support escalation manager.",
+      "domain_id": "commerce",
+      "id": "support-escalation-manager",
+      "label": "Support Escalation Manager",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    }
+  ],
+  "schema_version": "1.0",
+  "suites": [
+    {
+      "capability_ids": [
+        "operational-reliability",
+        "order-operations",
+        "policy-resilience",
+        "refund-resolution",
+        "support-escalation"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 0,
+      "id": "commerce.customer-support-agent.custom",
+      "label": "Customer Support Agent Custom",
+      "revision": "1.0.0",
+      "role_id": "customer-support-agent",
+      "scenario_ids": [],
+      "schema_version": "1.0",
+      "tier": "custom"
+    },
+    {
+      "capability_ids": [
+        "operational-reliability",
+        "order-operations",
+        "policy-resilience",
+        "refund-resolution",
+        "support-escalation"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 456,
+      "id": "commerce.customer-support-agent.full",
+      "label": "Customer Support Agent Full",
+      "revision": "1.0.0",
+      "role_id": "customer-support-agent",
+      "scenario_ids": [
+        "commerce.adversarial-conflicts.001",
+        "commerce.adversarial-conflicts.002",
+        "commerce.adversarial-conflicts.003",
+        "commerce.adversarial-conflicts.004",
+        "commerce.adversarial-conflicts.005",
+        "commerce.adversarial-conflicts.006",
+        "commerce.adversarial-conflicts.007",
+        "commerce.adversarial-conflicts.008",
+        "commerce.adversarial-conflicts.009",
+        "commerce.adversarial-conflicts.010",
+        "commerce.adversarial-conflicts.011",
+        "commerce.adversarial-conflicts.012",
+        "commerce.adversarial-conflicts.013",
+        "commerce.adversarial-conflicts.014",
+        "commerce.adversarial-conflicts.015",
+        "commerce.adversarial-conflicts.016",
+        "commerce.adversarial-conflicts.017",
+        "commerce.adversarial-conflicts.018",
+        "commerce.adversarial-conflicts.019",
+        "commerce.adversarial-conflicts.020",
+        "commerce.adversarial-conflicts.021",
+        "commerce.adversarial-conflicts.022",
+        "commerce.adversarial-conflicts.023",
+        "commerce.adversarial-conflicts.024",
+        "commerce.adversarial-conflicts.025",
+        "commerce.adversarial-conflicts.026",
+        "commerce.adversarial-conflicts.027",
+        "commerce.adversarial-conflicts.028",
+        "commerce.adversarial-conflicts.029",
+        "commerce.adversarial-conflicts.030",
+        "commerce.adversarial-conflicts.031",
+        "commerce.adversarial-conflicts.032",
+        "commerce.adversarial-conflicts.033",
+        "commerce.adversarial-conflicts.034",
+        "commerce.adversarial-conflicts.035",
+        "commerce.adversarial-conflicts.036",
+        "commerce.adversarial-conflicts.037",
+        "commerce.adversarial-conflicts.038",
+        "commerce.orders-identity.001",
+        "commerce.orders-identity.002",
+        "commerce.orders-identity.003",
+        "commerce.orders-identity.004",
+        "commerce.orders-identity.005",
+        "commerce.orders-identity.006",
+        "commerce.orders-identity.007",
+        "commerce.orders-identity.008",
+        "commerce.orders-identity.009",
+        "commerce.orders-identity.010",
+        "commerce.orders-identity.011",
+        "commerce.orders-identity.012",
+        "commerce.orders-identity.013",
+        "commerce.orders-identity.014",
+        "commerce.orders-identity.015",
+        "commerce.orders-identity.016",
+        "commerce.orders-identity.017",
+        "commerce.orders-identity.018",
+        "commerce.orders-identity.019",
+        "commerce.orders-identity.020",
+        "commerce.orders-identity.021",
+        "commerce.orders-identity.022",
+        "commerce.orders-identity.023",
+        "commerce.orders-identity.024",
+        "commerce.refunds-payments.001",
+        "commerce.refunds-payments.002",
+        "commerce.refunds-payments.003",
+        "commerce.refunds-payments.004",
+        "commerce.refunds-payments.005",
+        "commerce.refunds-payments.006",
+        "commerce.refunds-payments.007",
+        "commerce.refunds-payments.008",
+        "commerce.refunds-payments.009",
+        "commerce.refunds-payments.010",
+        "commerce.refunds-payments.011",
+        "commerce.refunds-payments.012",
+        "commerce.refunds-payments.013",
+        "commerce.refunds-payments.014",
+        "commerce.refunds-payments.015",
+        "commerce.refunds-payments.016",
+        "commerce.refunds-payments.017",
+        "commerce.refunds-payments.018",
+        "commerce.refunds-payments.019",
+        "commerce.refunds-payments.020",
+        "commerce.refunds-payments.021",
+        "commerce.refunds-payments.022",
+        "commerce.refunds-payments.023",
+        "commerce.refunds-payments.024",
+        "commerce.refunds-payments.025",
+        "commerce.refunds-payments.026",
+        "commerce.refunds-payments.027",
+        "commerce.refunds-payments.028",
+        "commerce.refunds-payments.029",
+        "commerce.refunds-payments.030",
+        "commerce.refunds-payments.031",
+        "commerce.refunds-payments.032",
+        "commerce.refunds-payments.033",
+        "commerce.refunds-payments.034",
+        "commerce.refunds-payments.035",
+        "commerce.refunds-payments.036",
+        "commerce.refunds-payments.037",
+        "commerce.refunds-payments.038",
+        "commerce.refunds-payments.039",
+        "commerce.refunds-payments.040",
+        "commerce.refunds-payments.041",
+        "commerce.refunds-payments.042",
+        "commerce.reliability-injection.001",
+        "commerce.reliability-injection.002",
+        "commerce.reliability-injection.003",
+        "commerce.reliability-injection.004",
+        "commerce.reliability-injection.005",
+        "commerce.reliability-injection.006",
+        "commerce.reliability-injection.007",
+        "commerce.reliability-injection.008",
+        "commerce.reliability-injection.009",
+        "commerce.reliability-injection.010",
+        "commerce.reliability-injection.011",
+        "commerce.reliability-injection.012",
+        "commerce.reliability-injection.013",
+        "commerce.reliability-injection.014",
+        "commerce.reliability-injection.015",
+        "commerce.reliability-injection.016",
+        "commerce.reliability-injection.017",
+        "commerce.reliability-injection.018",
+        "commerce.reliability-injection.019",
+        "commerce.reliability-injection.020",
+        "commerce.reliability-injection.021",
+        "commerce.reliability-injection.022",
+        "commerce.reliability-injection.023",
+        "commerce.reliability-injection.024",
+        "commerce.tickets-escalation.001",
+        "commerce.tickets-escalation.002",
+        "commerce.tickets-escalation.003",
+        "commerce.tickets-escalation.004",
+        "commerce.tickets-escalation.005",
+        "commerce.tickets-escalation.006",
+        "commerce.tickets-escalation.007",
+        "commerce.tickets-escalation.008",
+        "commerce.tickets-escalation.009",
+        "commerce.tickets-escalation.010",
+        "commerce.tickets-escalation.011",
+        "commerce.tickets-escalation.012",
+        "commerce.tickets-escalation.013",
+        "commerce.tickets-escalation.014",
+        "commerce.tickets-escalation.015",
+        "commerce.tickets-escalation.016",
+        "commerce.tickets-escalation.017",
+        "commerce.tickets-escalation.018",
+        "commerce.tickets-escalation.019",
+        "commerce.tickets-escalation.020",
+        "commerce.tickets-escalation.021",
+        "commerce.tickets-escalation.022",
+        "commerce.tickets-escalation.023",
+        "commerce.tickets-escalation.024"
+      ],
+      "schema_version": "1.0",
+      "tier": "full"
+    },
+    {
+      "capability_ids": [
+        "refund-resolution"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 18,
+      "id": "commerce.customer-support-agent.smoke",
+      "label": "Customer Support Agent Smoke",
+      "revision": "1.0.0",
+      "role_id": "customer-support-agent",
+      "scenario_ids": [
+        "commerce.refunds-payments.001",
+        "commerce.refunds-payments.002",
+        "commerce.refunds-payments.003",
+        "commerce.refunds-payments.004",
+        "commerce.refunds-payments.005",
+        "commerce.refunds-payments.006"
+      ],
+      "schema_version": "1.0",
+      "tier": "smoke"
+    },
+    {
+      "capability_ids": [
+        "refund-resolution"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 90,
+      "id": "commerce.customer-support-agent.standard",
+      "label": "Customer Support Agent Standard",
+      "revision": "1.0.0",
+      "role_id": "customer-support-agent",
+      "scenario_ids": [
+        "commerce.refunds-payments.001",
+        "commerce.refunds-payments.002",
+        "commerce.refunds-payments.003",
+        "commerce.refunds-payments.004",
+        "commerce.refunds-payments.005",
+        "commerce.refunds-payments.006",
+        "commerce.refunds-payments.007",
+        "commerce.refunds-payments.008",
+        "commerce.refunds-payments.009",
+        "commerce.refunds-payments.010",
+        "commerce.refunds-payments.011",
+        "commerce.refunds-payments.012",
+        "commerce.refunds-payments.013",
+        "commerce.refunds-payments.014",
+        "commerce.refunds-payments.015",
+        "commerce.refunds-payments.016",
+        "commerce.refunds-payments.017",
+        "commerce.refunds-payments.018",
+        "commerce.refunds-payments.019",
+        "commerce.refunds-payments.020",
+        "commerce.refunds-payments.021",
+        "commerce.refunds-payments.022",
+        "commerce.refunds-payments.023",
+        "commerce.refunds-payments.024",
+        "commerce.refunds-payments.025",
+        "commerce.refunds-payments.026",
+        "commerce.refunds-payments.027",
+        "commerce.refunds-payments.028",
+        "commerce.refunds-payments.029",
+        "commerce.refunds-payments.030"
+      ],
+      "schema_version": "1.0",
+      "tier": "standard"
+    },
+    {
+      "capability_ids": [
+        "fulfillment-coordination",
+        "operational-reliability",
+        "policy-resilience"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 0,
+      "id": "commerce.fulfillment-coordinator.custom",
+      "label": "Fulfillment Coordinator Custom",
+      "revision": "1.0.0",
+      "role_id": "fulfillment-coordinator",
+      "scenario_ids": [],
+      "schema_version": "1.0",
+      "tier": "custom"
+    },
+    {
+      "capability_ids": [
+        "fulfillment-coordination",
+        "operational-reliability",
+        "policy-resilience"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 258,
+      "id": "commerce.fulfillment-coordinator.full",
+      "label": "Fulfillment Coordinator Full",
+      "revision": "1.0.0",
+      "role_id": "fulfillment-coordinator",
+      "scenario_ids": [
+        "commerce.adversarial-conflicts.001",
+        "commerce.adversarial-conflicts.002",
+        "commerce.adversarial-conflicts.003",
+        "commerce.adversarial-conflicts.004",
+        "commerce.adversarial-conflicts.005",
+        "commerce.adversarial-conflicts.006",
+        "commerce.adversarial-conflicts.007",
+        "commerce.adversarial-conflicts.008",
+        "commerce.adversarial-conflicts.009",
+        "commerce.adversarial-conflicts.010",
+        "commerce.adversarial-conflicts.011",
+        "commerce.adversarial-conflicts.012",
+        "commerce.adversarial-conflicts.013",
+        "commerce.adversarial-conflicts.014",
+        "commerce.adversarial-conflicts.015",
+        "commerce.adversarial-conflicts.016",
+        "commerce.adversarial-conflicts.017",
+        "commerce.adversarial-conflicts.018",
+        "commerce.adversarial-conflicts.019",
+        "commerce.adversarial-conflicts.020",
+        "commerce.adversarial-conflicts.021",
+        "commerce.adversarial-conflicts.022",
+        "commerce.adversarial-conflicts.023",
+        "commerce.adversarial-conflicts.024",
+        "commerce.adversarial-conflicts.025",
+        "commerce.adversarial-conflicts.026",
+        "commerce.adversarial-conflicts.027",
+        "commerce.adversarial-conflicts.028",
+        "commerce.adversarial-conflicts.029",
+        "commerce.adversarial-conflicts.030",
+        "commerce.adversarial-conflicts.031",
+        "commerce.adversarial-conflicts.032",
+        "commerce.adversarial-conflicts.033",
+        "commerce.adversarial-conflicts.034",
+        "commerce.adversarial-conflicts.035",
+        "commerce.adversarial-conflicts.036",
+        "commerce.adversarial-conflicts.037",
+        "commerce.adversarial-conflicts.038",
+        "commerce.reliability-injection.001",
+        "commerce.reliability-injection.002",
+        "commerce.reliability-injection.003",
+        "commerce.reliability-injection.004",
+        "commerce.reliability-injection.005",
+        "commerce.reliability-injection.006",
+        "commerce.reliability-injection.007",
+        "commerce.reliability-injection.008",
+        "commerce.reliability-injection.009",
+        "commerce.reliability-injection.010",
+        "commerce.reliability-injection.011",
+        "commerce.reliability-injection.012",
+        "commerce.reliability-injection.013",
+        "commerce.reliability-injection.014",
+        "commerce.reliability-injection.015",
+        "commerce.reliability-injection.016",
+        "commerce.reliability-injection.017",
+        "commerce.reliability-injection.018",
+        "commerce.reliability-injection.019",
+        "commerce.reliability-injection.020",
+        "commerce.reliability-injection.021",
+        "commerce.reliability-injection.022",
+        "commerce.reliability-injection.023",
+        "commerce.reliability-injection.024",
+        "commerce.shipping-fulfillment.001",
+        "commerce.shipping-fulfillment.002",
+        "commerce.shipping-fulfillment.003",
+        "commerce.shipping-fulfillment.004",
+        "commerce.shipping-fulfillment.005",
+        "commerce.shipping-fulfillment.006",
+        "commerce.shipping-fulfillment.007",
+        "commerce.shipping-fulfillment.008",
+        "commerce.shipping-fulfillment.009",
+        "commerce.shipping-fulfillment.010",
+        "commerce.shipping-fulfillment.011",
+        "commerce.shipping-fulfillment.012",
+        "commerce.shipping-fulfillment.013",
+        "commerce.shipping-fulfillment.014",
+        "commerce.shipping-fulfillment.015",
+        "commerce.shipping-fulfillment.016",
+        "commerce.shipping-fulfillment.017",
+        "commerce.shipping-fulfillment.018",
+        "commerce.shipping-fulfillment.019",
+        "commerce.shipping-fulfillment.020",
+        "commerce.shipping-fulfillment.021",
+        "commerce.shipping-fulfillment.022",
+        "commerce.shipping-fulfillment.023",
+        "commerce.shipping-fulfillment.024"
+      ],
+      "schema_version": "1.0",
+      "tier": "full"
+    },
+    {
+      "capability_ids": [
+        "fulfillment-coordination"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 18,
+      "id": "commerce.fulfillment-coordinator.smoke",
+      "label": "Fulfillment Coordinator Smoke",
+      "revision": "1.0.0",
+      "role_id": "fulfillment-coordinator",
+      "scenario_ids": [
+        "commerce.shipping-fulfillment.001",
+        "commerce.shipping-fulfillment.002",
+        "commerce.shipping-fulfillment.003",
+        "commerce.shipping-fulfillment.004",
+        "commerce.shipping-fulfillment.005",
+        "commerce.shipping-fulfillment.006"
+      ],
+      "schema_version": "1.0",
+      "tier": "smoke"
+    },
+    {
+      "capability_ids": [
+        "fulfillment-coordination",
+        "policy-resilience"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 90,
+      "id": "commerce.fulfillment-coordinator.standard",
+      "label": "Fulfillment Coordinator Standard",
+      "revision": "1.0.0",
+      "role_id": "fulfillment-coordinator",
+      "scenario_ids": [
+        "commerce.adversarial-conflicts.001",
+        "commerce.adversarial-conflicts.002",
+        "commerce.adversarial-conflicts.003",
+        "commerce.adversarial-conflicts.004",
+        "commerce.adversarial-conflicts.005",
+        "commerce.adversarial-conflicts.006",
+        "commerce.shipping-fulfillment.001",
+        "commerce.shipping-fulfillment.002",
+        "commerce.shipping-fulfillment.003",
+        "commerce.shipping-fulfillment.004",
+        "commerce.shipping-fulfillment.005",
+        "commerce.shipping-fulfillment.006",
+        "commerce.shipping-fulfillment.007",
+        "commerce.shipping-fulfillment.008",
+        "commerce.shipping-fulfillment.009",
+        "commerce.shipping-fulfillment.010",
+        "commerce.shipping-fulfillment.011",
+        "commerce.shipping-fulfillment.012",
+        "commerce.shipping-fulfillment.013",
+        "commerce.shipping-fulfillment.014",
+        "commerce.shipping-fulfillment.015",
+        "commerce.shipping-fulfillment.016",
+        "commerce.shipping-fulfillment.017",
+        "commerce.shipping-fulfillment.018",
+        "commerce.shipping-fulfillment.019",
+        "commerce.shipping-fulfillment.020",
+        "commerce.shipping-fulfillment.021",
+        "commerce.shipping-fulfillment.022",
+        "commerce.shipping-fulfillment.023",
+        "commerce.shipping-fulfillment.024"
+      ],
+      "schema_version": "1.0",
+      "tier": "standard"
+    },
+    {
+      "capability_ids": [
+        "inventory-control",
+        "operational-reliability",
+        "policy-resilience"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 0,
+      "id": "commerce.inventory-controller.custom",
+      "label": "Inventory Controller Custom",
+      "revision": "1.0.0",
+      "role_id": "inventory-controller",
+      "scenario_ids": [],
+      "schema_version": "1.0",
+      "tier": "custom"
+    },
+    {
+      "capability_ids": [
+        "inventory-control",
+        "operational-reliability",
+        "policy-resilience"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 258,
+      "id": "commerce.inventory-controller.full",
+      "label": "Inventory Controller Full",
+      "revision": "1.0.0",
+      "role_id": "inventory-controller",
+      "scenario_ids": [
+        "commerce.adversarial-conflicts.001",
+        "commerce.adversarial-conflicts.002",
+        "commerce.adversarial-conflicts.003",
+        "commerce.adversarial-conflicts.004",
+        "commerce.adversarial-conflicts.005",
+        "commerce.adversarial-conflicts.006",
+        "commerce.adversarial-conflicts.007",
+        "commerce.adversarial-conflicts.008",
+        "commerce.adversarial-conflicts.009",
+        "commerce.adversarial-conflicts.010",
+        "commerce.adversarial-conflicts.011",
+        "commerce.adversarial-conflicts.012",
+        "commerce.adversarial-conflicts.013",
+        "commerce.adversarial-conflicts.014",
+        "commerce.adversarial-conflicts.015",
+        "commerce.adversarial-conflicts.016",
+        "commerce.adversarial-conflicts.017",
+        "commerce.adversarial-conflicts.018",
+        "commerce.adversarial-conflicts.019",
+        "commerce.adversarial-conflicts.020",
+        "commerce.adversarial-conflicts.021",
+        "commerce.adversarial-conflicts.022",
+        "commerce.adversarial-conflicts.023",
+        "commerce.adversarial-conflicts.024",
+        "commerce.adversarial-conflicts.025",
+        "commerce.adversarial-conflicts.026",
+        "commerce.adversarial-conflicts.027",
+        "commerce.adversarial-conflicts.028",
+        "commerce.adversarial-conflicts.029",
+        "commerce.adversarial-conflicts.030",
+        "commerce.adversarial-conflicts.031",
+        "commerce.adversarial-conflicts.032",
+        "commerce.adversarial-conflicts.033",
+        "commerce.adversarial-conflicts.034",
+        "commerce.adversarial-conflicts.035",
+        "commerce.adversarial-conflicts.036",
+        "commerce.adversarial-conflicts.037",
+        "commerce.adversarial-conflicts.038",
+        "commerce.inventory-catalog.001",
+        "commerce.inventory-catalog.002",
+        "commerce.inventory-catalog.003",
+        "commerce.inventory-catalog.004",
+        "commerce.inventory-catalog.005",
+        "commerce.inventory-catalog.006",
+        "commerce.inventory-catalog.007",
+        "commerce.inventory-catalog.008",
+        "commerce.inventory-catalog.009",
+        "commerce.inventory-catalog.010",
+        "commerce.inventory-catalog.011",
+        "commerce.inventory-catalog.012",
+        "commerce.inventory-catalog.013",
+        "commerce.inventory-catalog.014",
+        "commerce.inventory-catalog.015",
+        "commerce.inventory-catalog.016",
+        "commerce.inventory-catalog.017",
+        "commerce.inventory-catalog.018",
+        "commerce.inventory-catalog.019",
+        "commerce.inventory-catalog.020",
+        "commerce.inventory-catalog.021",
+        "commerce.inventory-catalog.022",
+        "commerce.inventory-catalog.023",
+        "commerce.inventory-catalog.024",
+        "commerce.reliability-injection.001",
+        "commerce.reliability-injection.002",
+        "commerce.reliability-injection.003",
+        "commerce.reliability-injection.004",
+        "commerce.reliability-injection.005",
+        "commerce.reliability-injection.006",
+        "commerce.reliability-injection.007",
+        "commerce.reliability-injection.008",
+        "commerce.reliability-injection.009",
+        "commerce.reliability-injection.010",
+        "commerce.reliability-injection.011",
+        "commerce.reliability-injection.012",
+        "commerce.reliability-injection.013",
+        "commerce.reliability-injection.014",
+        "commerce.reliability-injection.015",
+        "commerce.reliability-injection.016",
+        "commerce.reliability-injection.017",
+        "commerce.reliability-injection.018",
+        "commerce.reliability-injection.019",
+        "commerce.reliability-injection.020",
+        "commerce.reliability-injection.021",
+        "commerce.reliability-injection.022",
+        "commerce.reliability-injection.023",
+        "commerce.reliability-injection.024"
+      ],
+      "schema_version": "1.0",
+      "tier": "full"
+    },
+    {
+      "capability_ids": [
+        "inventory-control"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 18,
+      "id": "commerce.inventory-controller.smoke",
+      "label": "Inventory Controller Smoke",
+      "revision": "1.0.0",
+      "role_id": "inventory-controller",
+      "scenario_ids": [
+        "commerce.inventory-catalog.001",
+        "commerce.inventory-catalog.002",
+        "commerce.inventory-catalog.003",
+        "commerce.inventory-catalog.004",
+        "commerce.inventory-catalog.005",
+        "commerce.inventory-catalog.006"
+      ],
+      "schema_version": "1.0",
+      "tier": "smoke"
+    },
+    {
+      "capability_ids": [
+        "inventory-control",
+        "policy-resilience"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 90,
+      "id": "commerce.inventory-controller.standard",
+      "label": "Inventory Controller Standard",
+      "revision": "1.0.0",
+      "role_id": "inventory-controller",
+      "scenario_ids": [
+        "commerce.adversarial-conflicts.001",
+        "commerce.adversarial-conflicts.002",
+        "commerce.adversarial-conflicts.003",
+        "commerce.adversarial-conflicts.004",
+        "commerce.adversarial-conflicts.005",
+        "commerce.adversarial-conflicts.006",
+        "commerce.inventory-catalog.001",
+        "commerce.inventory-catalog.002",
+        "commerce.inventory-catalog.003",
+        "commerce.inventory-catalog.004",
+        "commerce.inventory-catalog.005",
+        "commerce.inventory-catalog.006",
+        "commerce.inventory-catalog.007",
+        "commerce.inventory-catalog.008",
+        "commerce.inventory-catalog.009",
+        "commerce.inventory-catalog.010",
+        "commerce.inventory-catalog.011",
+        "commerce.inventory-catalog.012",
+        "commerce.inventory-catalog.013",
+        "commerce.inventory-catalog.014",
+        "commerce.inventory-catalog.015",
+        "commerce.inventory-catalog.016",
+        "commerce.inventory-catalog.017",
+        "commerce.inventory-catalog.018",
+        "commerce.inventory-catalog.019",
+        "commerce.inventory-catalog.020",
+        "commerce.inventory-catalog.021",
+        "commerce.inventory-catalog.022",
+        "commerce.inventory-catalog.023",
+        "commerce.inventory-catalog.024"
+      ],
+      "schema_version": "1.0",
+      "tier": "standard"
+    },
+    {
+      "capability_ids": [
+        "fulfillment-coordination",
+        "inventory-control",
+        "operational-reliability",
+        "order-operations",
+        "policy-resilience"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 0,
+      "id": "commerce.order-operations-specialist.custom",
+      "label": "Order Operations Specialist Custom",
+      "revision": "1.0.0",
+      "role_id": "order-operations-specialist",
+      "scenario_ids": [],
+      "schema_version": "1.0",
+      "tier": "custom"
+    },
+    {
+      "capability_ids": [
+        "fulfillment-coordination",
+        "inventory-control",
+        "operational-reliability",
+        "order-operations",
+        "policy-resilience"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 402,
+      "id": "commerce.order-operations-specialist.full",
+      "label": "Order Operations Specialist Full",
+      "revision": "1.0.0",
+      "role_id": "order-operations-specialist",
+      "scenario_ids": [
+        "commerce.adversarial-conflicts.001",
+        "commerce.adversarial-conflicts.002",
+        "commerce.adversarial-conflicts.003",
+        "commerce.adversarial-conflicts.004",
+        "commerce.adversarial-conflicts.005",
+        "commerce.adversarial-conflicts.006",
+        "commerce.adversarial-conflicts.007",
+        "commerce.adversarial-conflicts.008",
+        "commerce.adversarial-conflicts.009",
+        "commerce.adversarial-conflicts.010",
+        "commerce.adversarial-conflicts.011",
+        "commerce.adversarial-conflicts.012",
+        "commerce.adversarial-conflicts.013",
+        "commerce.adversarial-conflicts.014",
+        "commerce.adversarial-conflicts.015",
+        "commerce.adversarial-conflicts.016",
+        "commerce.adversarial-conflicts.017",
+        "commerce.adversarial-conflicts.018",
+        "commerce.adversarial-conflicts.019",
+        "commerce.adversarial-conflicts.020",
+        "commerce.adversarial-conflicts.021",
+        "commerce.adversarial-conflicts.022",
+        "commerce.adversarial-conflicts.023",
+        "commerce.adversarial-conflicts.024",
+        "commerce.adversarial-conflicts.025",
+        "commerce.adversarial-conflicts.026",
+        "commerce.adversarial-conflicts.027",
+        "commerce.adversarial-conflicts.028",
+        "commerce.adversarial-conflicts.029",
+        "commerce.adversarial-conflicts.030",
+        "commerce.adversarial-conflicts.031",
+        "commerce.adversarial-conflicts.032",
+        "commerce.adversarial-conflicts.033",
+        "commerce.adversarial-conflicts.034",
+        "commerce.adversarial-conflicts.035",
+        "commerce.adversarial-conflicts.036",
+        "commerce.adversarial-conflicts.037",
+        "commerce.adversarial-conflicts.038",
+        "commerce.inventory-catalog.001",
+        "commerce.inventory-catalog.002",
+        "commerce.inventory-catalog.003",
+        "commerce.inventory-catalog.004",
+        "commerce.inventory-catalog.005",
+        "commerce.inventory-catalog.006",
+        "commerce.inventory-catalog.007",
+        "commerce.inventory-catalog.008",
+        "commerce.inventory-catalog.009",
+        "commerce.inventory-catalog.010",
+        "commerce.inventory-catalog.011",
+        "commerce.inventory-catalog.012",
+        "commerce.inventory-catalog.013",
+        "commerce.inventory-catalog.014",
+        "commerce.inventory-catalog.015",
+        "commerce.inventory-catalog.016",
+        "commerce.inventory-catalog.017",
+        "commerce.inventory-catalog.018",
+        "commerce.inventory-catalog.019",
+        "commerce.inventory-catalog.020",
+        "commerce.inventory-catalog.021",
+        "commerce.inventory-catalog.022",
+        "commerce.inventory-catalog.023",
+        "commerce.inventory-catalog.024",
+        "commerce.orders-identity.001",
+        "commerce.orders-identity.002",
+        "commerce.orders-identity.003",
+        "commerce.orders-identity.004",
+        "commerce.orders-identity.005",
+        "commerce.orders-identity.006",
+        "commerce.orders-identity.007",
+        "commerce.orders-identity.008",
+        "commerce.orders-identity.009",
+        "commerce.orders-identity.010",
+        "commerce.orders-identity.011",
+        "commerce.orders-identity.012",
+        "commerce.orders-identity.013",
+        "commerce.orders-identity.014",
+        "commerce.orders-identity.015",
+        "commerce.orders-identity.016",
+        "commerce.orders-identity.017",
+        "commerce.orders-identity.018",
+        "commerce.orders-identity.019",
+        "commerce.orders-identity.020",
+        "commerce.orders-identity.021",
+        "commerce.orders-identity.022",
+        "commerce.orders-identity.023",
+        "commerce.orders-identity.024",
+        "commerce.reliability-injection.001",
+        "commerce.reliability-injection.002",
+        "commerce.reliability-injection.003",
+        "commerce.reliability-injection.004",
+        "commerce.reliability-injection.005",
+        "commerce.reliability-injection.006",
+        "commerce.reliability-injection.007",
+        "commerce.reliability-injection.008",
+        "commerce.reliability-injection.009",
+        "commerce.reliability-injection.010",
+        "commerce.reliability-injection.011",
+        "commerce.reliability-injection.012",
+        "commerce.reliability-injection.013",
+        "commerce.reliability-injection.014",
+        "commerce.reliability-injection.015",
+        "commerce.reliability-injection.016",
+        "commerce.reliability-injection.017",
+        "commerce.reliability-injection.018",
+        "commerce.reliability-injection.019",
+        "commerce.reliability-injection.020",
+        "commerce.reliability-injection.021",
+        "commerce.reliability-injection.022",
+        "commerce.reliability-injection.023",
+        "commerce.reliability-injection.024",
+        "commerce.shipping-fulfillment.001",
+        "commerce.shipping-fulfillment.002",
+        "commerce.shipping-fulfillment.003",
+        "commerce.shipping-fulfillment.004",
+        "commerce.shipping-fulfillment.005",
+        "commerce.shipping-fulfillment.006",
+        "commerce.shipping-fulfillment.007",
+        "commerce.shipping-fulfillment.008",
+        "commerce.shipping-fulfillment.009",
+        "commerce.shipping-fulfillment.010",
+        "commerce.shipping-fulfillment.011",
+        "commerce.shipping-fulfillment.012",
+        "commerce.shipping-fulfillment.013",
+        "commerce.shipping-fulfillment.014",
+        "commerce.shipping-fulfillment.015",
+        "commerce.shipping-fulfillment.016",
+        "commerce.shipping-fulfillment.017",
+        "commerce.shipping-fulfillment.018",
+        "commerce.shipping-fulfillment.019",
+        "commerce.shipping-fulfillment.020",
+        "commerce.shipping-fulfillment.021",
+        "commerce.shipping-fulfillment.022",
+        "commerce.shipping-fulfillment.023",
+        "commerce.shipping-fulfillment.024"
+      ],
+      "schema_version": "1.0",
+      "tier": "full"
+    },
+    {
+      "capability_ids": [
+        "order-operations"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 18,
+      "id": "commerce.order-operations-specialist.smoke",
+      "label": "Order Operations Specialist Smoke",
+      "revision": "1.0.0",
+      "role_id": "order-operations-specialist",
+      "scenario_ids": [
+        "commerce.orders-identity.001",
+        "commerce.orders-identity.002",
+        "commerce.orders-identity.003",
+        "commerce.orders-identity.004",
+        "commerce.orders-identity.005",
+        "commerce.orders-identity.006"
+      ],
+      "schema_version": "1.0",
+      "tier": "smoke"
+    },
+    {
+      "capability_ids": [
+        "inventory-control",
+        "order-operations"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 90,
+      "id": "commerce.order-operations-specialist.standard",
+      "label": "Order Operations Specialist Standard",
+      "revision": "1.0.0",
+      "role_id": "order-operations-specialist",
+      "scenario_ids": [
+        "commerce.inventory-catalog.001",
+        "commerce.inventory-catalog.002",
+        "commerce.inventory-catalog.003",
+        "commerce.inventory-catalog.004",
+        "commerce.inventory-catalog.005",
+        "commerce.inventory-catalog.006",
+        "commerce.orders-identity.001",
+        "commerce.orders-identity.002",
+        "commerce.orders-identity.003",
+        "commerce.orders-identity.004",
+        "commerce.orders-identity.005",
+        "commerce.orders-identity.006",
+        "commerce.orders-identity.007",
+        "commerce.orders-identity.008",
+        "commerce.orders-identity.009",
+        "commerce.orders-identity.010",
+        "commerce.orders-identity.011",
+        "commerce.orders-identity.012",
+        "commerce.orders-identity.013",
+        "commerce.orders-identity.014",
+        "commerce.orders-identity.015",
+        "commerce.orders-identity.016",
+        "commerce.orders-identity.017",
+        "commerce.orders-identity.018",
+        "commerce.orders-identity.019",
+        "commerce.orders-identity.020",
+        "commerce.orders-identity.021",
+        "commerce.orders-identity.022",
+        "commerce.orders-identity.023",
+        "commerce.orders-identity.024"
+      ],
+      "schema_version": "1.0",
+      "tier": "standard"
+    },
+    {
+      "capability_ids": [
+        "operational-reliability",
+        "policy-resilience",
+        "refund-resolution"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 0,
+      "id": "commerce.refund-specialist.custom",
+      "label": "Refund Specialist Custom",
+      "revision": "1.0.0",
+      "role_id": "refund-specialist",
+      "scenario_ids": [],
+      "schema_version": "1.0",
+      "tier": "custom"
+    },
+    {
+      "capability_ids": [
+        "operational-reliability",
+        "policy-resilience",
+        "refund-resolution"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 312,
+      "id": "commerce.refund-specialist.full",
+      "label": "Refund Specialist Full",
+      "revision": "1.0.0",
+      "role_id": "refund-specialist",
+      "scenario_ids": [
+        "commerce.adversarial-conflicts.001",
+        "commerce.adversarial-conflicts.002",
+        "commerce.adversarial-conflicts.003",
+        "commerce.adversarial-conflicts.004",
+        "commerce.adversarial-conflicts.005",
+        "commerce.adversarial-conflicts.006",
+        "commerce.adversarial-conflicts.007",
+        "commerce.adversarial-conflicts.008",
+        "commerce.adversarial-conflicts.009",
+        "commerce.adversarial-conflicts.010",
+        "commerce.adversarial-conflicts.011",
+        "commerce.adversarial-conflicts.012",
+        "commerce.adversarial-conflicts.013",
+        "commerce.adversarial-conflicts.014",
+        "commerce.adversarial-conflicts.015",
+        "commerce.adversarial-conflicts.016",
+        "commerce.adversarial-conflicts.017",
+        "commerce.adversarial-conflicts.018",
+        "commerce.adversarial-conflicts.019",
+        "commerce.adversarial-conflicts.020",
+        "commerce.adversarial-conflicts.021",
+        "commerce.adversarial-conflicts.022",
+        "commerce.adversarial-conflicts.023",
+        "commerce.adversarial-conflicts.024",
+        "commerce.adversarial-conflicts.025",
+        "commerce.adversarial-conflicts.026",
+        "commerce.adversarial-conflicts.027",
+        "commerce.adversarial-conflicts.028",
+        "commerce.adversarial-conflicts.029",
+        "commerce.adversarial-conflicts.030",
+        "commerce.adversarial-conflicts.031",
+        "commerce.adversarial-conflicts.032",
+        "commerce.adversarial-conflicts.033",
+        "commerce.adversarial-conflicts.034",
+        "commerce.adversarial-conflicts.035",
+        "commerce.adversarial-conflicts.036",
+        "commerce.adversarial-conflicts.037",
+        "commerce.adversarial-conflicts.038",
+        "commerce.refunds-payments.001",
+        "commerce.refunds-payments.002",
+        "commerce.refunds-payments.003",
+        "commerce.refunds-payments.004",
+        "commerce.refunds-payments.005",
+        "commerce.refunds-payments.006",
+        "commerce.refunds-payments.007",
+        "commerce.refunds-payments.008",
+        "commerce.refunds-payments.009",
+        "commerce.refunds-payments.010",
+        "commerce.refunds-payments.011",
+        "commerce.refunds-payments.012",
+        "commerce.refunds-payments.013",
+        "commerce.refunds-payments.014",
+        "commerce.refunds-payments.015",
+        "commerce.refunds-payments.016",
+        "commerce.refunds-payments.017",
+        "commerce.refunds-payments.018",
+        "commerce.refunds-payments.019",
+        "commerce.refunds-payments.020",
+        "commerce.refunds-payments.021",
+        "commerce.refunds-payments.022",
+        "commerce.refunds-payments.023",
+        "commerce.refunds-payments.024",
+        "commerce.refunds-payments.025",
+        "commerce.refunds-payments.026",
+        "commerce.refunds-payments.027",
+        "commerce.refunds-payments.028",
+        "commerce.refunds-payments.029",
+        "commerce.refunds-payments.030",
+        "commerce.refunds-payments.031",
+        "commerce.refunds-payments.032",
+        "commerce.refunds-payments.033",
+        "commerce.refunds-payments.034",
+        "commerce.refunds-payments.035",
+        "commerce.refunds-payments.036",
+        "commerce.refunds-payments.037",
+        "commerce.refunds-payments.038",
+        "commerce.refunds-payments.039",
+        "commerce.refunds-payments.040",
+        "commerce.refunds-payments.041",
+        "commerce.refunds-payments.042",
+        "commerce.reliability-injection.001",
+        "commerce.reliability-injection.002",
+        "commerce.reliability-injection.003",
+        "commerce.reliability-injection.004",
+        "commerce.reliability-injection.005",
+        "commerce.reliability-injection.006",
+        "commerce.reliability-injection.007",
+        "commerce.reliability-injection.008",
+        "commerce.reliability-injection.009",
+        "commerce.reliability-injection.010",
+        "commerce.reliability-injection.011",
+        "commerce.reliability-injection.012",
+        "commerce.reliability-injection.013",
+        "commerce.reliability-injection.014",
+        "commerce.reliability-injection.015",
+        "commerce.reliability-injection.016",
+        "commerce.reliability-injection.017",
+        "commerce.reliability-injection.018",
+        "commerce.reliability-injection.019",
+        "commerce.reliability-injection.020",
+        "commerce.reliability-injection.021",
+        "commerce.reliability-injection.022",
+        "commerce.reliability-injection.023",
+        "commerce.reliability-injection.024"
+      ],
+      "schema_version": "1.0",
+      "tier": "full"
+    },
+    {
+      "capability_ids": [
+        "refund-resolution"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 18,
+      "id": "commerce.refund-specialist.smoke",
+      "label": "Refund Specialist Smoke",
+      "revision": "1.0.0",
+      "role_id": "refund-specialist",
+      "scenario_ids": [
+        "commerce.refunds-payments.001",
+        "commerce.refunds-payments.002",
+        "commerce.refunds-payments.003",
+        "commerce.refunds-payments.004",
+        "commerce.refunds-payments.005",
+        "commerce.refunds-payments.006"
+      ],
+      "schema_version": "1.0",
+      "tier": "smoke"
+    },
+    {
+      "capability_ids": [
+        "refund-resolution"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 90,
+      "id": "commerce.refund-specialist.standard",
+      "label": "Refund Specialist Standard",
+      "revision": "1.0.0",
+      "role_id": "refund-specialist",
+      "scenario_ids": [
+        "commerce.refunds-payments.001",
+        "commerce.refunds-payments.002",
+        "commerce.refunds-payments.003",
+        "commerce.refunds-payments.004",
+        "commerce.refunds-payments.005",
+        "commerce.refunds-payments.006",
+        "commerce.refunds-payments.007",
+        "commerce.refunds-payments.008",
+        "commerce.refunds-payments.009",
+        "commerce.refunds-payments.010",
+        "commerce.refunds-payments.011",
+        "commerce.refunds-payments.012",
+        "commerce.refunds-payments.013",
+        "commerce.refunds-payments.014",
+        "commerce.refunds-payments.015",
+        "commerce.refunds-payments.016",
+        "commerce.refunds-payments.017",
+        "commerce.refunds-payments.018",
+        "commerce.refunds-payments.019",
+        "commerce.refunds-payments.020",
+        "commerce.refunds-payments.021",
+        "commerce.refunds-payments.022",
+        "commerce.refunds-payments.023",
+        "commerce.refunds-payments.024",
+        "commerce.refunds-payments.025",
+        "commerce.refunds-payments.026",
+        "commerce.refunds-payments.027",
+        "commerce.refunds-payments.028",
+        "commerce.refunds-payments.029",
+        "commerce.refunds-payments.030"
+      ],
+      "schema_version": "1.0",
+      "tier": "standard"
+    },
+    {
+      "capability_ids": [
+        "supply-chain-analysis"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 0,
+      "id": "commerce.supply-chain-analyst.custom",
+      "label": "Supply Chain Analyst Custom",
+      "revision": "1.0.0",
+      "role_id": "supply-chain-analyst",
+      "scenario_ids": [],
+      "schema_version": "1.0",
+      "tier": "custom"
+    },
+    {
+      "capability_ids": [
+        "supply-chain-analysis"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 36,
+      "id": "commerce.supply-chain-analyst.full",
+      "label": "Supply Chain Analyst Full",
+      "revision": "1.0.0",
+      "role_id": "supply-chain-analyst",
+      "scenario_ids": [
+        "commerce.supply-chain.001",
+        "commerce.supply-chain.002",
+        "commerce.supply-chain.003",
+        "commerce.supply-chain.004",
+        "commerce.supply-chain.005",
+        "commerce.supply-chain.006",
+        "commerce.supply-chain.007",
+        "commerce.supply-chain.008",
+        "commerce.supply-chain.009",
+        "commerce.supply-chain.010",
+        "commerce.supply-chain.011",
+        "commerce.supply-chain.012"
+      ],
+      "schema_version": "1.0",
+      "tier": "full"
+    },
+    {
+      "capability_ids": [
+        "supply-chain-analysis"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 18,
+      "id": "commerce.supply-chain-analyst.smoke",
+      "label": "Supply Chain Analyst Smoke",
+      "revision": "1.0.0",
+      "role_id": "supply-chain-analyst",
+      "scenario_ids": [
+        "commerce.supply-chain.001",
+        "commerce.supply-chain.002",
+        "commerce.supply-chain.003",
+        "commerce.supply-chain.004",
+        "commerce.supply-chain.005",
+        "commerce.supply-chain.006"
+      ],
+      "schema_version": "1.0",
+      "tier": "smoke"
+    },
+    {
+      "capability_ids": [
+        "supply-chain-analysis"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 30,
+      "id": "commerce.supply-chain-analyst.standard",
+      "label": "Supply Chain Analyst Standard",
+      "revision": "1.0.0",
+      "role_id": "supply-chain-analyst",
+      "scenario_ids": [
+        "commerce.supply-chain.001",
+        "commerce.supply-chain.002",
+        "commerce.supply-chain.003",
+        "commerce.supply-chain.004",
+        "commerce.supply-chain.005",
+        "commerce.supply-chain.006",
+        "commerce.supply-chain.007",
+        "commerce.supply-chain.008",
+        "commerce.supply-chain.009",
+        "commerce.supply-chain.010"
+      ],
+      "schema_version": "1.0",
+      "tier": "standard"
+    },
+    {
+      "capability_ids": [
+        "operational-reliability",
+        "policy-resilience",
+        "support-escalation"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 0,
+      "id": "commerce.support-escalation-manager.custom",
+      "label": "Support Escalation Manager Custom",
+      "revision": "1.0.0",
+      "role_id": "support-escalation-manager",
+      "scenario_ids": [],
+      "schema_version": "1.0",
+      "tier": "custom"
+    },
+    {
+      "capability_ids": [
+        "operational-reliability",
+        "policy-resilience",
+        "support-escalation"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 258,
+      "id": "commerce.support-escalation-manager.full",
+      "label": "Support Escalation Manager Full",
+      "revision": "1.0.0",
+      "role_id": "support-escalation-manager",
+      "scenario_ids": [
+        "commerce.adversarial-conflicts.001",
+        "commerce.adversarial-conflicts.002",
+        "commerce.adversarial-conflicts.003",
+        "commerce.adversarial-conflicts.004",
+        "commerce.adversarial-conflicts.005",
+        "commerce.adversarial-conflicts.006",
+        "commerce.adversarial-conflicts.007",
+        "commerce.adversarial-conflicts.008",
+        "commerce.adversarial-conflicts.009",
+        "commerce.adversarial-conflicts.010",
+        "commerce.adversarial-conflicts.011",
+        "commerce.adversarial-conflicts.012",
+        "commerce.adversarial-conflicts.013",
+        "commerce.adversarial-conflicts.014",
+        "commerce.adversarial-conflicts.015",
+        "commerce.adversarial-conflicts.016",
+        "commerce.adversarial-conflicts.017",
+        "commerce.adversarial-conflicts.018",
+        "commerce.adversarial-conflicts.019",
+        "commerce.adversarial-conflicts.020",
+        "commerce.adversarial-conflicts.021",
+        "commerce.adversarial-conflicts.022",
+        "commerce.adversarial-conflicts.023",
+        "commerce.adversarial-conflicts.024",
+        "commerce.adversarial-conflicts.025",
+        "commerce.adversarial-conflicts.026",
+        "commerce.adversarial-conflicts.027",
+        "commerce.adversarial-conflicts.028",
+        "commerce.adversarial-conflicts.029",
+        "commerce.adversarial-conflicts.030",
+        "commerce.adversarial-conflicts.031",
+        "commerce.adversarial-conflicts.032",
+        "commerce.adversarial-conflicts.033",
+        "commerce.adversarial-conflicts.034",
+        "commerce.adversarial-conflicts.035",
+        "commerce.adversarial-conflicts.036",
+        "commerce.adversarial-conflicts.037",
+        "commerce.adversarial-conflicts.038",
+        "commerce.reliability-injection.001",
+        "commerce.reliability-injection.002",
+        "commerce.reliability-injection.003",
+        "commerce.reliability-injection.004",
+        "commerce.reliability-injection.005",
+        "commerce.reliability-injection.006",
+        "commerce.reliability-injection.007",
+        "commerce.reliability-injection.008",
+        "commerce.reliability-injection.009",
+        "commerce.reliability-injection.010",
+        "commerce.reliability-injection.011",
+        "commerce.reliability-injection.012",
+        "commerce.reliability-injection.013",
+        "commerce.reliability-injection.014",
+        "commerce.reliability-injection.015",
+        "commerce.reliability-injection.016",
+        "commerce.reliability-injection.017",
+        "commerce.reliability-injection.018",
+        "commerce.reliability-injection.019",
+        "commerce.reliability-injection.020",
+        "commerce.reliability-injection.021",
+        "commerce.reliability-injection.022",
+        "commerce.reliability-injection.023",
+        "commerce.reliability-injection.024",
+        "commerce.tickets-escalation.001",
+        "commerce.tickets-escalation.002",
+        "commerce.tickets-escalation.003",
+        "commerce.tickets-escalation.004",
+        "commerce.tickets-escalation.005",
+        "commerce.tickets-escalation.006",
+        "commerce.tickets-escalation.007",
+        "commerce.tickets-escalation.008",
+        "commerce.tickets-escalation.009",
+        "commerce.tickets-escalation.010",
+        "commerce.tickets-escalation.011",
+        "commerce.tickets-escalation.012",
+        "commerce.tickets-escalation.013",
+        "commerce.tickets-escalation.014",
+        "commerce.tickets-escalation.015",
+        "commerce.tickets-escalation.016",
+        "commerce.tickets-escalation.017",
+        "commerce.tickets-escalation.018",
+        "commerce.tickets-escalation.019",
+        "commerce.tickets-escalation.020",
+        "commerce.tickets-escalation.021",
+        "commerce.tickets-escalation.022",
+        "commerce.tickets-escalation.023",
+        "commerce.tickets-escalation.024"
+      ],
+      "schema_version": "1.0",
+      "tier": "full"
+    },
+    {
+      "capability_ids": [
+        "support-escalation"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 18,
+      "id": "commerce.support-escalation-manager.smoke",
+      "label": "Support Escalation Manager Smoke",
+      "revision": "1.0.0",
+      "role_id": "support-escalation-manager",
+      "scenario_ids": [
+        "commerce.tickets-escalation.001",
+        "commerce.tickets-escalation.002",
+        "commerce.tickets-escalation.003",
+        "commerce.tickets-escalation.004",
+        "commerce.tickets-escalation.005",
+        "commerce.tickets-escalation.006"
+      ],
+      "schema_version": "1.0",
+      "tier": "smoke"
+    },
+    {
+      "capability_ids": [
+        "policy-resilience",
+        "support-escalation"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "commerce",
+      "estimated_duration_s": 90,
+      "id": "commerce.support-escalation-manager.standard",
+      "label": "Support Escalation Manager Standard",
+      "revision": "1.0.0",
+      "role_id": "support-escalation-manager",
+      "scenario_ids": [
+        "commerce.adversarial-conflicts.001",
+        "commerce.adversarial-conflicts.002",
+        "commerce.adversarial-conflicts.003",
+        "commerce.adversarial-conflicts.004",
+        "commerce.adversarial-conflicts.005",
+        "commerce.adversarial-conflicts.006",
+        "commerce.tickets-escalation.001",
+        "commerce.tickets-escalation.002",
+        "commerce.tickets-escalation.003",
+        "commerce.tickets-escalation.004",
+        "commerce.tickets-escalation.005",
+        "commerce.tickets-escalation.006",
+        "commerce.tickets-escalation.007",
+        "commerce.tickets-escalation.008",
+        "commerce.tickets-escalation.009",
+        "commerce.tickets-escalation.010",
+        "commerce.tickets-escalation.011",
+        "commerce.tickets-escalation.012",
+        "commerce.tickets-escalation.013",
+        "commerce.tickets-escalation.014",
+        "commerce.tickets-escalation.015",
+        "commerce.tickets-escalation.016",
+        "commerce.tickets-escalation.017",
+        "commerce.tickets-escalation.018",
+        "commerce.tickets-escalation.019",
+        "commerce.tickets-escalation.020",
+        "commerce.tickets-escalation.021",
+        "commerce.tickets-escalation.022",
+        "commerce.tickets-escalation.023",
+        "commerce.tickets-escalation.024"
+      ],
+      "schema_version": "1.0",
+      "tier": "standard"
+    },
+    {
+      "capability_ids": [
+        "claims-adjustment"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "insurance",
+      "estimated_duration_s": 0,
+      "id": "insurance.claims-adjuster.custom",
+      "label": "Claims Adjuster Custom",
+      "revision": "1.0.0",
+      "role_id": "claims-adjuster",
+      "scenario_ids": [],
+      "schema_version": "1.0",
+      "tier": "custom"
+    },
+    {
+      "capability_ids": [
+        "claims-adjustment"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "insurance",
+      "estimated_duration_s": 36,
+      "id": "insurance.claims-adjuster.full",
+      "label": "Claims Adjuster Full",
+      "revision": "1.0.0",
+      "role_id": "claims-adjuster",
+      "scenario_ids": [
+        "insurance.claims.001",
+        "insurance.claims.002",
+        "insurance.claims.003",
+        "insurance.claims.004",
+        "insurance.claims.005",
+        "insurance.claims.006",
+        "insurance.claims.007",
+        "insurance.claims.008",
+        "insurance.claims.009",
+        "insurance.claims.010",
+        "insurance.claims.011",
+        "insurance.claims.012"
+      ],
+      "schema_version": "1.0",
+      "tier": "full"
+    },
+    {
+      "capability_ids": [
+        "claims-adjustment"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "insurance",
+      "estimated_duration_s": 18,
+      "id": "insurance.claims-adjuster.smoke",
+      "label": "Claims Adjuster Smoke",
+      "revision": "1.0.0",
+      "role_id": "claims-adjuster",
+      "scenario_ids": [
+        "insurance.claims.001",
+        "insurance.claims.002",
+        "insurance.claims.003",
+        "insurance.claims.004",
+        "insurance.claims.005",
+        "insurance.claims.006"
+      ],
+      "schema_version": "1.0",
+      "tier": "smoke"
+    },
+    {
+      "capability_ids": [
+        "claims-adjustment"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "insurance",
+      "estimated_duration_s": 30,
+      "id": "insurance.claims-adjuster.standard",
+      "label": "Claims Adjuster Standard",
+      "revision": "1.0.0",
+      "role_id": "claims-adjuster",
+      "scenario_ids": [
+        "insurance.claims.001",
+        "insurance.claims.002",
+        "insurance.claims.003",
+        "insurance.claims.004",
+        "insurance.claims.005",
+        "insurance.claims.006",
+        "insurance.claims.007",
+        "insurance.claims.008",
+        "insurance.claims.009",
+        "insurance.claims.010"
+      ],
+      "schema_version": "1.0",
+      "tier": "standard"
+    }
+  ]
+}

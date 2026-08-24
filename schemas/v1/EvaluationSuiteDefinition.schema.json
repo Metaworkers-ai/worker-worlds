@@ -1,0 +1,150 @@
+{
+  "$defs": {
+    "Limits": {
+      "additionalProperties": false,
+      "description": "Execution budgets for a scenario.",
+      "properties": {
+        "cost_minor": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Cost Minor",
+          "type": "integer"
+        },
+        "injections": {
+          "default": 20,
+          "minimum": 0,
+          "title": "Injections",
+          "type": "integer"
+        },
+        "model_tokens": {
+          "default": 12000,
+          "minimum": 0,
+          "title": "Model Tokens",
+          "type": "integer"
+        },
+        "mutations": {
+          "default": 20,
+          "minimum": 0,
+          "title": "Mutations",
+          "type": "integer"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "tool_calls": {
+          "default": 20,
+          "minimum": 0,
+          "title": "Tool Calls",
+          "type": "integer"
+        },
+        "tool_timeout_s": {
+          "default": 10,
+          "exclusiveMinimum": 0,
+          "title": "Tool Timeout S",
+          "type": "number"
+        },
+        "wall_time_s": {
+          "default": 30,
+          "exclusiveMinimum": 0,
+          "title": "Wall Time S",
+          "type": "number"
+        },
+        "worker_turns": {
+          "default": 50,
+          "exclusiveMinimum": 0,
+          "title": "Worker Turns",
+          "type": "integer"
+        }
+      },
+      "title": "Limits",
+      "type": "object"
+    },
+    "SuiteTier": {
+      "description": "Supported deterministic suite sizes.",
+      "enum": [
+        "smoke",
+        "standard",
+        "full",
+        "custom"
+      ],
+      "title": "SuiteTier",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Immutable deterministic membership for a role evaluation.",
+  "properties": {
+    "capability_ids": {
+      "items": {
+        "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+        "type": "string"
+      },
+      "title": "Capability Ids",
+      "type": "array"
+    },
+    "default_limits": {
+      "$ref": "#/$defs/Limits"
+    },
+    "domain_id": {
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+      "title": "Domain Id",
+      "type": "string"
+    },
+    "estimated_duration_s": {
+      "minimum": 0,
+      "title": "Estimated Duration S",
+      "type": "integer"
+    },
+    "id": {
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+      "title": "Id",
+      "type": "string"
+    },
+    "label": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Label",
+      "type": "string"
+    },
+    "revision": {
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "title": "Revision",
+      "type": "string"
+    },
+    "role_id": {
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+      "title": "Role Id",
+      "type": "string"
+    },
+    "scenario_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Scenario Ids",
+      "type": "array"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "tier": {
+      "$ref": "#/$defs/SuiteTier"
+    }
+  },
+  "required": [
+    "id",
+    "domain_id",
+    "role_id",
+    "revision",
+    "label",
+    "tier",
+    "scenario_ids",
+    "capability_ids",
+    "estimated_duration_s"
+  ],
+  "title": "EvaluationSuiteDefinition",
+  "type": "object"
+}

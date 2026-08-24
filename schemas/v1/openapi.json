@@ -1,0 +1,4499 @@
+{
+  "components": {
+    "schemas": {
+      "AgentListResponse": {
+        "additionalProperties": false,
+        "description": "Stable registered-agent collection.",
+        "properties": {
+          "agents": {
+            "items": {
+              "$ref": "#/components/schemas/AgentSummary"
+            },
+            "title": "Agents",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "total": {
+            "minimum": 0.0,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "agents",
+          "total"
+        ],
+        "title": "AgentListResponse",
+        "type": "object"
+      },
+      "AgentSummary": {
+        "additionalProperties": false,
+        "description": "Credential-free registered-agent identity and readiness.",
+        "properties": {
+          "adapter": {
+            "title": "Adapter",
+            "type": "string"
+          },
+          "deterministic_test_infrastructure": {
+            "default": false,
+            "title": "Deterministic Test Infrastructure",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "missing_requirements": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing Requirements",
+            "type": "array"
+          },
+          "model_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Name"
+          },
+          "model_provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Provider"
+          },
+          "ready": {
+            "title": "Ready",
+            "type": "boolean"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "supported_domain_ids": {
+            "default": [
+              "commerce",
+              "insurance"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "title": "Supported Domain Ids",
+            "type": "array"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "adapter",
+          "version",
+          "ready"
+        ],
+        "title": "AgentSummary",
+        "type": "object"
+      },
+      "AssertionSeverity": {
+        "description": "Bounded assertion severity.",
+        "enum": [
+          "critical",
+          "high",
+          "medium",
+          "info"
+        ],
+        "title": "AssertionSeverity",
+        "type": "string"
+      },
+      "AuthorizationContext": {
+        "additionalProperties": false,
+        "description": "Trusted authority supplied by the harness, never world prose.",
+        "properties": {
+          "actor_id": {
+            "title": "Actor Id",
+            "type": "string"
+          },
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "scopes": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Scopes",
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "actor_id"
+        ],
+        "title": "AuthorizationContext",
+        "type": "object"
+      },
+      "CapabilityDefinition": {
+        "additionalProperties": false,
+        "description": "One independently versioned business capability.",
+        "properties": {
+          "description": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "domain_id": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "title": "Domain Id",
+            "type": "string"
+          },
+          "id": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "version": {
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "domain_id",
+          "version",
+          "label",
+          "description"
+        ],
+        "title": "CapabilityDefinition",
+        "type": "object"
+      },
+      "Catalog": {
+        "additionalProperties": false,
+        "description": "Validated immutable aggregate for every catalog reference.",
+        "properties": {
+          "capabilities": {
+            "items": {
+              "$ref": "#/components/schemas/CapabilityDefinition"
+            },
+            "title": "Capabilities",
+            "type": "array"
+          },
+          "catalog_version": {
+            "default": "1.0.0",
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+            "title": "Catalog Version",
+            "type": "string"
+          },
+          "classifications": {
+            "items": {
+              "$ref": "#/components/schemas/ScenarioClassification"
+            },
+            "title": "Classifications",
+            "type": "array"
+          },
+          "domains": {
+            "items": {
+              "$ref": "#/components/schemas/DomainDefinition"
+            },
+            "title": "Domains",
+            "type": "array"
+          },
+          "roles": {
+            "items": {
+              "$ref": "#/components/schemas/RoleDefinition"
+            },
+            "title": "Roles",
+            "type": "array"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "suites": {
+            "items": {
+              "$ref": "#/components/schemas/EvaluationSuiteDefinition"
+            },
+            "title": "Suites",
+            "type": "array"
+          }
+        },
+        "required": [
+          "domains",
+          "roles",
+          "capabilities",
+          "suites",
+          "classifications"
+        ],
+        "title": "Catalog",
+        "type": "object"
+      },
+      "ComparisonClassification": {
+        "description": "Primary semantic classification for a scenario comparison.",
+        "enum": [
+          "new_failure",
+          "fixed",
+          "unchanged_pass",
+          "unchanged_failure",
+          "failure_mode_changed",
+          "flakiness_increased",
+          "flakiness_decreased",
+          "performance_regressed",
+          "cost_regressed",
+          "infrastructure_health_regressed",
+          "insufficient_evidence",
+          "incompatible"
+        ],
+        "title": "ComparisonClassification",
+        "type": "string"
+      },
+      "ComparisonConfig": {
+        "additionalProperties": false,
+        "description": "Strict deterministic regression-gate configuration.",
+        "properties": {
+          "allow_scenario_hash_mismatch": {
+            "default": false,
+            "title": "Allow Scenario Hash Mismatch",
+            "type": "boolean"
+          },
+          "critical_occurrences_allowed": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Critical Occurrences Allowed",
+            "type": "integer"
+          },
+          "excluded_informational_metrics": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Excluded Informational Metrics",
+            "type": "array"
+          },
+          "insufficient_samples": {
+            "default": "warning",
+            "pattern": "^(warning|fail)$",
+            "title": "Insufficient Samples",
+            "type": "string"
+          },
+          "maximum_cost_increase": {
+            "default": 1.0,
+            "minimum": 0.0,
+            "title": "Maximum Cost Increase",
+            "type": "number"
+          },
+          "maximum_flakiness_increase": {
+            "default": 0.1,
+            "minimum": 0.0,
+            "title": "Maximum Flakiness Increase",
+            "type": "number"
+          },
+          "maximum_infrastructure_error_rate": {
+            "default": 0.01,
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Maximum Infrastructure Error Rate",
+            "type": "number"
+          },
+          "maximum_p50_latency_increase": {
+            "default": 1.0,
+            "minimum": 0.0,
+            "title": "Maximum P50 Latency Increase",
+            "type": "number"
+          },
+          "maximum_p95_latency_increase": {
+            "default": 1.0,
+            "minimum": 0.0,
+            "title": "Maximum P95 Latency Increase",
+            "type": "number"
+          },
+          "maximum_pass_rate_decrease": {
+            "default": 0.02,
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Maximum Pass Rate Decrease",
+            "type": "number"
+          },
+          "maximum_token_increase": {
+            "default": 1.0,
+            "minimum": 0.0,
+            "title": "Maximum Token Increase",
+            "type": "number"
+          },
+          "minimum_candidate_pass_rate": {
+            "default": 0,
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Minimum Candidate Pass Rate",
+            "type": "number"
+          },
+          "new_high_failures_allowed": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "New High Failures Allowed",
+            "type": "integer"
+          },
+          "practical_significance": {
+            "default": 0.02,
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Practical Significance",
+            "type": "number"
+          },
+          "required_minimum_repetitions": {
+            "default": 5,
+            "exclusiveMinimum": 0.0,
+            "title": "Required Minimum Repetitions",
+            "type": "integer"
+          },
+          "scenario_overrides": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "$ref": "#/components/schemas/ComparisonOverrideValue"
+              },
+              "type": "object"
+            },
+            "title": "Scenario Overrides",
+            "type": "object"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "tag_overrides": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "$ref": "#/components/schemas/ComparisonOverrideValue"
+              },
+              "type": "object"
+            },
+            "title": "Tag Overrides",
+            "type": "object"
+          }
+        },
+        "title": "ComparisonConfig",
+        "type": "object"
+      },
+      "ComparisonListResponse": {
+        "additionalProperties": false,
+        "description": "Stable comparison collection.",
+        "properties": {
+          "comparisons": {
+            "items": {
+              "$ref": "#/components/schemas/ComparisonSummary"
+            },
+            "title": "Comparisons",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "total": {
+            "minimum": 0.0,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "comparisons",
+          "total"
+        ],
+        "title": "ComparisonListResponse",
+        "type": "object"
+      },
+      "ComparisonOverrideValue": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "string"
+          }
+        ]
+      },
+      "ComparisonReport": {
+        "additionalProperties": false,
+        "description": "Complete immutable behavioral comparison artifact.",
+        "properties": {
+          "baseline_hash": {
+            "title": "Baseline Hash",
+            "type": "string"
+          },
+          "baseline_name": {
+            "title": "Baseline Name",
+            "type": "string"
+          },
+          "baseline_source": {
+            "title": "Baseline Source",
+            "type": "string"
+          },
+          "candidate_hash": {
+            "title": "Candidate Hash",
+            "type": "string"
+          },
+          "candidate_source": {
+            "title": "Candidate Source",
+            "type": "string"
+          },
+          "compatibility": {
+            "$ref": "#/components/schemas/CompatibilityLevel"
+          },
+          "compatibility_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Compatibility Reasons",
+            "type": "array"
+          },
+          "config": {
+            "$ref": "#/components/schemas/ComparisonConfig"
+          },
+          "created_at": {
+            "description": "Timezone-aware UTC timestamp",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "reproduction_commands": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reproduction Commands",
+            "type": "array"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/ScenarioComparison"
+            },
+            "title": "Scenarios",
+            "type": "array"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "verdict": {
+            "$ref": "#/components/schemas/ComparisonVerdict"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "baseline_name",
+          "baseline_hash",
+          "candidate_hash",
+          "compatibility",
+          "compatibility_reasons",
+          "config",
+          "scenarios",
+          "verdict",
+          "reproduction_commands",
+          "baseline_source",
+          "candidate_source"
+        ],
+        "title": "ComparisonReport",
+        "type": "object"
+      },
+      "ComparisonSummary": {
+        "additionalProperties": false,
+        "description": "Compact persisted behavioral comparison.",
+        "properties": {
+          "baseline_worker": {
+            "title": "Baseline Worker",
+            "type": "string"
+          },
+          "candidate_worker": {
+            "title": "Candidate Worker",
+            "type": "string"
+          },
+          "compatibility": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Compatibility"
+          },
+          "domain_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain Id"
+          },
+          "gate": {
+            "enum": [
+              "pass",
+              "fail"
+            ],
+            "title": "Gate",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "new_critical": {
+            "minimum": 0.0,
+            "title": "New Critical",
+            "type": "integer"
+          },
+          "new_high": {
+            "minimum": 0.0,
+            "title": "New High",
+            "type": "integer"
+          },
+          "pass_rate_delta": {
+            "title": "Pass Rate Delta",
+            "type": "number"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "role_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role Id"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "suite_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suite Id"
+          }
+        },
+        "required": [
+          "id",
+          "gate",
+          "baseline_worker",
+          "candidate_worker",
+          "new_critical",
+          "new_high",
+          "pass_rate_delta",
+          "path"
+        ],
+        "title": "ComparisonSummary",
+        "type": "object"
+      },
+      "ComparisonVerdict": {
+        "additionalProperties": false,
+        "description": "Pure gate result over comparison evidence.",
+        "properties": {
+          "new_critical": {
+            "title": "New Critical",
+            "type": "integer"
+          },
+          "new_high": {
+            "title": "New High",
+            "type": "integer"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "passed",
+          "reasons",
+          "warnings",
+          "new_critical",
+          "new_high"
+        ],
+        "title": "ComparisonVerdict",
+        "type": "object"
+      },
+      "CompatibilityLevel": {
+        "description": "Compatibility classification for two immutable suite artifacts.",
+        "enum": [
+          "compatible",
+          "compatible_with_warning",
+          "incompatible"
+        ],
+        "title": "CompatibilityLevel",
+        "type": "string"
+      },
+      "ContextCompatibility": {
+        "description": "Compatibility of two immutable evaluation contexts.",
+        "enum": [
+          "compatible",
+          "incompatible"
+        ],
+        "title": "ContextCompatibility",
+        "type": "string"
+      },
+      "ContextualComparisonRecord": {
+        "additionalProperties": false,
+        "description": "Comparison report plus explicit business-context compatibility.",
+        "properties": {
+          "baseline": {
+            "$ref": "#/components/schemas/ContextualSuiteManifest"
+          },
+          "candidate": {
+            "$ref": "#/components/schemas/ContextualSuiteManifest"
+          },
+          "compatibility": {
+            "$ref": "#/components/schemas/ContextCompatibility"
+          },
+          "compatibility_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Compatibility Reasons",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          },
+          "report": {
+            "$ref": "#/components/schemas/ComparisonReport"
+          },
+          "role_summary": {
+            "$ref": "#/components/schemas/RoleComparisonSummary"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "baseline",
+          "candidate",
+          "compatibility",
+          "compatibility_reasons",
+          "report",
+          "role_summary",
+          "passed"
+        ],
+        "title": "ContextualComparisonRecord",
+        "type": "object"
+      },
+      "ContextualSuiteManifest": {
+        "additionalProperties": false,
+        "description": "Context sidecar referencing an immutable completed SuiteRecord.",
+        "properties": {
+          "context": {
+            "$ref": "#/components/schemas/EvaluationContext"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "suite_record_hash": {
+            "title": "Suite Record Hash",
+            "type": "string"
+          }
+        },
+        "required": [
+          "suite_record_hash",
+          "context"
+        ],
+        "title": "ContextualSuiteManifest",
+        "type": "object"
+      },
+      "CreateContextualComparisonRequest": {
+        "additionalProperties": false,
+        "description": "Request a comparison between two completed compatible suite jobs.",
+        "properties": {
+          "baseline_job_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Baseline Job Id",
+            "type": "string"
+          },
+          "candidate_job_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Candidate Job Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "baseline_job_id",
+          "candidate_job_id"
+        ],
+        "title": "CreateContextualComparisonRequest",
+        "type": "object"
+      },
+      "CreateRunRequest": {
+        "additionalProperties": false,
+        "description": "Bounded request to run one locally available scenario.",
+        "properties": {
+          "agent_id": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Id"
+          },
+          "domain_id": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain Id"
+          },
+          "role_id": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role Id"
+          },
+          "scenario_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Scenario Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "suite_id": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suite Id"
+          },
+          "worker": {
+            "default": "stub",
+            "enum": [
+              "stub",
+              "langgraph-fake",
+              "openai-agents-fake"
+            ],
+            "title": "Worker",
+            "type": "string"
+          },
+          "world": {
+            "default": "postgres",
+            "enum": [
+              "stub",
+              "postgres",
+              "supply-chain",
+              "insurance"
+            ],
+            "title": "World",
+            "type": "string"
+          }
+        },
+        "required": [
+          "scenario_id"
+        ],
+        "title": "CreateRunRequest",
+        "type": "object"
+      },
+      "CreateSuiteJobRequest": {
+        "additionalProperties": false,
+        "description": "Bounded request for a durable catalog suite evaluation.",
+        "properties": {
+          "agent_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Agent Id",
+            "type": "string"
+          },
+          "budget": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SuiteBudget"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "concurrency": {
+            "default": 4,
+            "maximum": 16.0,
+            "minimum": 1.0,
+            "title": "Concurrency",
+            "type": "integer"
+          },
+          "domain_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Domain Id",
+            "type": "string"
+          },
+          "limits": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Limits"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "request_key": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Request Key",
+            "type": "string"
+          },
+          "role_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Role Id",
+            "type": "string"
+          },
+          "scenario_ids": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 200,
+            "title": "Scenario Ids",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "seed": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seed"
+          },
+          "suite_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Suite Id",
+            "type": "string"
+          },
+          "world": {
+            "default": "postgres",
+            "enum": [
+              "stub",
+              "postgres",
+              "supply-chain",
+              "insurance"
+            ],
+            "title": "World",
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_key",
+          "domain_id",
+          "role_id",
+          "suite_id",
+          "agent_id"
+        ],
+        "title": "CreateSuiteJobRequest",
+        "type": "object"
+      },
+      "Difficulty": {
+        "description": "Bounded scenario difficulty.",
+        "enum": [
+          "basic",
+          "intermediate",
+          "advanced",
+          "adversarial"
+        ],
+        "title": "Difficulty",
+        "type": "string"
+      },
+      "DistributionSummary": {
+        "additionalProperties": false,
+        "description": "Small-sample-aware deterministic distribution summary.",
+        "properties": {
+          "completed": {
+            "title": "Completed",
+            "type": "integer"
+          },
+          "cost_minor_total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Minor Total"
+          },
+          "duration_p50_ms": {
+            "title": "Duration P50 Ms",
+            "type": "number"
+          },
+          "duration_p95_ms": {
+            "title": "Duration P95 Ms",
+            "type": "number"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "integer"
+          },
+          "failed": {
+            "title": "Failed",
+            "type": "integer"
+          },
+          "infrastructure_error_rate": {
+            "default": 0,
+            "title": "Infrastructure Error Rate",
+            "type": "number"
+          },
+          "low_sample": {
+            "title": "Low Sample",
+            "type": "boolean"
+          },
+          "mutation_counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Mutation Counts",
+            "type": "object"
+          },
+          "outcome_counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Outcome Counts",
+            "type": "object"
+          },
+          "pass_rate": {
+            "title": "Pass Rate",
+            "type": "number"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "integer"
+          },
+          "requested": {
+            "title": "Requested",
+            "type": "integer"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "severity_counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Severity Counts",
+            "type": "object"
+          },
+          "terminal_counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Terminal Counts",
+            "type": "object"
+          },
+          "tokens_total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tokens Total"
+          },
+          "tool_counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Tool Counts",
+            "type": "object"
+          },
+          "variability": {
+            "title": "Variability",
+            "type": "number"
+          },
+          "wilson_high": {
+            "title": "Wilson High",
+            "type": "number"
+          },
+          "wilson_low": {
+            "title": "Wilson Low",
+            "type": "number"
+          }
+        },
+        "required": [
+          "requested",
+          "completed",
+          "passed",
+          "failed",
+          "errors",
+          "pass_rate",
+          "wilson_low",
+          "wilson_high",
+          "variability",
+          "low_sample",
+          "outcome_counts",
+          "severity_counts",
+          "terminal_counts",
+          "tool_counts",
+          "mutation_counts",
+          "duration_p50_ms",
+          "duration_p95_ms"
+        ],
+        "title": "DistributionSummary",
+        "type": "object"
+      },
+      "DomainDefinition": {
+        "additionalProperties": false,
+        "description": "A deterministic enterprise world offered by Worker Worlds.",
+        "properties": {
+          "capability_ids": {
+            "items": {
+              "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+              "type": "string"
+            },
+            "title": "Capability Ids",
+            "type": "array"
+          },
+          "description": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "id": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "role_ids": {
+            "items": {
+              "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+              "type": "string"
+            },
+            "title": "Role Ids",
+            "type": "array"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "version": {
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+            "title": "Version",
+            "type": "string"
+          },
+          "world_names": {
+            "items": {
+              "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+              "type": "string"
+            },
+            "title": "World Names",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "label",
+          "description",
+          "world_names",
+          "role_ids",
+          "capability_ids"
+        ],
+        "title": "DomainDefinition",
+        "type": "object"
+      },
+      "EntityRef": {
+        "additionalProperties": false,
+        "description": "Stable reference to a world entity.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id"
+        ],
+        "title": "EntityRef",
+        "type": "object"
+      },
+      "EvaluationContext": {
+        "additionalProperties": false,
+        "description": "Server-derived business and runtime provenance for an evaluation.",
+        "properties": {
+          "agent_id": {
+            "title": "Agent Id",
+            "type": "string"
+          },
+          "agent_version": {
+            "title": "Agent Version",
+            "type": "string"
+          },
+          "catalog_version": {
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+            "title": "Catalog Version",
+            "type": "string"
+          },
+          "domain_id": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "title": "Domain Id",
+            "type": "string"
+          },
+          "limits": {
+            "$ref": "#/components/schemas/Limits"
+          },
+          "role_id": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "title": "Role Id",
+            "type": "string"
+          },
+          "scenario_hashes": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Scenario Hashes",
+            "type": "object"
+          },
+          "scenario_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Scenario Ids",
+            "type": "array"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "seeds": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Seeds",
+            "type": "array"
+          },
+          "suite_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suite Id"
+          },
+          "suite_revision": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suite Revision"
+          },
+          "world_name": {
+            "title": "World Name",
+            "type": "string"
+          },
+          "world_version": {
+            "title": "World Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "catalog_version",
+          "domain_id",
+          "role_id",
+          "scenario_ids",
+          "scenario_hashes",
+          "agent_id",
+          "agent_version",
+          "world_name",
+          "world_version",
+          "seeds",
+          "limits"
+        ],
+        "title": "EvaluationContext",
+        "type": "object"
+      },
+      "EvaluationSuiteDefinition": {
+        "additionalProperties": false,
+        "description": "Immutable deterministic membership for a role evaluation.",
+        "properties": {
+          "capability_ids": {
+            "items": {
+              "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+              "type": "string"
+            },
+            "title": "Capability Ids",
+            "type": "array"
+          },
+          "default_limits": {
+            "$ref": "#/components/schemas/Limits"
+          },
+          "domain_id": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "title": "Domain Id",
+            "type": "string"
+          },
+          "estimated_duration_s": {
+            "minimum": 0.0,
+            "title": "Estimated Duration S",
+            "type": "integer"
+          },
+          "id": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "revision": {
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+            "title": "Revision",
+            "type": "string"
+          },
+          "role_id": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "title": "Role Id",
+            "type": "string"
+          },
+          "scenario_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Scenario Ids",
+            "type": "array"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "tier": {
+            "$ref": "#/components/schemas/SuiteTier"
+          }
+        },
+        "required": [
+          "id",
+          "domain_id",
+          "role_id",
+          "revision",
+          "label",
+          "tier",
+          "scenario_ids",
+          "capability_ids",
+          "estimated_duration_s"
+        ],
+        "title": "EvaluationSuiteDefinition",
+        "type": "object"
+      },
+      "EvidenceKind": {
+        "description": "Kinds of bounded evidence references.",
+        "enum": [
+          "initial_snapshot",
+          "final_snapshot",
+          "event",
+          "tool_call",
+          "worker_turn",
+          "authorization",
+          "changed_entity",
+          "resource",
+          "policy"
+        ],
+        "title": "EvidenceKind",
+        "type": "string"
+      },
+      "EvidenceReference": {
+        "additionalProperties": false,
+        "description": "Resolvable bounded reference into RunRecord evidence.",
+        "properties": {
+          "facts": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Facts",
+            "type": "object"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/EvidenceKind"
+          },
+          "path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Path"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "sequence": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sequence"
+          },
+          "value": {
+            "$ref": "#/components/schemas/JsonValue"
+          }
+        },
+        "required": [
+          "kind",
+          "reference"
+        ],
+        "title": "EvidenceReference",
+        "type": "object"
+      },
+      "FailureModeDelta": {
+        "additionalProperties": false,
+        "description": "Semantic failure change with representative evidence links.",
+        "properties": {
+          "baseline_rate": {
+            "default": 0,
+            "title": "Baseline Rate",
+            "type": "number"
+          },
+          "baseline_run_ids": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Baseline Run Ids",
+            "type": "array"
+          },
+          "candidate_rate": {
+            "default": 0,
+            "title": "Candidate Rate",
+            "type": "number"
+          },
+          "candidate_run_ids": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Candidate Run Ids",
+            "type": "array"
+          },
+          "change": {
+            "title": "Change",
+            "type": "string"
+          },
+          "event_ids": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Event Ids",
+            "type": "array"
+          },
+          "evidence_refs": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "identity": {
+            "title": "Identity",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "outcome_signatures": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Outcome Signatures",
+            "type": "array"
+          },
+          "representative_evidence": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Representative Evidence",
+            "type": "object"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "severity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Severity"
+          },
+          "verdict_ids": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Verdict Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "identity",
+          "change"
+        ],
+        "title": "FailureModeDelta",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HealthResponse": {
+        "additionalProperties": false,
+        "description": "Runtime and database readiness without credential disclosure.",
+        "properties": {
+          "artifact_directory": {
+            "title": "Artifact Directory",
+            "type": "string"
+          },
+          "database": {
+            "title": "Database",
+            "type": "string"
+          },
+          "database_ready": {
+            "title": "Database Ready",
+            "type": "boolean"
+          },
+          "package_version": {
+            "title": "Package Version",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "degraded"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "package_version",
+          "database_ready",
+          "database",
+          "artifact_directory"
+        ],
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "JsonValue": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "items": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "type": "array"
+          },
+          {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "type": "object"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "Limits": {
+        "additionalProperties": false,
+        "description": "Execution budgets for a scenario.",
+        "properties": {
+          "cost_minor": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Cost Minor",
+            "type": "integer"
+          },
+          "injections": {
+            "default": 20,
+            "minimum": 0.0,
+            "title": "Injections",
+            "type": "integer"
+          },
+          "model_tokens": {
+            "default": 12000,
+            "minimum": 0.0,
+            "title": "Model Tokens",
+            "type": "integer"
+          },
+          "mutations": {
+            "default": 20,
+            "minimum": 0.0,
+            "title": "Mutations",
+            "type": "integer"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "tool_calls": {
+            "default": 20,
+            "minimum": 0.0,
+            "title": "Tool Calls",
+            "type": "integer"
+          },
+          "tool_timeout_s": {
+            "default": 10,
+            "exclusiveMinimum": 0.0,
+            "title": "Tool Timeout S",
+            "type": "number"
+          },
+          "wall_time_s": {
+            "default": 30,
+            "exclusiveMinimum": 0.0,
+            "title": "Wall Time S",
+            "type": "number"
+          },
+          "worker_turns": {
+            "default": 50,
+            "exclusiveMinimum": 0.0,
+            "title": "Worker Turns",
+            "type": "integer"
+          }
+        },
+        "title": "Limits",
+        "type": "object"
+      },
+      "OverviewResponse": {
+        "additionalProperties": false,
+        "description": "Workspace metrics derived only from persisted run evidence.",
+        "properties": {
+          "critical_regressions": {
+            "minimum": 0.0,
+            "title": "Critical Regressions",
+            "type": "integer"
+          },
+          "failed_runs": {
+            "minimum": 0.0,
+            "title": "Failed Runs",
+            "type": "integer"
+          },
+          "median_duration_ms": {
+            "minimum": 0.0,
+            "title": "Median Duration Ms",
+            "type": "integer"
+          },
+          "pass_rate": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Pass Rate",
+            "type": "number"
+          },
+          "passed_runs": {
+            "minimum": 0.0,
+            "title": "Passed Runs",
+            "type": "integer"
+          },
+          "recent_pass_rates": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Recent Pass Rates",
+            "type": "array"
+          },
+          "scenario_count": {
+            "minimum": 0.0,
+            "title": "Scenario Count",
+            "type": "integer"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "total_runs": {
+            "minimum": 0.0,
+            "title": "Total Runs",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total_runs",
+          "passed_runs",
+          "failed_runs",
+          "critical_regressions",
+          "pass_rate",
+          "median_duration_ms",
+          "scenario_count",
+          "recent_pass_rates"
+        ],
+        "title": "OverviewResponse",
+        "type": "object"
+      },
+      "RiskCategory": {
+        "description": "Bounded enterprise risk category.",
+        "enum": [
+          "financial",
+          "authorization",
+          "operational",
+          "safety",
+          "reliability"
+        ],
+        "title": "RiskCategory",
+        "type": "string"
+      },
+      "RoleComparisonSummary": {
+        "additionalProperties": false,
+        "description": "Comparable role-level aggregates linked to immutable run IDs.",
+        "properties": {
+          "baseline": {
+            "$ref": "#/components/schemas/RoleMetrics"
+          },
+          "candidate": {
+            "$ref": "#/components/schemas/RoleMetrics"
+          },
+          "cost_delta_minor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Delta Minor"
+          },
+          "duration_delta_ms": {
+            "title": "Duration Delta Ms",
+            "type": "integer"
+          },
+          "failure_delta": {
+            "title": "Failure Delta",
+            "type": "integer"
+          },
+          "model_token_delta": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Token Delta"
+          },
+          "mutation_delta": {
+            "title": "Mutation Delta",
+            "type": "integer"
+          },
+          "pass_rate_delta": {
+            "title": "Pass Rate Delta",
+            "type": "number"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "tool_call_delta": {
+            "title": "Tool Call Delta",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "baseline",
+          "candidate",
+          "pass_rate_delta",
+          "failure_delta",
+          "tool_call_delta",
+          "mutation_delta",
+          "duration_delta_ms",
+          "model_token_delta",
+          "cost_delta_minor"
+        ],
+        "title": "RoleComparisonSummary",
+        "type": "object"
+      },
+      "RoleDefinition": {
+        "additionalProperties": false,
+        "description": "A business role and the capabilities it is evaluated against.",
+        "properties": {
+          "capability_ids": {
+            "items": {
+              "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+              "type": "string"
+            },
+            "title": "Capability Ids",
+            "type": "array"
+          },
+          "description": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "domain_id": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "title": "Domain Id",
+            "type": "string"
+          },
+          "id": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "version": {
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "domain_id",
+          "version",
+          "label",
+          "description",
+          "capability_ids"
+        ],
+        "title": "RoleDefinition",
+        "type": "object"
+      },
+      "RoleMetrics": {
+        "additionalProperties": false,
+        "description": "Role-level outcome, behavior, resource, and evidence summary.",
+        "properties": {
+          "cost_minor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Minor"
+          },
+          "duration_ms": {
+            "title": "Duration Ms",
+            "type": "integer"
+          },
+          "failures": {
+            "title": "Failures",
+            "type": "integer"
+          },
+          "incomplete_evidence": {
+            "title": "Incomplete Evidence",
+            "type": "integer"
+          },
+          "model_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Tokens"
+          },
+          "mutations": {
+            "title": "Mutations",
+            "type": "integer"
+          },
+          "pass_rate": {
+            "title": "Pass Rate",
+            "type": "number"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "integer"
+          },
+          "run_ids_by_scenario": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "title": "Run Ids By Scenario",
+            "type": "object"
+          },
+          "runs": {
+            "title": "Runs",
+            "type": "integer"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "tool_calls": {
+            "title": "Tool Calls",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "runs",
+          "passed",
+          "pass_rate",
+          "failures",
+          "incomplete_evidence",
+          "tool_calls",
+          "mutations",
+          "duration_ms",
+          "model_tokens",
+          "cost_minor",
+          "run_ids_by_scenario"
+        ],
+        "title": "RoleMetrics",
+        "type": "object"
+      },
+      "RunListResponse": {
+        "additionalProperties": false,
+        "description": "Stable run collection ordered newest first.",
+        "properties": {
+          "runs": {
+            "items": {
+              "$ref": "#/components/schemas/RunSummary"
+            },
+            "title": "Runs",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "total": {
+            "minimum": 0.0,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "runs",
+          "total"
+        ],
+        "title": "RunListResponse",
+        "type": "object"
+      },
+      "RunRecord": {
+        "additionalProperties": false,
+        "description": "Complete normalized evidence for one worker run.",
+        "properties": {
+          "adapter": {
+            "title": "Adapter",
+            "type": "string"
+          },
+          "cleanup_succeeded": {
+            "default": true,
+            "title": "Cleanup Succeeded",
+            "type": "boolean"
+          },
+          "cost_minor": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Minor"
+          },
+          "dependency_versions": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Dependency Versions",
+            "type": "object"
+          },
+          "ended_at": {
+            "description": "Timezone-aware UTC timestamp",
+            "format": "date-time",
+            "title": "Ended At",
+            "type": "string"
+          },
+          "environment": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Environment",
+            "type": "object"
+          },
+          "error_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Message"
+          },
+          "error_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Type"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/WorldEvent"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "final_snapshot": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WorldSnapshot"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "final_snapshot_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Final Snapshot Hash"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "incomplete_evidence": {
+            "title": "Incomplete Evidence",
+            "type": "boolean"
+          },
+          "initial_snapshot": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WorldSnapshot"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "initial_snapshot_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Initial Snapshot Hash"
+          },
+          "migration_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Migration Version"
+          },
+          "model_tokens": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Tokens"
+          },
+          "mutation_count": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Mutation Count",
+            "type": "integer"
+          },
+          "repetition": {
+            "minimum": 0.0,
+            "title": "Repetition",
+            "type": "integer"
+          },
+          "scenario_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scenario Hash"
+          },
+          "scenario_id": {
+            "title": "Scenario Id",
+            "type": "string"
+          },
+          "scenario_tags": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Scenario Tags",
+            "type": "array"
+          },
+          "scenario_trigger": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Scenario Trigger",
+            "type": "object"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "seed": {
+            "title": "Seed",
+            "type": "integer"
+          },
+          "started_at": {
+            "description": "Timezone-aware UTC timestamp",
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          },
+          "terminal_reason": {
+            "$ref": "#/components/schemas/TerminalReason"
+          },
+          "tool_call_count": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Tool Call Count",
+            "type": "integer"
+          },
+          "tool_duration_ms": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Tool Duration Ms",
+            "type": "integer"
+          },
+          "total_duration_ms": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Total Duration Ms",
+            "type": "integer"
+          },
+          "turns": {
+            "items": {
+              "$ref": "#/components/schemas/WorkerTurn"
+            },
+            "title": "Turns",
+            "type": "array"
+          },
+          "verdicts": {
+            "items": {
+              "$ref": "#/components/schemas/Verdict"
+            },
+            "title": "Verdicts",
+            "type": "array"
+          },
+          "worker": {
+            "title": "Worker",
+            "type": "string"
+          },
+          "worker_version": {
+            "title": "Worker Version",
+            "type": "string"
+          },
+          "world_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "World Version"
+          }
+        },
+        "required": [
+          "id",
+          "scenario_id",
+          "worker",
+          "worker_version",
+          "adapter",
+          "repetition",
+          "seed",
+          "started_at",
+          "ended_at",
+          "terminal_reason",
+          "initial_snapshot",
+          "final_snapshot",
+          "turns",
+          "events",
+          "verdicts",
+          "incomplete_evidence"
+        ],
+        "title": "RunRecord",
+        "type": "object"
+      },
+      "RunSummary": {
+        "additionalProperties": false,
+        "description": "Compact representation of a canonical RunRecord.",
+        "properties": {
+          "cleanup_succeeded": {
+            "title": "Cleanup Succeeded",
+            "type": "boolean"
+          },
+          "duration_ms": {
+            "minimum": 0.0,
+            "title": "Duration Ms",
+            "type": "integer"
+          },
+          "family": {
+            "title": "Family",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "mutations": {
+            "minimum": 0.0,
+            "title": "Mutations",
+            "type": "integer"
+          },
+          "scenario_id": {
+            "title": "Scenario Id",
+            "type": "string"
+          },
+          "scenario_name": {
+            "title": "Scenario Name",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "fail",
+              "error"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "terminal_reason": {
+            "title": "Terminal Reason",
+            "type": "string"
+          },
+          "tool_calls": {
+            "minimum": 0.0,
+            "title": "Tool Calls",
+            "type": "integer"
+          },
+          "worker": {
+            "title": "Worker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "scenario_id",
+          "scenario_name",
+          "family",
+          "worker",
+          "status",
+          "terminal_reason",
+          "duration_ms",
+          "tool_calls",
+          "mutations",
+          "started_at",
+          "cleanup_succeeded"
+        ],
+        "title": "RunSummary",
+        "type": "object"
+      },
+      "ScenarioClassification": {
+        "additionalProperties": false,
+        "description": "External taxonomy for one immutable scenario definition.",
+        "properties": {
+          "capability_id": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "title": "Capability Id",
+            "type": "string"
+          },
+          "difficulty": {
+            "$ref": "#/components/schemas/Difficulty"
+          },
+          "domain_id": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "title": "Domain Id",
+            "type": "string"
+          },
+          "risk_category": {
+            "$ref": "#/components/schemas/RiskCategory"
+          },
+          "role_ids": {
+            "items": {
+              "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+              "type": "string"
+            },
+            "title": "Role Ids",
+            "type": "array"
+          },
+          "scenario_hash": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Scenario Hash",
+            "type": "string"
+          },
+          "scenario_id": {
+            "title": "Scenario Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "scenario_id",
+          "scenario_hash",
+          "domain_id",
+          "role_ids",
+          "capability_id",
+          "difficulty",
+          "risk_category"
+        ],
+        "title": "ScenarioClassification",
+        "type": "object"
+      },
+      "ScenarioComparison": {
+        "additionalProperties": false,
+        "description": "Distribution comparison for one scenario with one primary finding.",
+        "properties": {
+          "baseline": {
+            "$ref": "#/components/schemas/DistributionSummary"
+          },
+          "baseline_run_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Baseline Run Ids",
+            "type": "array"
+          },
+          "candidate": {
+            "$ref": "#/components/schemas/DistributionSummary"
+          },
+          "candidate_run_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Candidate Run Ids",
+            "type": "array"
+          },
+          "compatibility": {
+            "$ref": "#/components/schemas/CompatibilityLevel"
+          },
+          "compatibility_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Compatibility Reasons",
+            "type": "array"
+          },
+          "failure_deltas": {
+            "items": {
+              "$ref": "#/components/schemas/FailureModeDelta"
+            },
+            "title": "Failure Deltas",
+            "type": "array"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/ComparisonClassification"
+            },
+            "title": "Findings",
+            "type": "array"
+          },
+          "flakiness_delta": {
+            "title": "Flakiness Delta",
+            "type": "number"
+          },
+          "pass_rate_delta": {
+            "title": "Pass Rate Delta",
+            "type": "number"
+          },
+          "primary_classification": {
+            "$ref": "#/components/schemas/ComparisonClassification"
+          },
+          "scenario_id": {
+            "title": "Scenario Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "tags": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+          }
+        },
+        "required": [
+          "scenario_id",
+          "compatibility",
+          "compatibility_reasons",
+          "primary_classification",
+          "findings",
+          "baseline",
+          "candidate",
+          "pass_rate_delta",
+          "flakiness_delta",
+          "failure_deltas",
+          "baseline_run_ids",
+          "candidate_run_ids"
+        ],
+        "title": "ScenarioComparison",
+        "type": "object"
+      },
+      "ScenarioListResponse": {
+        "additionalProperties": false,
+        "description": "Stable scenario collection.",
+        "properties": {
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/ScenarioSummary"
+            },
+            "title": "Scenarios",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "total": {
+            "minimum": 0.0,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "scenarios",
+          "total"
+        ],
+        "title": "ScenarioListResponse",
+        "type": "object"
+      },
+      "ScenarioSummary": {
+        "additionalProperties": false,
+        "description": "Readable scenario metadata for browsing and run selection.",
+        "properties": {
+          "family": {
+            "title": "Family",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "objective": {
+            "title": "Objective",
+            "type": "string"
+          },
+          "review_status": {
+            "title": "Review Status",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "severity": {
+            "title": "Severity",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+          },
+          "tools": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tools",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "objective",
+          "family",
+          "severity",
+          "tools",
+          "tags",
+          "review_status",
+          "source"
+        ],
+        "title": "ScenarioSummary",
+        "type": "object"
+      },
+      "SuiteBudget": {
+        "additionalProperties": false,
+        "description": "Aggregate limits enforced across every attempt in one suite job.",
+        "properties": {
+          "cost_minor": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Cost Minor",
+            "type": "integer"
+          },
+          "deadline_s": {
+            "default": 3600,
+            "exclusiveMinimum": 0.0,
+            "maximum": 86400.0,
+            "title": "Deadline S",
+            "type": "integer"
+          },
+          "model_tokens": {
+            "default": 10000000,
+            "minimum": 0.0,
+            "title": "Model Tokens",
+            "type": "integer"
+          },
+          "mutations": {
+            "default": 10000,
+            "minimum": 0.0,
+            "title": "Mutations",
+            "type": "integer"
+          },
+          "scenarios": {
+            "default": 200,
+            "exclusiveMinimum": 0.0,
+            "maximum": 500.0,
+            "title": "Scenarios",
+            "type": "integer"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "tool_calls": {
+            "default": 10000,
+            "minimum": 0.0,
+            "title": "Tool Calls",
+            "type": "integer"
+          }
+        },
+        "title": "SuiteBudget",
+        "type": "object"
+      },
+      "SuiteJobListResponse": {
+        "additionalProperties": false,
+        "description": "Stable newest-first collection of durable suite jobs.",
+        "properties": {
+          "jobs": {
+            "items": {
+              "$ref": "#/components/schemas/SuiteJobRecord"
+            },
+            "title": "Jobs",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "total": {
+            "minimum": 0.0,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "jobs",
+          "total"
+        ],
+        "title": "SuiteJobListResponse",
+        "type": "object"
+      },
+      "SuiteJobRecord": {
+        "additionalProperties": false,
+        "description": "Durable mutable-job snapshot kept separate from final SuiteRecord.",
+        "properties": {
+          "agent_id": {
+            "title": "Agent Id",
+            "type": "string"
+          },
+          "cancel_requested": {
+            "title": "Cancel Requested",
+            "type": "boolean"
+          },
+          "catalog_version": {
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+            "title": "Catalog Version",
+            "type": "string"
+          },
+          "completed_scenarios": {
+            "minimum": 0.0,
+            "title": "Completed Scenarios",
+            "type": "integer"
+          },
+          "configuration": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Configuration",
+            "type": "object"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "domain_id": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "title": "Domain Id",
+            "type": "string"
+          },
+          "ended_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ended At"
+          },
+          "error_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Message"
+          },
+          "error_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Type"
+          },
+          "executor_expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Executor Expires At"
+          },
+          "executor_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Executor Id"
+          },
+          "failed_scenarios": {
+            "minimum": 0.0,
+            "title": "Failed Scenarios",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "passed_scenarios": {
+            "minimum": 0.0,
+            "title": "Passed Scenarios",
+            "type": "integer"
+          },
+          "request_key": {
+            "title": "Request Key",
+            "type": "string"
+          },
+          "revision": {
+            "minimum": 0.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "role_id": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "title": "Role Id",
+            "type": "string"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/SuiteScenarioRecord"
+            },
+            "title": "Scenarios",
+            "type": "array"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SuiteJobStatus"
+          },
+          "suite_id": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "title": "Suite Id",
+            "type": "string"
+          },
+          "suite_record_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suite Record Path"
+          },
+          "suite_revision": {
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+            "title": "Suite Revision",
+            "type": "string"
+          },
+          "total_scenarios": {
+            "minimum": 0.0,
+            "title": "Total Scenarios",
+            "type": "integer"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "world": {
+            "title": "World",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "request_key",
+          "status",
+          "catalog_version",
+          "domain_id",
+          "role_id",
+          "suite_id",
+          "suite_revision",
+          "agent_id",
+          "world",
+          "configuration",
+          "total_scenarios",
+          "completed_scenarios",
+          "passed_scenarios",
+          "failed_scenarios",
+          "cancel_requested",
+          "revision",
+          "scenarios",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "SuiteJobRecord",
+        "type": "object"
+      },
+      "SuiteJobStatus": {
+        "description": "Legal persisted suite-job lifecycle states.",
+        "enum": [
+          "queued",
+          "running",
+          "cancelling",
+          "cancelled",
+          "completed",
+          "failed"
+        ],
+        "title": "SuiteJobStatus",
+        "type": "string"
+      },
+      "SuiteScenarioRecord": {
+        "additionalProperties": false,
+        "description": "Restart-safe progress for one suite scenario.",
+        "properties": {
+          "attempts": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Attempts",
+            "type": "integer"
+          },
+          "error_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Message"
+          },
+          "error_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Type"
+          },
+          "ordinal": {
+            "minimum": 0.0,
+            "title": "Ordinal",
+            "type": "integer"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          },
+          "run_record_hash": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Record Hash"
+          },
+          "scenario_id": {
+            "title": "Scenario Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SuiteScenarioStatus"
+          },
+          "terminal_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Terminal Reason"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "scenario_id",
+          "ordinal",
+          "status",
+          "updated_at"
+        ],
+        "title": "SuiteScenarioRecord",
+        "type": "object"
+      },
+      "SuiteScenarioStatus": {
+        "description": "Persisted state for one scenario inside a suite job.",
+        "enum": [
+          "pending",
+          "running",
+          "passed",
+          "failed",
+          "error",
+          "cancelled"
+        ],
+        "title": "SuiteScenarioStatus",
+        "type": "string"
+      },
+      "SuiteTier": {
+        "description": "Supported deterministic suite sizes.",
+        "enum": [
+          "smoke",
+          "standard",
+          "full",
+          "custom"
+        ],
+        "title": "SuiteTier",
+        "type": "string"
+      },
+      "TerminalReason": {
+        "description": "Why worker execution ended.",
+        "enum": [
+          "completed",
+          "timeout",
+          "tool_error",
+          "worker_error",
+          "infrastructure_error",
+          "cancelled",
+          "budget_exceeded",
+          "adapter_error",
+          "provider_error",
+          "scenario_error",
+          "tool_timeout",
+          "tool_validation_error",
+          "tool_execution_error",
+          "authorization_rejection",
+          "injection_error",
+          "injection_budget_exceeded"
+        ],
+        "title": "TerminalReason",
+        "type": "string"
+      },
+      "ToolCall": {
+        "additionalProperties": false,
+        "description": "Normalized worker request to invoke a world tool.",
+        "properties": {
+          "arguments": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Arguments",
+            "type": "object"
+          },
+          "authorization": {
+            "$ref": "#/components/schemas/AuthorizationContext"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "requested_at": {
+            "description": "Timezone-aware UTC timestamp",
+            "format": "date-time",
+            "title": "Requested At",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "tool_name": {
+            "title": "Tool Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "run_id",
+          "tool_name",
+          "arguments",
+          "authorization",
+          "requested_at"
+        ],
+        "title": "ToolCall",
+        "type": "object"
+      },
+      "ToolResult": {
+        "additionalProperties": false,
+        "description": "Normalized result, including typed failure provenance.",
+        "properties": {
+          "audit_metadata": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Audit Metadata",
+            "type": "object"
+          },
+          "call_id": {
+            "title": "Call Id",
+            "type": "string"
+          },
+          "duration_ms": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Duration Ms",
+            "type": "integer"
+          },
+          "ended_at": {
+            "description": "Timezone-aware UTC timestamp",
+            "format": "date-time",
+            "title": "Ended At",
+            "type": "string"
+          },
+          "error_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Message"
+          },
+          "error_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Type"
+          },
+          "output": {
+            "$ref": "#/components/schemas/JsonValue"
+          },
+          "retry_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retry Of"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "started_at": {
+            "description": "Timezone-aware UTC timestamp",
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ToolResultStatus"
+          }
+        },
+        "required": [
+          "call_id",
+          "status",
+          "started_at",
+          "ended_at"
+        ],
+        "title": "ToolResult",
+        "type": "object"
+      },
+      "ToolResultStatus": {
+        "description": "Normalized tool result status.",
+        "enum": [
+          "success",
+          "error"
+        ],
+        "title": "ToolResultStatus",
+        "type": "string"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "Verdict": {
+        "additionalProperties": false,
+        "description": "Evidence-backed deterministic assertion verdict.",
+        "properties": {
+          "assertion_id": {
+            "title": "Assertion Id",
+            "type": "string"
+          },
+          "assertion_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assertion Type"
+          },
+          "evaluator_version": {
+            "default": "1.0",
+            "title": "Evaluator Version",
+            "type": "string"
+          },
+          "evidence": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "evidence_refs": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "expected": {
+            "$ref": "#/components/schemas/JsonValue"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "observed": {
+            "$ref": "#/components/schemas/JsonValue"
+          },
+          "policy_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Policy Name"
+          },
+          "reason_code": {
+            "default": "unspecified",
+            "title": "Reason Code",
+            "type": "string"
+          },
+          "required": {
+            "default": true,
+            "title": "Required",
+            "type": "boolean"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/AssertionSeverity"
+          },
+          "status": {
+            "$ref": "#/components/schemas/VerdictStatus"
+          }
+        },
+        "required": [
+          "id",
+          "assertion_id",
+          "status",
+          "severity",
+          "message"
+        ],
+        "title": "Verdict",
+        "type": "object"
+      },
+      "VerdictStatus": {
+        "description": "Outcome of deterministic grading.",
+        "enum": [
+          "pass",
+          "fail",
+          "error"
+        ],
+        "title": "VerdictStatus",
+        "type": "string"
+      },
+      "WorkerTurn": {
+        "additionalProperties": false,
+        "description": "One normalized worker decision and its observed result.",
+        "properties": {
+          "cost_minor": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Minor"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "index": {
+            "minimum": 0.0,
+            "title": "Index",
+            "type": "integer"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "model_input_tokens": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Input Tokens"
+          },
+          "model_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Name"
+          },
+          "model_output_tokens": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Output Tokens"
+          },
+          "model_provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Provider"
+          },
+          "model_tokens": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Tokens"
+          },
+          "model_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Version"
+          },
+          "occurred_at": {
+            "description": "Timezone-aware UTC timestamp",
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          },
+          "provider_request_ids": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Provider Request Ids",
+            "type": "array"
+          },
+          "provider_response_ids": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Provider Response Ids",
+            "type": "array"
+          },
+          "provider_retry_count": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Provider Retry Count",
+            "type": "integer"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "terminal": {
+            "default": false,
+            "title": "Terminal",
+            "type": "boolean"
+          },
+          "tool_call": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ToolCall"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tool_result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ToolResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "index",
+          "occurred_at"
+        ],
+        "title": "WorkerTurn",
+        "type": "object"
+      },
+      "WorldEvent": {
+        "additionalProperties": false,
+        "description": "Append-only world mutation evidence.",
+        "properties": {
+          "actor_id": {
+            "title": "Actor Id",
+            "type": "string"
+          },
+          "after": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/JsonValue"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "After"
+          },
+          "authorization": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AuthorizationContext"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "before": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/JsonValue"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Before"
+          },
+          "entity": {
+            "$ref": "#/components/schemas/EntityRef"
+          },
+          "event_type": {
+            "title": "Event Type",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Metadata",
+            "type": "object"
+          },
+          "occurred_at": {
+            "description": "Timezone-aware UTC timestamp",
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          },
+          "policy_context": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "Policy Context",
+            "type": "object"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Request Id"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "scenario_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scenario Id"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "sequence": {
+            "exclusiveMinimum": 0.0,
+            "title": "Sequence",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "run_id",
+          "sequence",
+          "occurred_at",
+          "event_type",
+          "entity",
+          "actor_id"
+        ],
+        "title": "WorldEvent",
+        "type": "object"
+      },
+      "WorldSnapshot": {
+        "additionalProperties": false,
+        "description": "Canonical world state at a controlled instant.",
+        "properties": {
+          "captured_at": {
+            "description": "Timezone-aware UTC timestamp",
+            "format": "date-time",
+            "title": "Captured At",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0.0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "state": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "title": "State",
+            "type": "object"
+          },
+          "world_name": {
+            "title": "World Name",
+            "type": "string"
+          },
+          "world_version": {
+            "title": "World Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "world_name",
+          "world_version",
+          "run_id",
+          "captured_at",
+          "sequence",
+          "state"
+        ],
+        "title": "WorldSnapshot",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Local versioned control plane for deterministic AI worker evaluations.",
+    "title": "Worker Worlds API",
+    "version": "1.0.0rc1"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/agents": {
+      "get": {
+        "operationId": "agents_api_v1_agents_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Agents"
+      }
+    },
+    "/api/v1/agents/{agent_id}": {
+      "get": {
+        "operationId": "agent_detail_api_v1_agents__agent_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agent_id",
+            "required": true,
+            "schema": {
+              "title": "Agent Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Agent Detail"
+      }
+    },
+    "/api/v1/capabilities": {
+      "get": {
+        "operationId": "capabilities_api_v1_capabilities_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CapabilityDefinition"
+                  },
+                  "title": "Response Capabilities Api V1 Capabilities Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Capabilities"
+      }
+    },
+    "/api/v1/catalog": {
+      "get": {
+        "operationId": "catalog_api_v1_catalog_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Catalog"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Catalog"
+      }
+    },
+    "/api/v1/comparisons": {
+      "get": {
+        "operationId": "comparisons_api_v1_comparisons_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComparisonListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Comparisons"
+      }
+    },
+    "/api/v1/comparisons/contextual": {
+      "post": {
+        "operationId": "create_contextual_comparison_api_v1_comparisons_contextual_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContextualComparisonRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContextualComparisonRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Contextual Comparison"
+      }
+    },
+    "/api/v1/domains": {
+      "get": {
+        "operationId": "domains_api_v1_domains_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DomainDefinition"
+                  },
+                  "title": "Response Domains Api V1 Domains Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Domains"
+      }
+    },
+    "/api/v1/domains/{domain_id}/roles": {
+      "get": {
+        "operationId": "domain_roles_api_v1_domains__domain_id__roles_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "domain_id",
+            "required": true,
+            "schema": {
+              "title": "Domain Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RoleDefinition"
+                  },
+                  "title": "Response Domain Roles Api V1 Domains  Domain Id  Roles Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Domain Roles"
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "operationId": "health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health"
+      }
+    },
+    "/api/v1/overview": {
+      "get": {
+        "operationId": "overview_api_v1_overview_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OverviewResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Overview"
+      }
+    },
+    "/api/v1/roles/{role_id}/suites": {
+      "get": {
+        "operationId": "role_suites_api_v1_roles__role_id__suites_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "role_id",
+            "required": true,
+            "schema": {
+              "title": "Role Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/EvaluationSuiteDefinition"
+                  },
+                  "title": "Response Role Suites Api V1 Roles  Role Id  Suites Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Role Suites"
+      }
+    },
+    "/api/v1/runs": {
+      "get": {
+        "operationId": "runs_api_v1_runs_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Runs"
+      },
+      "post": {
+        "operationId": "create_run_api_v1_runs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRunRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Run"
+      }
+    },
+    "/api/v1/runs/{run_id}": {
+      "get": {
+        "operationId": "run_detail_api_v1_runs__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Run Detail"
+      }
+    },
+    "/api/v1/scenarios": {
+      "get": {
+        "operationId": "scenarios_api_v1_scenarios_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScenarioListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Scenarios"
+      }
+    },
+    "/api/v1/suite-jobs": {
+      "get": {
+        "operationId": "suite_jobs_api_v1_suite_jobs_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuiteJobListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Suite Jobs"
+      },
+      "post": {
+        "operationId": "create_suite_job_api_v1_suite_jobs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSuiteJobRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuiteJobRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Suite Job"
+      }
+    },
+    "/api/v1/suite-jobs/{job_id}": {
+      "delete": {
+        "operationId": "cancel_suite_job_api_v1_suite_jobs__job_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuiteJobRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Suite Job"
+      },
+      "get": {
+        "operationId": "suite_job_detail_api_v1_suite_jobs__job_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuiteJobRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Suite Job Detail"
+      }
+    },
+    "/api/v1/suite-jobs/{job_id}/evidence": {
+      "get": {
+        "operationId": "suite_job_evidence_api_v1_suite_jobs__job_id__evidence_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Suite Job Evidence"
+      }
+    },
+    "/api/v1/suites/{suite_id}": {
+      "get": {
+        "operationId": "suite_detail_api_v1_suites__suite_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "suite_id",
+            "required": true,
+            "schema": {
+              "title": "Suite Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationSuiteDefinition"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Suite Detail"
+      }
+    }
+  }
+}

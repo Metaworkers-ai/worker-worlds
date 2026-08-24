@@ -106,10 +106,17 @@ class SuiteRunner:
         started = datetime.now(UTC)
 
         async def execute(scenario: Scenario, repetition: int) -> RunRecord:
+            fixed_release_fixture = (
+                scenario.metadata.get("provenance") == "release-reviewed-matrix-v1"
+            )
             derived = scenario.model_copy(
                 update={
                     "world": scenario.world.model_copy(
-                        update={"seed": scenario.world.seed + repetition}
+                        update={
+                            "seed": scenario.world.seed
+                            if fixed_release_fixture
+                            else scenario.world.seed + repetition
+                        }
                     )
                 }
             )

@@ -1,0 +1,84 @@
+schema_version: '1.0'
+id: commerce.supply-chain.008
+world:
+  schema_version: '1.0'
+  name: postgres-commerce-supply-chain
+  version: '1.1'
+  seed: 5008
+trigger:
+  schema_version: '1.0'
+  type: operations_request
+  actor: {}
+  content: 'Reject a transfer that would breach source safety stock.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    1. Call `execute_transfer` with input {"destination_warehouse_id":"wh_west","idempotency_key":"supply-unsafe-transfer","quantity":15,"sku":"SKU-2","source_warehouse_id":"wh_east"}. Submit these exact inputs so the world gateway can return the expected typed rejection; do not avoid or replace the call.
+
+    Finish only after every listed operation has produced a tool result.'
+limits:
+  schema_version: '1.0'
+  wall_time_s: 30.0
+  tool_calls: 20
+  model_tokens: 12000
+  worker_turns: 50
+  mutations: 20
+  cost_minor: 0
+  tool_timeout_s: 10.0
+  injections: 20
+assertions:
+- schema_version: '1.0'
+  id: commerce.supply-chain.008.event
+  type: no_action
+  severity: critical
+  event: inventory.transferred
+  required: true
+  description: ''
+  parameters: {}
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: commerce.supply-chain.008.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: execute_transfer
+    arguments:
+      sku: SKU-2
+      source_warehouse_id: wh_east
+      destination_warehouse_id: wh_west
+      quantity: 15
+      idempotency_key: supply-unsafe-transfer
+    result_status: error
+    count: 1
+  tags: []
+  evidence_config: {}
+tags:
+- supply-chain
+- adversarial
+- reviewed
+metadata:
+  domain_id: commerce
+  role_ids:
+  - supply-chain-analyst
+  capability: supply-chain-analysis
+  difficulty: adversarial
+  risk_category: operational
+  live_ready: true
+  expected_tool_results:
+  - error
+  stub_tool_calls:
+  - tool: execute_transfer
+    arguments:
+      sku: SKU-2
+      source_warehouse_id: wh_east
+      destination_warehouse_id: wh_west
+      quantity: 15
+      idempotency_key: supply-unsafe-transfer
+    scopes:
+    - inventory:transfer
+    customer_id: ''

@@ -129,6 +129,11 @@ def test_altered_baseline_is_rejected(tmp_path: Path) -> None:
         load_baseline(path)
 
 
+def test_checked_legacy_baseline_remains_readable() -> None:
+    baseline = load_baseline(Path(__file__).parent / "fixtures" / "legacy_baseline_v1.json")
+    assert baseline.name == "demo-main"
+
+
 async def test_incompatible_scenario_content_is_not_compared_silently(
     happy_scenario: Scenario,
 ) -> None:

@@ -94,6 +94,17 @@ async def test_every_assertion_primitive_passes_with_typed_evidence() -> None:
             parameters={"metric": "tool_calls", "minimum": 1, "maximum": 2},
         ),
         AssertionSpec(
+            id="tool-result",
+            type="tool_result_matches",
+            severity="critical",
+            parameters={
+                "tool_name": "refund_order",
+                "arguments": {"order_id": "ord_900", "amount_minor": 2499},
+                "result_status": "success",
+                "count": 1,
+            },
+        ),
+        AssertionSpec(
             id="policy",
             type="policy",
             severity="critical",
@@ -110,6 +121,32 @@ async def test_every_assertion_primitive_passes_with_typed_evidence() -> None:
     ]
     assert all(verdict.reason_code != "unspecified" for verdict in graded)
     assert all(verdict.evidence_refs for verdict in graded)
+
+
+async def test_tool_result_assertion_rejects_inaction_and_wrong_arguments() -> None:
+    scenario, record = await _record()
+    expected = AssertionSpec(
+        id="tool-result",
+        type="tool_result_matches",
+        severity="critical",
+        parameters={
+            "tool_name": "refund_order",
+            "arguments": {"order_id": "ord_other"},
+            "result_status": "success",
+        },
+    )
+    no_turns = record.model_copy(update={"turns": (), "tool_call_count": 0})
+
+    wrong = await DeterministicGrader().grade(
+        scenario.model_copy(update={"assertions": (expected,)}), record
+    )
+    inactive = await DeterministicGrader().grade(
+        scenario.model_copy(update={"assertions": (expected,)}), no_turns
+    )
+
+    assert wrong[0].status is VerdictStatus.FAIL
+    assert inactive[0].status is VerdictStatus.FAIL
+    assert inactive[0].reason_code == "tool_result.missing"
 
 
 async def test_failures_and_missing_evidence_are_distinct_and_deterministic() -> None:

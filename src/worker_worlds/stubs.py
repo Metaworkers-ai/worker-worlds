@@ -295,7 +295,13 @@ class StubWorkerAdapter:
             )
             index = self._turn_index
             self._turn_index += 1
-            return WorkerTurn(id=turn_id, index=index, occurred_at=now, tool_call=call)
+            return WorkerTurn(
+                id=turn_id,
+                index=index,
+                occurred_at=now,
+                tool_call=call,
+                tool_result=tool_result,
+            )
         if behavior == "abstain":
             self._turn_index += 1
             return WorkerTurn(

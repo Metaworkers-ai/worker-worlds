@@ -4,10 +4,27 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 from pydantic import BaseModel
 
+from worker_worlds.agent_registry import (
+    AgentDefinition,
+    AgentFactoryContext,
+    AgentModelMetadata,
+    AgentReadiness,
+    AgentRegistry,
+)
+from worker_worlds.catalog import (
+    CapabilityDefinition,
+    Catalog,
+    DomainDefinition,
+    EvaluationSuiteDefinition,
+    RoleDefinition,
+    ScenarioClassification,
+)
+from worker_worlds.comparison_context import ContextualComparisonRecord, ContextualSuiteManifest
 from worker_worlds.config import WorkerWorldsConfig
 from worker_worlds.contracts import (
     AuthorizationContext,
@@ -33,6 +50,13 @@ from worker_worlds.contracts import (
     WorkerTurn,
     WorldEvent,
     WorldSnapshot,
+)
+from worker_worlds.evaluation import EvaluationContext, EvaluationRunManifest
+from worker_worlds.suite_jobs import (
+    SuiteBudget,
+    SuiteJobCreate,
+    SuiteJobRecord,
+    SuiteScenarioRecord,
 )
 
 SCHEMA_DIRECTORY = Path("schemas/v1")
@@ -61,6 +85,25 @@ MODELS: tuple[type[BaseModel], ...] = (
     ComparisonVerdict,
     ComparisonReport,
     WorkerWorldsConfig,
+    AgentModelMetadata,
+    AgentDefinition,
+    AgentFactoryContext,
+    AgentReadiness,
+    AgentRegistry,
+    DomainDefinition,
+    RoleDefinition,
+    CapabilityDefinition,
+    EvaluationSuiteDefinition,
+    ScenarioClassification,
+    Catalog,
+    EvaluationContext,
+    EvaluationRunManifest,
+    SuiteScenarioRecord,
+    SuiteBudget,
+    SuiteJobCreate,
+    SuiteJobRecord,
+    ContextualSuiteManifest,
+    ContextualComparisonRecord,
 )
 
 
@@ -84,6 +127,10 @@ def generate(directory: Path = SCHEMA_DIRECTORY) -> None:
 
 def check(directory: Path = SCHEMA_DIRECTORY) -> list[str]:
     """Return filenames that are missing, stale, or unexpectedly present."""
+    if directory == SCHEMA_DIRECTORY and not directory.is_dir():
+        installed = Path(sys.prefix) / "share/worker-worlds/schemas/v1"
+        if installed.is_dir():
+            directory = installed
     expected = generated_schemas()
     actual_files = {path.name for path in directory.glob("*.schema.json")}
     drift = [

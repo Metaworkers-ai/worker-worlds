@@ -12,6 +12,8 @@ SOURCES = (
     "operations.md",
     "reference.md",
     "release.md",
+    "api.md",
+    "catalog.md",
     "live-adapter-smoke.md",
     "security/threat-model.md",
     "security/secure-worker-deployment.md",

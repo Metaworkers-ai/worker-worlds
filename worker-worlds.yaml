@@ -11,6 +11,32 @@ reporting:
 database: {}
 baselines_directory: .worker-worlds/baselines
 provider: {}
+agents:
+  local-stub:
+    schema_version: "1.0"
+    id: local-stub
+    version: "1.0.0"
+    adapter: stub
+  langgraph-project:
+    schema_version: "1.0"
+    id: langgraph-project
+    version: "1.0.0"
+    adapter: langgraph
+    factory: worker_worlds.example_factories:create_langgraph_agent
+    required_env: [OPENAI_API_KEY]
+    model:
+      provider: openai
+      name: gpt-5-mini
+  openai-project:
+    schema_version: "1.0"
+    id: openai-project
+    version: "1.0.0"
+    adapter: openai-agents
+    factory: worker_worlds.example_factories:create_openai_agent
+    required_env: [OPENAI_API_KEY]
+    model:
+      provider: openai
+      name: gpt-5-mini
 comparison:
   critical_occurrences_allowed: 0
   new_high_failures_allowed: 0

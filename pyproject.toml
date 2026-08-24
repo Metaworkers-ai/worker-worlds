@@ -29,25 +29,32 @@ dev = [
   "types-PyYAML>=6.0.12,<7",
   "asyncpg-stubs>=0.31,<0.32",
   "twine>=7,<8",
+  "fastapi[standard]>=0.141,<1",
+  "httpx>=0.28,<1",
 ]
-langgraph = ["langgraph>=0.6,<1"]
-openai-agents = ["openai-agents>=0.2,<1"]
+langgraph = ["langgraph==1.2.10", "langchain==1.3.14", "langchain-openai==1.4.1"]
+openai-agents = ["openai-agents==0.19.4"]
+api = ["fastapi[standard]>=0.141,<1"]
 
 [project.scripts]
 worker-worlds = "worker_worlds.cli:main"
 worker-worlds-schema = "worker_worlds.schema_cli:main"
+worker-worlds-api = "worker_worlds.api:main"
+worker-worlds-openapi = "worker_worlds.openapi_cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/worker_worlds"]
 
 [tool.hatch.build.targets.wheel.shared-data]
 "schemas" = "share/worker-worlds/schemas"
+"catalog" = "share/worker-worlds/catalog"
 "scenarios/release" = "share/worker-worlds/scenarios"
+"scenarios/enterprise" = "share/worker-worlds/enterprise-scenarios"
 "examples/scenarios" = "share/worker-worlds/examples/scenarios"
 "docs/assets" = "share/worker-worlds/report-assets"
 
 [tool.hatch.build.targets.sdist]
-include = ["src", "schemas", "scenarios", "examples", "migrations", "docs", "scripts", "site", "worker-worlds.yaml", "compose.yaml", "Makefile", "README.md", "LICENSE", "SECURITY.md", "CHANGELOG.md", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md"]
+include = ["src", "schemas", "catalog", "scenarios", "examples", "migrations", "docs", "scripts", "site", "worker-worlds.yaml", "compose.yaml", "Makefile", "README.md", "LICENSE", "SECURITY.md", "CHANGELOG.md", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md"]
 
 [tool.ruff]
 target-version = "py312"
@@ -75,3 +82,6 @@ plugins = ["pydantic.mypy"]
 asyncio_mode = "auto"
 testpaths = ["tests"]
 markers = ["live: credential-guarded paid-provider smoke tests disabled by default"]
+filterwarnings = [
+  "ignore:The default value of `allowed_objects` will change:langchain_core._api.deprecation.LangChainPendingDeprecationWarning",
+]

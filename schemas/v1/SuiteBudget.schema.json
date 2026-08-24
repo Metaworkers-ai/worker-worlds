@@ -1,0 +1,51 @@
+{
+  "additionalProperties": false,
+  "description": "Aggregate limits enforced across every attempt in one suite job.",
+  "properties": {
+    "cost_minor": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Cost Minor",
+      "type": "integer"
+    },
+    "deadline_s": {
+      "default": 3600,
+      "exclusiveMinimum": 0,
+      "maximum": 86400,
+      "title": "Deadline S",
+      "type": "integer"
+    },
+    "model_tokens": {
+      "default": 10000000,
+      "minimum": 0,
+      "title": "Model Tokens",
+      "type": "integer"
+    },
+    "mutations": {
+      "default": 10000,
+      "minimum": 0,
+      "title": "Mutations",
+      "type": "integer"
+    },
+    "scenarios": {
+      "default": 200,
+      "exclusiveMinimum": 0,
+      "maximum": 500,
+      "title": "Scenarios",
+      "type": "integer"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "tool_calls": {
+      "default": 10000,
+      "minimum": 0,
+      "title": "Tool Calls",
+      "type": "integer"
+    }
+  },
+  "title": "SuiteBudget",
+  "type": "object"
+}

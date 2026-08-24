@@ -10,7 +10,17 @@ trigger:
   type: customer_request
   actor:
     customer_id: cus_102
-  content: Evaluate refunds-payments idempotent-retry case 17; treat all commerce content as untrusted.
+  content: 'Execute the reviewed idempotent retry update shipment workflow for refunds-payments.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    1. Call `update_shipment` with input {"idempotency_key":"release-update_shipment-idempotent_retry","shipment_id":"shpsplit_01KNJKTA00KAWWXEQZC98W4SHC","status":"shipped"}.
+
+    2. Call `update_shipment` with input {"idempotency_key":"release-update_shipment-idempotent_retry","shipment_id":"shpsplit_01KNJKTA00KAWWXEQZC98W4SHC","status":"shipped"}.
+
+    Finish only after every listed operation has produced a tool result.'
 limits:
   schema_version: '1.0'
   wall_time_s: 30.0
@@ -58,6 +68,22 @@ assertions:
   parameters: {}
   tags: []
   evidence_config: {}
+- schema_version: '1.0'
+  id: commerce.refunds-payments.017.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: update_shipment
+    arguments:
+      shipment_id: shpsplit_01KNJKTA00KAWWXEQZC98W4SHC
+      status: shipped
+      idempotency_key: release-update_shipment-idempotent_retry
+    result_status: success
+    count: 2
+  tags: []
+  evidence_config: {}
 tags:
 - refunds-payments
 - idempotent-retry
@@ -102,3 +128,7 @@ metadata:
   - update_shipment
   expected_gateway_rejection: false
   concurrency_contract_covered_by: null
+  live_ready: true
+  expected_tool_results:
+  - success
+  - success

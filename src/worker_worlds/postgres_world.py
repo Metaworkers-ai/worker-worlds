@@ -137,10 +137,11 @@ class PostgresWorld:
     """Per-run isolated commerce world backed by Postgres transactions."""
 
     version = WORLD_VERSION
-    migration_version = "003"
+    migration_version = "006"
 
     def __init__(self, settings: DatabaseSettings, scenario_id: str) -> None:
         """Configure an uninitialized world without opening a connection."""
+        settings.validate()
         self._settings = settings
         self._scenario_id = ScenarioId(scenario_id)
         self._connection: asyncpg.Connection[asyncpg.Record] | None = None
@@ -356,6 +357,13 @@ class PostgresWorld:
             )
         try:
             validated = model_type.model_validate(call.arguments)
+            if call.tool_name in _MUTATIONS:
+                argument_key = getattr(validated, "idempotency_key", None)
+                if not isinstance(argument_key, str) or call.idempotency_key != argument_key:
+                    raise ToolRejection(
+                        "IdempotencyEnvelopeMismatch",
+                        "tool call idempotency key must match validated mutation input",
+                    )
             handler = getattr(self, f"_tool_{call.tool_name}")
             output = await handler(call, validated)
             self._clock += timedelta(milliseconds=1)
@@ -432,12 +440,8 @@ class PostgresWorld:
         self, call: ToolCall, raw: IssueRefundInput
     ) -> dict[str, JsonValue]:
         connection, schema = self._ready()
-        input_json = raw.model_dump(mode="json")
-        input_hash = self._input_hash(input_json)
+        input_hash = self._idempotency_fingerprint(call, raw)
         async with connection.transaction():
-            prior = await self._existing_idempotency(connection, schema, raw)
-            if prior is not None:
-                return prior
             order = await connection.fetchrow(
                 f"SELECT * FROM {schema}.orders WHERE id=$1 FOR UPDATE", raw.order_id
             )
@@ -450,6 +454,9 @@ class PostgresWorld:
                 raise ToolRejection(
                     "AuthorizationDenied", "refund is not authorized for this customer"
                 )
+            prior = await self._existing_idempotency(connection, schema, call, raw)
+            if prior is not None:
+                return prior
             if raw.currency != order["currency"]:
                 raise ToolRejection("CurrencyMismatch", "refund currency must match order currency")
             if order["status"] not in {"paid", "partially_refunded"}:
@@ -519,8 +526,9 @@ class PostgresWorld:
         self, call: ToolCall, raw: CreateTicketInput
     ) -> dict[str, JsonValue]:
         connection, schema = self._ready()
+        self._require_customer_scope(call, raw.customer_id, "ticket:create")
         async with connection.transaction():
-            prior = await self._existing_idempotency(connection, schema, raw)
+            prior = await self._existing_idempotency(connection, schema, call, raw)
             if prior is not None:
                 return prior
             customer = await connection.fetchval(
@@ -578,7 +586,7 @@ class PostgresWorld:
                 "InvalidTicketStatus", f"unknown ticket status: {raw.status}"
             ) from exc
         async with connection.transaction():
-            prior = await self._existing_idempotency(connection, schema, raw)
+            prior = await self._existing_idempotency(connection, schema, call, raw)
             if prior is not None:
                 return prior
             row = await connection.fetchrow(
@@ -586,6 +594,7 @@ class PostgresWorld:
             )
             if row is None:
                 raise ToolRejection("TicketNotFound", "ticket not found")
+            self._require_customer_scope(call, row["customer_id"], "ticket:update")
             try:
                 validate_ticket_transition(TicketStatus(row["status"]), target)
             except ValueError as exc:
@@ -613,8 +622,9 @@ class PostgresWorld:
         self, call: ToolCall, raw: AdjustInventoryInput
     ) -> dict[str, JsonValue]:
         connection, schema = self._ready()
+        self._require_scope(call, "inventory:write")
         async with connection.transaction():
-            prior = await self._existing_idempotency(connection, schema, raw)
+            prior = await self._existing_idempotency(connection, schema, call, raw)
             if prior is not None:
                 return prior
             row = await connection.fetchrow(
@@ -651,8 +661,9 @@ class PostgresWorld:
 
     async def _tool_send_email(self, call: ToolCall, raw: SendEmailInput) -> dict[str, JsonValue]:
         connection, schema = self._ready()
+        self._require_customer_scope(call, raw.customer_id, "email:send")
         async with connection.transaction():
-            prior = await self._existing_idempotency(connection, schema, raw)
+            prior = await self._existing_idempotency(connection, schema, call, raw)
             if prior is not None:
                 return prior
             if (
@@ -695,7 +706,7 @@ class PostgresWorld:
     async def _tool_escalate(self, call: ToolCall, raw: EscalateInput) -> dict[str, JsonValue]:
         connection, schema = self._ready()
         async with connection.transaction():
-            prior = await self._existing_idempotency(connection, schema, raw)
+            prior = await self._existing_idempotency(connection, schema, call, raw)
             if prior is not None:
                 return prior
             ticket = await connection.fetchrow(
@@ -703,6 +714,7 @@ class PostgresWorld:
             )
             if ticket is None:
                 raise ToolRejection("TicketNotFound", "ticket not found")
+            self._require_customer_scope(call, ticket["customer_id"], "ticket:escalate")
             sequence = await self._next_sequence(connection, schema)
             entity_id = self._entity_id("esc", sequence)
             after: dict[str, JsonValue] = {
@@ -739,7 +751,7 @@ class PostgresWorld:
     ) -> dict[str, JsonValue]:
         connection, schema = self._ready()
         async with connection.transaction():
-            prior = await self._existing_idempotency(connection, schema, raw)
+            prior = await self._existing_idempotency(connection, schema, call, raw)
             if prior is not None:
                 return prior
             order = await connection.fetchrow(
@@ -790,7 +802,7 @@ class PostgresWorld:
         connection, schema = self._ready()
         self._require_scope(call, "inventory:write")
         async with connection.transaction():
-            prior = await self._existing_idempotency(connection, schema, raw)
+            prior = await self._existing_idempotency(connection, schema, call, raw)
             if prior is not None:
                 return prior
             row = await connection.fetchrow(
@@ -842,7 +854,7 @@ class PostgresWorld:
         if raw.status not in legal:
             raise ToolRejection("InvalidShipmentStatus", "unknown shipment status")
         async with connection.transaction():
-            prior = await self._existing_idempotency(connection, schema, raw)
+            prior = await self._existing_idempotency(connection, schema, call, raw)
             if prior is not None:
                 return prior
             row = await connection.fetchrow(
@@ -880,7 +892,7 @@ class PostgresWorld:
         connection, schema = self._ready()
         self._require_scope(call, "promotion:write")
         async with connection.transaction():
-            prior = await self._existing_idempotency(connection, schema, raw)
+            prior = await self._existing_idempotency(connection, schema, call, raw)
             if prior is not None:
                 return prior
             sequence = await self._next_sequence(connection, schema)
@@ -915,7 +927,7 @@ class PostgresWorld:
         if raw.selected_customer_id not in raw.candidate_ids:
             raise ToolRejection("InvalidCustomerSelection", "selected customer must be a candidate")
         async with connection.transaction():
-            prior = await self._existing_idempotency(connection, schema, raw)
+            prior = await self._existing_idempotency(connection, schema, call, raw)
             if prior is not None:
                 return prior
             count = await connection.fetchval(
@@ -953,7 +965,7 @@ class PostgresWorld:
         if raw.source_location == raw.destination_location:
             raise ToolRejection("InvalidTransfer", "inventory locations must differ")
         async with connection.transaction():
-            prior = await self._existing_idempotency(connection, schema, raw)
+            prior = await self._existing_idempotency(connection, schema, call, raw)
             if prior is not None:
                 return prior
             rows = await connection.fetch(
@@ -1006,7 +1018,7 @@ class PostgresWorld:
     ) -> dict[str, JsonValue]:
         connection, schema = self._ready()
         async with connection.transaction():
-            prior = await self._existing_idempotency(connection, schema, raw)
+            prior = await self._existing_idempotency(connection, schema, call, raw)
             if prior is not None:
                 return prior
             order = await connection.fetchrow(
@@ -1048,7 +1060,7 @@ class PostgresWorld:
         connection, schema = self._ready()
         self._require_scope(call, "refund:process")
         async with connection.transaction():
-            prior = await self._existing_idempotency(connection, schema, raw)
+            prior = await self._existing_idempotency(connection, schema, call, raw)
             if prior is not None:
                 return prior
             refund = await connection.fetchrow(
@@ -1087,7 +1099,7 @@ class PostgresWorld:
         connection, schema = self._ready()
         self._require_scope(call, "ticket:reopen")
         async with connection.transaction():
-            prior = await self._existing_idempotency(connection, schema, raw)
+            prior = await self._existing_idempotency(connection, schema, call, raw)
             if prior is not None:
                 return prior
             ticket = await connection.fetchrow(
@@ -1141,7 +1153,7 @@ class PostgresWorld:
     ) -> dict[str, JsonValue]:
         input_data = raw.model_dump(mode="json")
         key = str(input_data["idempotency_key"])
-        fingerprint = self._input_hash(input_data)
+        fingerprint = self._idempotency_fingerprint(call, raw)
         try:
             await connection.execute(
                 f"INSERT INTO {schema}.idempotency VALUES($1,$2,$3,$4::jsonb)",
@@ -1160,18 +1172,21 @@ class PostgresWorld:
         self,
         connection: asyncpg.Connection[asyncpg.Record],
         schema: str,
+        call: ToolCall,
         raw: BaseModel,
     ) -> dict[str, JsonValue] | None:
         input_data = raw.model_dump(mode="json")
         key = str(input_data["idempotency_key"])
-        fingerprint = self._input_hash(input_data)
-        await connection.execute("SELECT pg_advisory_xact_lock(hashtext($1))", key)
+        fingerprint = self._idempotency_fingerprint(call, raw)
+        await connection.execute(
+            "SELECT pg_advisory_xact_lock(hashtext($1))", f"{self._namespace}:{key}"
+        )
         prior = await connection.fetchrow(
-            f"SELECT input_hash,result FROM {schema}.idempotency WHERE key=$1", key
+            f"SELECT tool_name,input_hash,result FROM {schema}.idempotency WHERE key=$1", key
         )
         if prior is None:
             return None
-        if prior["input_hash"] != fingerprint:
+        if prior["tool_name"] != call.tool_name or prior["input_hash"] != fingerprint:
             raise ToolRejection(
                 "IdempotencyConflict", "idempotency key was reused with different input"
             )
@@ -1179,6 +1194,17 @@ class PostgresWorld:
             json.loads(prior["result"]) if isinstance(prior["result"], str) else prior["result"]
         )
         return cast(dict[str, JsonValue], result)
+
+    @classmethod
+    def _idempotency_fingerprint(cls, call: ToolCall, raw: BaseModel) -> str:
+        """Bind a mutation retry to its tool, validated input, actor, and authority."""
+        return cls._input_hash(
+            {
+                "tool": call.tool_name,
+                "arguments": raw.model_dump(mode="json"),
+                "authorization": call.authorization.model_dump(mode="json"),
+            }
+        )
 
     async def _next_sequence(
         self, connection: asyncpg.Connection[asyncpg.Record], schema: str
@@ -1392,7 +1418,6 @@ class PostgresWorld:
         """Drop only this validated namespace and release its lease."""
         if self._closed:
             return
-        self._closed = True
         if self._renewal_task is not None:
             self._renewal_task.cancel()
             await self._renewal_task
@@ -1405,9 +1430,10 @@ class PostgresWorld:
             async with self._connection.transaction():
                 await self._connection.execute(f'DROP SCHEMA IF EXISTS "{namespace}" CASCADE')
                 await self._connection.execute(
-                    "UPDATE worker_worlds.run_leases SET active=false WHERE run_id=$1", self._run_id
+                    "DELETE FROM worker_worlds.run_leases WHERE run_id=$1", self._run_id
                 )
             self.cleanup_succeeded = True
+            self._closed = True
         finally:
             await self._connection.close()
             self._connection = None

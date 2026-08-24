@@ -1,12 +1,33 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Worker Worlds 1.0</title><style>body{font:16px system-ui;margin:auto;max-width:1100px;padding:1rem;line-height:1.5}nav a{margin-right:1rem}pre{white-space:pre-wrap;overflow-wrap:anywhere}a:focus{outline:3px solid #0563c1}</style></head><body><header><h1>Worker Worlds <small>1.0.0rc1</small></h1><nav aria-label="Documentation"><a href="quickstart.html">quickstart</a> <a href="concepts.html">concepts</a> <a href="authoring.html">authoring</a> <a href="operations.html">operations</a> <a href="reference.html">reference</a> <a href="release.html">release</a> <a href="live-adapter-smoke.html">live-adapter-smoke</a> <a href="security-threat-model.html">threat-model</a> <a href="security-secure-worker-deployment.html">secure-worker-deployment</a></nav></header><main><pre># Operations
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Worker Worlds 1.0</title><style>body{font:16px system-ui;margin:auto;max-width:1100px;padding:1rem;line-height:1.5}nav a{margin-right:1rem}pre{white-space:pre-wrap;overflow-wrap:anywhere}a:focus{outline:3px solid #0563c1}</style></head><body><header><h1>Worker Worlds <small>1.0.0rc1</small></h1><nav aria-label="Documentation"><a href="quickstart.html">quickstart</a> <a href="concepts.html">concepts</a> <a href="authoring.html">authoring</a> <a href="operations.html">operations</a> <a href="reference.html">reference</a> <a href="release.html">release</a> <a href="api.html">api</a> <a href="catalog.html">catalog</a> <a href="live-adapter-smoke.html">live-adapter-smoke</a> <a href="security-threat-model.html">threat-model</a> <a href="security-secure-worker-deployment.html">secure-worker-deployment</a></nav></header><main><pre># Operations
 
 Use the pinned Compose service for local Postgres. Migrations are forward-only,
 checksummed, and applied by `worker-worlds migrate`. Every run owns a validated
 schema and lease; `close()` removes only that namespace. Artifact retention is an
 operator decision. Use summary reports in CI and retain per-run JSON for failures.
 
+Role-level suite jobs use global `worker_worlds.suite_jobs` metadata and isolated per-run world
+schemas. Progress updates are transactional and monotonic. The local API owns active executor tasks;
+job rows and completed evidence survive dashboard refreshes. Cancellation marks pending scenarios
+before cancelling active tasks. Evidence bundles live under
+`.worker-worlds/api/suite-jobs/&lt;job-id&gt;/publications/&lt;executor-id&gt;/evidence.zip`.
+
+The API is a trusted-loopback control plane, not a public multi-tenant service. Suite executors hold
+short PostgreSQL leases and heartbeat while active. A restarted API scans queued jobs and expired
+leases, reloads immutable RunRecords already written to disk, resets only interrupted scenario rows,
+and resumes the remaining work. Executor IDs fence stale processes from writing after takeover.
+Infrastructure failures identified as `InfrastructureError` receive one bounded retry by default;
+all attempts remain in the final SuiteRecord. Cancellation is durable and creates terminal partial
+evidence, including when the prior executor disappeared.
+
 Troubleshooting begins with `worker-worlds doctor`. Never aim cleanup at an
 unspecified database. Reference performance and security claims apply only to
 the documented local profile; provider queues and external worker latency are
 separate.
+
+For a fresh handover checkout, copy `.env.example` to the ignored `.env`. The pinned Compose service
+creates only `worker_worlds_dev`; both local runtime and test variables may point to that explicit
+database because every test/run receives a validated isolated schema. Stop manually running API and
+dashboard processes before `make verify`, which owns the database test lifecycle and its Playwright
+server. See [HANDOVER.md](../HANDOVER.md) for the module map, current branch, evidence paths, and
+remaining work.
 </pre></main></body></html>

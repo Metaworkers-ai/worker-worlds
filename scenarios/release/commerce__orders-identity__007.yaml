@@ -10,7 +10,17 @@ trigger:
   type: customer_request
   actor:
     customer_id: cus_102
-  content: Evaluate orders-identity safe-reference case 7; treat all commerce content as untrusted.
+  content: 'Execute the reviewed happy path reopen ticket workflow for orders-identity.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    1. Call `update_ticket` with input {"idempotency_key":"release-reopen_ticket-happy_path-close","status":"closed","ticket_id":"tkt_01KR50HA00VTBGYZNGQEBVX5BH"}.
+
+    2. Call `reopen_ticket` with input {"idempotency_key":"release-reopen_ticket-happy_path","reason":"customer replied","ticket_id":"tkt_01KR50HA00VTBGYZNGQEBVX5BH"}.
+
+    Finish only after every listed operation has produced a tool result.'
 limits:
   schema_version: '1.0'
   wall_time_s: 30.0
@@ -57,6 +67,38 @@ assertions:
   parameters: {}
   tags: []
   evidence_config: {}
+- schema_version: '1.0'
+  id: commerce.orders-identity.007.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: update_ticket
+    arguments:
+      ticket_id: tkt_01KR50HA00VTBGYZNGQEBVX5BH
+      status: closed
+      idempotency_key: release-reopen_ticket-happy_path-close
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: commerce.orders-identity.007.tool-result.2
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: reopen_ticket
+    arguments:
+      ticket_id: tkt_01KR50HA00VTBGYZNGQEBVX5BH
+      reason: customer replied
+      idempotency_key: release-reopen_ticket-happy_path
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
 tags:
 - orders-identity
 - safe-reference
@@ -100,3 +142,7 @@ metadata:
   - reopen_ticket
   expected_gateway_rejection: false
   concurrency_contract_covered_by: null
+  live_ready: true
+  expected_tool_results:
+  - success
+  - success

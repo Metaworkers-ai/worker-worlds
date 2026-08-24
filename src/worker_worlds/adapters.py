@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+import asyncio
 import importlib.util
 import json
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from importlib import import_module
-from typing import Protocol
+from typing import Protocol, cast
 
 from worker_worlds.contracts import (
     AuthorizationContext,
@@ -22,8 +23,13 @@ from worker_worlds.contracts import (
     TurnId,
     WorkerTurn,
 )
-from worker_worlds.errors import AdapterError
+from worker_worlds.errors import AdapterError, ProviderError
 from worker_worlds.ids import prefixed_ulid
+from worker_worlds.native_bridge import (
+    NativeBridgePendingError,
+    NativeToolBridge,
+    NativeToolHandler,
+)
 
 
 @dataclass(frozen=True)
@@ -35,8 +41,16 @@ class NativeDecision:
     arguments: dict[str, JsonValue] | None = None
     terminal: bool = False
     model_tokens: int | None = None
+    model_input_tokens: int | None = None
+    model_output_tokens: int | None = None
     cost_minor: int | None = None
     request_id: str | None = None
+    provider_response_ids: tuple[str, ...] = ()
+    provider_request_ids: tuple[str, ...] = ()
+    provider_retry_count: int = 0
+    model_provider: str | None = None
+    model_name: str | None = None
+    model_version: str | None = None
 
 
 class NativeRuntime(Protocol):
@@ -60,6 +74,20 @@ class NativeRuntime(Protocol):
 RuntimeFactory = Callable[[], NativeRuntime]
 
 
+class NativeBridgeRuntime(Protocol):
+    """Opt-in seam for SDKs that own their model/tool loop."""
+
+    async def run_with_tools(
+        self, scenario: Scenario, tools: list[NativeToolHandler]
+    ) -> NativeDecision:
+        """Run the provider loop using callbacks backed by the runner."""
+        ...
+
+    async def cancel(self) -> None:
+        """Cancel provider work."""
+        ...
+
+
 class NativeAdapter:
     """Shared translation boundary for supported native frameworks."""
 
@@ -68,7 +96,7 @@ class NativeAdapter:
     required_module = ""
     install_extra = ""
 
-    def __init__(self, runtime: NativeRuntime | None = None) -> None:
+    def __init__(self, runtime: NativeRuntime | NativeBridgeRuntime | None = None) -> None:
         """Use an injected test seam or load an installed native runtime."""
         if runtime is None:
             if not self.required_module or importlib.util.find_spec(self.required_module) is None:
@@ -82,12 +110,33 @@ class NativeAdapter:
         self._scenario: Scenario | None = None
         self._tools: list[ToolSpec] = []
         self._turn_index = 0
+        self._bridge: NativeToolBridge | None = None
+        self._provider_task: asyncio.Task[NativeDecision] | None = None
+        self._provider_ended_with_pending = False
+        self._cancel_lock = asyncio.Lock()
+        self._cancelled = False
+        self._cancellation_failed = False
 
     async def start(self, scenario: Scenario, tools: list[ToolSpec]) -> None:
         """Start a normalized native run."""
         self._scenario = scenario
         self._turn_index = 0
+        self._cancelled = False
+        self._cancellation_failed = False
         await self.expose_tools(tools)
+        run_with_tools = getattr(self._runtime, "run_with_tools", None)
+        if callable(run_with_tools):
+            authorization = AuthorizationContext(
+                actor_id=self.name,
+                customer_id=str(scenario.trigger.actor.get("customer_id", "")) or None,
+                scopes=frozenset({"refund:own_order"}),
+            )
+            self._bridge = NativeToolBridge(tools, authorization)
+            self._provider_ended_with_pending = False
+            runtime = cast(NativeBridgeRuntime, self._runtime)
+            self._provider_task = asyncio.create_task(
+                runtime.run_with_tools(scenario, self._bridge.handlers())
+            )
 
     async def expose_tools(self, tools: list[ToolSpec]) -> None:
         """Translate and retain framework-neutral tool schemas."""
@@ -108,14 +157,18 @@ class NativeAdapter:
         """Normalize a native decision into a WorkerTurn."""
         if self._scenario is None:
             raise AdapterError("adapter has not been started")
+        if self._bridge is not None:
+            return await self._next_bridge_turn(tool_result)
+        failure_type: str | None = None
         try:
-            decision = await self._runtime.decide(
+            runtime = cast(NativeRuntime, self._runtime)
+            decision = await runtime.decide(
                 self._scenario, self.native_tools(), tool_result, self._turn_index
             )
-        except AdapterError:
-            raise
         except Exception as exc:
-            raise AdapterError(f"{self.name} worker invocation failed: {exc}") from exc
+            failure_type = type(exc).__name__
+        if failure_type is not None:
+            raise AdapterError(f"{self.name} worker invocation failed ({failure_type})")
         now = datetime.now(UTC)
         tool_call = None
         if decision.tool_name is not None:
@@ -147,10 +200,122 @@ class NativeAdapter:
             tool_result=tool_result,
             terminal=decision.terminal,
             model_tokens=decision.model_tokens,
+            model_input_tokens=decision.model_input_tokens,
+            model_output_tokens=decision.model_output_tokens,
             cost_minor=decision.cost_minor,
+            provider_response_ids=decision.provider_response_ids,
+            provider_request_ids=decision.provider_request_ids,
+            provider_retry_count=decision.provider_retry_count,
+            model_provider=decision.model_provider,
+            model_name=decision.model_name,
+            model_version=decision.model_version,
         )
         self._turn_index += 1
         return turn
+
+    async def _next_bridge_turn(self, tool_result: ToolResult | None) -> WorkerTurn:
+        """Race provider completion against FIFO native tool submissions."""
+        assert self._bridge is not None
+        assert self._provider_task is not None
+        if self._provider_task.done() and self._bridge.pending_count:
+            self._provider_ended_with_pending = True
+        if tool_result is not None:
+            self._bridge.resolve(tool_result)
+        if self._provider_ended_with_pending:
+            return self._provider_terminal_turn(tool_result)
+        if self._bridge.queued_count:
+            call = await self._bridge.next_call()
+            self._provider_ended_with_pending = self._provider_task.done()
+            return self._call_turn(call, tool_result)
+        call_task = asyncio.create_task(self._bridge.next_call())
+        done, _ = await asyncio.wait(
+            {call_task, self._provider_task}, return_when=asyncio.FIRST_COMPLETED
+        )
+        if call_task in done:
+            self._provider_ended_with_pending = self._provider_task.done()
+            return self._call_turn(call_task.result(), tool_result)
+        call_task.cancel()
+        await asyncio.gather(call_task, return_exceptions=True)
+        if self._bridge.pending_count or self._bridge.queued_count:
+            self._provider_ended_with_pending = True
+            return self._provider_terminal_turn(tool_result)
+        return self._provider_terminal_turn(tool_result)
+
+    def _provider_terminal_turn(self, tool_result: ToolResult | None) -> WorkerTurn:
+        assert self._provider_task is not None
+        if self._provider_ended_with_pending:
+            raise NativeBridgePendingError(
+                "native provider terminated with pending tool requests"
+            ) from None
+        failure_type: str | None = None
+        provider_failed = False
+        try:
+            decision = self._provider_task.result()
+        except Exception as exc:
+            failure_type = type(exc).__name__
+            provider_failed = isinstance(exc, ProviderError)
+        if failure_type is not None:
+            if provider_failed:
+                raise ProviderError(f"{self.name} provider invocation failed") from None
+            raise AdapterError(f"{self.name} worker invocation failed ({failure_type})")
+        now = datetime.now(UTC)
+        turn = WorkerTurn(
+            id=TurnId(prefixed_ulid("turn")),
+            index=self._turn_index,
+            occurred_at=now,
+            message=decision.message,
+            tool_result=tool_result,
+            terminal=True,
+            model_tokens=decision.model_tokens,
+            model_input_tokens=decision.model_input_tokens,
+            model_output_tokens=decision.model_output_tokens,
+            cost_minor=decision.cost_minor,
+            provider_response_ids=decision.provider_response_ids,
+            provider_request_ids=decision.provider_request_ids,
+            provider_retry_count=decision.provider_retry_count,
+            model_provider=decision.model_provider,
+            model_name=decision.model_name,
+            model_version=decision.model_version,
+        )
+        self._turn_index += 1
+        return turn
+
+    def _call_turn(self, call: ToolCall, tool_result: ToolResult | None) -> WorkerTurn:
+        now = datetime.now(UTC)
+        turn = WorkerTurn(
+            id=TurnId(prefixed_ulid("turn")),
+            index=self._turn_index,
+            occurred_at=now,
+            tool_call=call,
+            tool_result=tool_result,
+        )
+        self._turn_index += 1
+        return turn
+
+    @property
+    def continues_after_tool_error(self) -> bool:
+        """Only SDK-managed bridge loops receive structured tool failures."""
+        return self._bridge is not None
+
+    @property
+    def incomplete_native_evidence(self) -> bool:
+        """Report provider termination while callbacks were unresolved."""
+        return self._provider_ended_with_pending
+
+    @property
+    def cancellation_failed(self) -> bool:
+        """Report a sanitized native-runtime cancellation failure."""
+        return self._cancellation_failed
+
+    @property
+    def pending_native_calls(self) -> int:
+        """Return unresolved bridge callbacks for lifecycle verification."""
+        return self._bridge.pending_count if self._bridge is not None else 0
+
+    @property
+    def queued_native_calls(self) -> int:
+        """Return queued bridge callbacks for lifecycle verification."""
+        return self._bridge.queued_count if self._bridge is not None else 0
 
     def is_terminal(self, turn: WorkerTurn) -> bool:
         """Recognize explicit native completion."""
@@ -158,7 +323,21 @@ class NativeAdapter:
 
     async def cancel(self) -> None:
         """Propagate cancellation to the native runtime."""
-        await self._runtime.cancel()
+        async with self._cancel_lock:
+            if self._cancelled:
+                return
+            self._cancelled = True
+            if self._bridge is not None:
+                await self._bridge.close()
+            try:
+                await self._runtime.cancel()
+            except BaseException:
+                self._cancellation_failed = True
+            finally:
+                if self._provider_task is not None:
+                    if not self._provider_task.done():
+                        self._provider_task.cancel()
+                    await asyncio.gather(self._provider_task, return_exceptions=True)
 
 
 class LangGraphAdapter(NativeAdapter):

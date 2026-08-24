@@ -1,8 +1,12 @@
 # Threat model
 
-Worker Worlds treats scenario data and worker behavior as untrusted. Trusted
-components are the runner, authorization context, world gateway, migration set,
-grader, and reporter redaction layer.
+Worker Worlds treats worker behavior plus scenario messages, injected content,
+and external evidence as untrusted. Scenario control-plane fields (world,
+budgets, assertions, and authorization fixtures) are trusted test-author input
+and must come from a reviewed catalog. The runner maps fixture authorization to
+a fixed per-tool scope policy; arbitrary scope names in YAML are ignored.
+Trusted components are the runner, authorization policy, world gateway,
+migration set, grader, and reporter redaction layer.
 
 | Boundary | Current control | Limitation |
 |---|---|---|
