@@ -217,6 +217,47 @@ async def test_insurance_payment_enforces_authorization_and_approved_balance(
     await world.close()
 
 
+async def test_insurance_payment_cannot_exceed_approved_balance(
+    enterprise_settings: DatabaseSettings,
+) -> None:
+    run_id = prefixed_ulid("run")
+    world = InsuranceWorld(enterprise_settings, "insurance.claims.test-overpay")
+    await world.reset(seed=7002, run_id=run_id)
+    decision = await world.invoke(
+        _call(
+            run_id,
+            "decide_claim",
+            {
+                "claim_id": "clm_100",
+                "decision": "approve",
+                "approved_minor": 100000,
+                "idempotency_key": "approve-for-overpay",
+            },
+            {"claim:decide"},
+        )
+    )
+    assert decision.status is ToolResultStatus.SUCCESS
+    after_approval = await world.snapshot()
+    events_after_approval = await world.events()
+    over_payment = await world.invoke(
+        _call(
+            run_id,
+            "issue_claim_payment",
+            {
+                "claim_id": "clm_100",
+                "amount_minor": 150000,
+                "currency": "USD",
+                "idempotency_key": "overpay",
+            },
+            {"claim:pay"},
+        )
+    )
+    assert over_payment.error_type == "PaymentExceedsApproved"
+    assert (await world.snapshot()).state == after_approval.state
+    assert await world.events() == events_after_approval
+    await world.close()
+
+
 async def test_ten_mixed_enterprise_worlds_are_isolated(
     enterprise_settings: DatabaseSettings,
 ) -> None:
