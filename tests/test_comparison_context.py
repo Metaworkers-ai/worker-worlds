@@ -5,7 +5,7 @@ from worker_worlds.comparison_context import (
     compare_contextual_suites,
     context_compatibility,
 )
-from worker_worlds.contracts import RunId, RunRecord, Scenario, SuiteRecord
+from worker_worlds.contracts import RunId, RunRecord, Scenario, SuiteRecord, VerdictStatus
 from worker_worlds.evaluation import EvaluationContext
 from worker_worlds.grading import DeterministicGrader
 from worker_worlds.runner import Runner
@@ -82,3 +82,19 @@ async def test_incomplete_evidence_cannot_pass_context_gate(happy_scenario: Scen
     context = _context(happy_scenario)
     result = compare_contextual_suites(incomplete, incomplete, context, context)
     assert not result.passed
+
+
+async def test_new_critical_failure_cannot_pass_context_gate(happy_scenario: Scenario) -> None:
+    suite = await _suite(happy_scenario)
+    context = _context(happy_scenario)
+    failed_verdict = suite.runs[0].verdicts[0].model_copy(update={"status": VerdictStatus.FAIL})
+    failed_run = suite.runs[0].model_copy(
+        update={"id": RunId("run_context_critical"), "verdicts": (failed_verdict,)}
+    )
+    candidate = suite.model_copy(update={"runs": (failed_run, *suite.runs[1:])})
+    result = compare_contextual_suites(suite, candidate, context, context)
+    assert result.compatibility is ContextCompatibility.COMPATIBLE
+    assert result.compatibility_reasons == ()
+    assert result.report.verdict.new_critical == 1
+    assert not result.report.verdict.passed
+    assert result.passed is False
