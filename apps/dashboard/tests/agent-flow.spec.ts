@@ -505,6 +505,95 @@ test("compares two completed agents only inside the selected evaluation context"
   await expect(page.getByText("Regression gate passed")).toBeVisible();
 });
 
+test("cancels a running suite through the evaluation wizard", async ({ page }) => {
+  await mockDashboardApi(page, () => undefined);
+
+  let cancelled = false;
+  let cancelRequestReceived = false;
+
+  const job = () => ({
+    schema_version: "1.0",
+    id: "suitejob_cancel_test",
+    request_key: "browser-cancel-request",
+    status: cancelled ? "cancelled" : "running",
+    catalog_version: "1.0.0",
+    domain_id: "commerce",
+    role_id: "refund-specialist",
+    suite_id: "commerce.refund-specialist.smoke",
+    suite_revision: "1.0.0",
+    agent_id: "local-stub",
+    world: "postgres",
+    configuration: {},
+    total_scenarios: 1,
+    completed_scenarios: 0,
+    passed_scenarios: 0,
+    failed_scenarios: 0,
+    cancel_requested: cancelled,
+    revision: cancelled ? 2 : 1,
+    scenarios: [],
+    error_type: null,
+    error_message: null,
+    // The suite is still in flight until cancelled: no path is published yet, matching
+    // how the wizard's own poll loop decides a job is still running.
+    suite_record_path: cancelled ? "suitejob_cancel_test/suite.json" : null,
+    created_at: "2026-08-20T00:00:00Z",
+    updated_at: "2026-08-20T00:00:00Z",
+    started_at: "2026-08-20T00:00:00Z",
+    ended_at: cancelled ? "2026-08-20T00:00:01Z" : null,
+  });
+
+  // Nothing was already running before this test's own suite is created.
+  await page.route("**/api/v1/suite-jobs?limit=200", (route) =>
+    route.fulfill({ status: 200, json: { schema_version: "1.0", jobs: [], total: 0 } }),
+  );
+
+  await page.route("**/api/v1/suite-jobs", async (route) => {
+    if (route.request().method() !== "POST") {
+      await route.fallback();
+      return;
+    }
+    // The mock backend never resolves this job on its own -- it stays "running" until
+    // the browser sends the real DELETE cancellation request below, guaranteeing the UI
+    // is in a controlled, non-racing running state when the test clicks Cancel.
+    await route.fulfill({ status: 202, json: job() });
+  });
+
+  await page.route("**/api/v1/suite-jobs/suitejob_cancel_test", async (route) => {
+    const method = route.request().method();
+    if (method === "DELETE") {
+      cancelRequestReceived = true;
+      cancelled = true;
+      await route.fulfill({ status: 200, json: job() });
+      return;
+    }
+    if (method === "GET") {
+      await route.fulfill({ status: 200, json: job() });
+      return;
+    }
+    await route.fallback();
+  });
+
+  await page.goto("/");
+  await page.getByRole("button", { name: "Run evaluation" }).click();
+  await expect(page.getByLabel("Choose evaluation suite")).toHaveValue(
+    "commerce.refund-specialist.smoke",
+  );
+  await page.getByRole("button", { name: "Start evaluation suite" }).click();
+
+  // The suite has genuinely reached a running state in the UI -- not a guess about
+  // timing -- because the mock never returns a terminal status until cancelled.
+  await expect(page.getByText("Suite running")).toBeVisible();
+  const cancelButton = page.getByRole("button", { name: "Cancel evaluation" });
+  await expect(cancelButton).toBeVisible();
+
+  await cancelButton.click();
+
+  await expect.poll(() => cancelRequestReceived).toBe(true);
+  await expect(page.getByText("Suite cancelled")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Cancel evaluation" })).toHaveCount(0);
+  await expect(page.getByText("Suite completed")).toHaveCount(0);
+});
+
 test("selects a ready agent, disables unavailable agents, and submits agent_id", async ({
   page,
 }) => {
