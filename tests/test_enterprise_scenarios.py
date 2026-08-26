@@ -11,7 +11,7 @@ def test_enterprise_scenarios_are_checked_and_catalogued() -> None:
     scenarios = enterprise_scenarios()
     catalog = builtin_catalog()
     classified = {str(item.scenario_id) for item in catalog.classifications}
-    assert len(scenarios) == 24
+    assert len(scenarios) == 25
     for scenario in scenarios:
         path = Path("scenarios/enterprise") / scenario_filename(scenario)
         loaded = load_scenario(path)
@@ -30,6 +30,7 @@ def test_enterprise_scenarios_are_checked_and_catalogued() -> None:
 
 def test_new_roles_have_smoke_standard_and_full_suites() -> None:
     catalog = builtin_catalog()
+    expected_full = {"supply-chain-analyst": 13, "claims-adjuster": 12}
     for role_id in ("supply-chain-analyst", "claims-adjuster"):
         suites = [item for item in catalog.suites if item.role_id == role_id]
         assert [item.tier.value for item in suites] == [
@@ -39,7 +40,12 @@ def test_new_roles_have_smoke_standard_and_full_suites() -> None:
             "standard",
         ]
         counts = {item.tier.value: len(item.scenario_ids) for item in suites}
-        assert counts == {"custom": 0, "full": 12, "smoke": 6, "standard": 10}
+        assert counts == {
+            "custom": 0,
+            "full": expected_full[role_id],
+            "smoke": 6,
+            "standard": 10,
+        }
 
 
 def test_every_live_enterprise_prompt_is_self_contained_and_requires_tool_evidence() -> None:

@@ -1,0 +1,135 @@
+schema_version: '1.0'
+id: commerce.supply-chain.013
+world:
+  schema_version: '1.0'
+  name: postgres-commerce-supply-chain
+  version: '1.1'
+  seed: 5013
+trigger:
+  schema_version: '1.0'
+  type: operations_request
+  actor: {}
+  content: 'Redistribute excess inventory from an overstocked warehouse to relieve a stockout risk at another warehouse.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    1. Call `get_stockout_risk` with input {"sku":"SKU-2","warehouse_id":"wh_west"}.
+
+    2. Call `execute_transfer` with input {"destination_warehouse_id":"wh_west","idempotency_key":"supply-excess-transfer","quantity":10,"sku":"SKU-2","source_warehouse_id":"wh_east"}.
+
+    Finish only after every listed operation has produced a tool result.'
+limits:
+  schema_version: '1.0'
+  wall_time_s: 30.0
+  tool_calls: 20
+  model_tokens: 12000
+  worker_turns: 50
+  mutations: 20
+  cost_minor: 0
+  tool_timeout_s: 10.0
+  injections: 20
+assertions:
+- schema_version: '1.0'
+  id: commerce.supply-chain.013.state.destination
+  type: state_matches
+  severity: critical
+  path: stock_positions.0.available
+  required: true
+  description: ''
+  parameters:
+    operation: enum_equals
+    expected: 12
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: commerce.supply-chain.013.state.source
+  type: state_matches
+  severity: critical
+  path: stock_positions.1.available
+  required: true
+  description: ''
+  parameters:
+    operation: enum_equals
+    expected: 11
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: commerce.supply-chain.013.action
+  type: action_count
+  severity: critical
+  event: inventory.transferred
+  required: true
+  description: ''
+  parameters:
+    event_type: inventory.transferred
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: commerce.supply-chain.013.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: get_stockout_risk
+    arguments:
+      sku: SKU-2
+      warehouse_id: wh_west
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: commerce.supply-chain.013.tool-result.2
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: execute_transfer
+    arguments:
+      sku: SKU-2
+      source_warehouse_id: wh_east
+      destination_warehouse_id: wh_west
+      quantity: 10
+      idempotency_key: supply-excess-transfer
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+tags:
+- supply-chain
+- advanced
+- reviewed
+- excess-inventory
+metadata:
+  domain_id: commerce
+  role_ids:
+  - supply-chain-analyst
+  capability: supply-chain-analysis
+  difficulty: advanced
+  risk_category: operational
+  live_ready: true
+  expected_tool_results:
+  - success
+  - success
+  stub_tool_calls:
+  - tool: get_stockout_risk
+    arguments:
+      sku: SKU-2
+      warehouse_id: wh_west
+    scopes: []
+    customer_id: ''
+  - tool: execute_transfer
+    arguments:
+      sku: SKU-2
+      source_warehouse_id: wh_east
+      destination_warehouse_id: wh_west
+      quantity: 10
+      idempotency_key: supply-excess-transfer
+    scopes:
+    - inventory:transfer
+    customer_id: ''

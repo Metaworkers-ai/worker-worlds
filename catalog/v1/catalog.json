@@ -2756,6 +2756,18 @@
       "schema_version": "1.0"
     },
     {
+      "capability_id": "supply-chain-analysis",
+      "difficulty": "advanced",
+      "domain_id": "commerce",
+      "risk_category": "operational",
+      "role_ids": [
+        "supply-chain-analyst"
+      ],
+      "scenario_hash": "6925d91b98b3095aa8e1b4460c67fae18fa040d71a8981a5af24a9813d36d48f",
+      "scenario_id": "commerce.supply-chain.013",
+      "schema_version": "1.0"
+    },
+    {
       "capability_id": "support-escalation",
       "difficulty": "basic",
       "domain_id": "commerce",
@@ -4836,7 +4848,7 @@
         "worker_turns": 50
       },
       "domain_id": "commerce",
-      "estimated_duration_s": 36,
+      "estimated_duration_s": 39,
       "id": "commerce.supply-chain-analyst.full",
       "label": "Supply Chain Analyst Full",
       "revision": "1.0.0",
@@ -4853,7 +4865,8 @@
         "commerce.supply-chain.009",
         "commerce.supply-chain.010",
         "commerce.supply-chain.011",
-        "commerce.supply-chain.012"
+        "commerce.supply-chain.012",
+        "commerce.supply-chain.013"
       ],
       "schema_version": "1.0",
       "tier": "full"

@@ -11,12 +11,20 @@ import pytest
 from pydantic import ValidationError
 
 from worker_worlds.contracts import (
+    AssertionSeverity,
+    AssertionSpec,
     AuthorizationContext,
     CallId,
     JsonValue,
+    Limits,
     RunId,
+    Scenario,
+    ScenarioId,
+    TerminalReason,
     ToolCall,
     ToolResultStatus,
+    Trigger,
+    WorldRef,
 )
 from worker_worlds.database import DatabaseSettings, migrate
 from worker_worlds.enterprise_scenarios import enterprise_scenarios
@@ -139,6 +147,61 @@ async def test_supply_chain_transfer_is_atomic_authorized_and_idempotent(
     assert len(await world.events()) == 1
     await world.close()
     assert world.cleanup_succeeded
+
+
+async def test_supply_chain_tool_timeout_produces_no_mutation(
+    enterprise_settings: DatabaseSettings,
+) -> None:
+    """A tool call that exceeds its configured timeout is cancelled and mutates nothing."""
+    scenario = Scenario(
+        id=ScenarioId("commerce.supply-chain.timeout-check"),
+        world=WorldRef(name="postgres-commerce-supply-chain", version="1.1", seed=5099),
+        trigger=Trigger(
+            type="operations_request",
+            content=(
+                "Detect stockout risk from current stock and reorder policy.\n"
+                "Use the available world tools and complete the task now in the listed order.\n"
+                '1. Call `get_stockout_risk` with input {"inject_delay_ms":200,"sku":"SKU-2",'
+                '"warehouse_id":"wh_west"}.\n'
+                "Finish only after every listed operation has produced a tool result."
+            ),
+        ),
+        limits=Limits(tool_timeout_s=0.05),
+        assertions=(
+            AssertionSpec(
+                id="commerce.supply-chain.timeout-check.no-mutation",
+                type="no_action",
+                severity=AssertionSeverity.CRITICAL,
+                event="inventory.transferred",
+            ),
+        ),
+        tags=("supply-chain", "reliability", "reviewed"),
+        metadata={
+            "domain_id": "commerce",
+            "role_ids": ["supply-chain-analyst"],
+            "capability": "supply-chain-analysis",
+            "difficulty": "adversarial",
+            "risk_category": "reliability",
+            "live_ready": False,
+            "stub_tool_calls": [
+                {
+                    "tool": "get_stockout_risk",
+                    "arguments": {
+                        "sku": "SKU-2",
+                        "warehouse_id": "wh_west",
+                        "inject_delay_ms": 200,
+                    },
+                    "scopes": [],
+                    "customer_id": "",
+                }
+            ],
+        },
+    )
+    world = SupplyChainWorld(enterprise_settings, "commerce.supply-chain.timeout-check")
+    record = await Runner(DeterministicGrader()).run(scenario, world, StubWorkerAdapter())
+    assert record.terminal_reason is TerminalReason.TOOL_TIMEOUT
+    assert record.events == ()
+    assert record.cleanup_succeeded
 
 
 async def test_insurance_payment_enforces_authorization_and_approved_balance(
