@@ -1,6 +1,10 @@
 # Hosted-runner verification checklist
 
-Status: **PENDING EXTERNAL VALIDATION**.
+Status: **PR gate and nightly have both run green on hosted runners.** Release validation
+last ran green via manual `workflow_dispatch` before the most recent merge to `main` and has
+not been re-run since; re-run it before cutting a release. The live-smoke workflow below is
+new and has not yet been exercised on a hosted runner because it requires a maintainer to
+configure the `OPENAI_API_KEY` repository secret and manually dispatch it.
 
 ## Pull request
 
@@ -19,6 +23,23 @@ Status: **PENDING EXTERNAL VALIDATION**.
 - Retain raw JSON, JUnit, HTML, benchmark, and cleanup audit.
 - Acceptance: no infrastructure errors, zero critical regressions, zero active
   leases/run schemas, artifacts downloadable and offline-readable.
+
+## Live adapter smoke
+
+- `worker-worlds-live-smoke.yml` runs only on manual `workflow_dispatch`; it never triggers
+  on pushes, pull requests, or a schedule.
+- Requires the `OPENAI_API_KEY` repository secret to be configured. GitHub redacts secret
+  values from all logs automatically; the job never echoes it.
+- Runs `pytest -m live tests/live` with `WORKER_WORLDS_LIVE_SMOKE=1` and the same bounded
+  token/cost/retry ceilings documented in `docs/live-adapter-smoke.md`.
+- Bounded by a 10-minute job timeout in addition to the test's own internal 30-second
+  per-provider-call timeout.
+- If the secret is missing, the guarded test fails loudly (`OPENAI_API_KEY is required only
+  after live smoke is explicitly enabled`) rather than silently passing or skipping --
+  dispatching this workflow is itself an explicit, deliberate action.
+- Acceptance: both the `openai-agents` and `langgraph` parametrized cases report
+  `runtime_exercised=true` with a real `provider_response_ids` value and measured cost at or
+  under `WORKER_WORLDS_LIVE_MAX_COST_MINOR`.
 
 ## Release validation
 
