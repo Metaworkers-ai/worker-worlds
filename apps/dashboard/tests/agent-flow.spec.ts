@@ -594,6 +594,56 @@ test("cancels a running suite through the evaluation wizard", async ({ page }) =
   await expect(page.getByText("Suite completed")).toHaveCount(0);
 });
 
+test("preserves the wizard's business selection across a dashboard catalog refresh", async ({
+  page,
+}) => {
+  await mockDashboardApi(page, () => undefined);
+  await page.route("**/api/v1/suite-jobs?limit=200", (route) =>
+    route.fulfill({ status: 200, json: { schema_version: "1.0", jobs: [], total: 0 } }),
+  );
+
+  // Gated on a deliberate signal the test controls -- not on a request count -- because
+  // Next.js dev mode (React Strict Mode) double-invokes the mount effect and would
+  // otherwise consume "refreshed" responses before the user ever clicks anything.
+  let refreshed = false;
+  await page.route("**/api/v1/catalog", async (route) => {
+    // The refreshed catalog is a brand new object -- a different catalog_version and a
+    // freshly reordered domains array -- so the test can only pass if the wizard resolves
+    // its selection by ID against whatever catalog it is currently given, not by clinging
+    // to the first catalog object it ever saw.
+    const payload = {
+      ...catalog,
+      catalog_version: refreshed ? "1.0.1" : "1.0.0",
+      domains: [...catalog.domains].reverse(),
+    };
+    await route.fulfill({ status: 200, json: payload });
+  });
+
+  await page.goto("/");
+  await page.getByRole("button", { name: "Run evaluation" }).click();
+
+  // Establish a genuine, non-default business selection before any refresh happens.
+  await page.getByLabel("Choose domain").selectOption("insurance");
+  await expect(page.getByLabel("Choose job role")).toHaveValue("claims-adjuster");
+  await expect(page.getByLabel("Choose evaluation suite")).toHaveValue(
+    "insurance.claims-adjuster.smoke",
+  );
+  await expect(page.getByText("catalog 1.0.0", { exact: false })).toBeVisible();
+
+  // Trigger the real catalog refresh through the actual UI control -- not an internal
+  // function call -- and wait for the fresh catalog to genuinely be in use.
+  refreshed = true;
+  await page.getByRole("button", { name: "Refresh dashboard" }).click();
+  await expect(page.getByText("catalog 1.0.1", { exact: false })).toBeVisible();
+
+  // The selection made before the refresh is still active against the new catalog data.
+  await expect(page.getByLabel("Choose domain")).toHaveValue("insurance");
+  await expect(page.getByLabel("Choose job role")).toHaveValue("claims-adjuster");
+  await expect(page.getByLabel("Choose evaluation suite")).toHaveValue(
+    "insurance.claims-adjuster.smoke",
+  );
+});
+
 test("selects a ready agent, disables unavailable agents, and submits agent_id", async ({
   page,
 }) => {
