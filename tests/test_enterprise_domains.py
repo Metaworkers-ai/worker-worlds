@@ -6,6 +6,7 @@ import json
 import os
 from collections.abc import Mapping
 from datetime import UTC, datetime
+from typing import Any, cast
 
 import pytest
 from pydantic import ValidationError
@@ -318,6 +319,71 @@ async def test_insurance_payment_cannot_exceed_approved_balance(
     assert over_payment.error_type == "PaymentExceedsApproved"
     assert (await world.snapshot()).state == after_approval.state
     assert await world.events() == events_after_approval
+    await world.close()
+
+
+async def test_insurance_payment_retry_is_idempotent_and_not_applied_twice(
+    enterprise_settings: DatabaseSettings,
+) -> None:
+    run_id = prefixed_ulid("run")
+    world = InsuranceWorld(enterprise_settings, "insurance.claims.test-payment-retry")
+    await world.reset(seed=7003, run_id=run_id)
+    decision = await world.invoke(
+        _call(
+            run_id,
+            "decide_claim",
+            {
+                "claim_id": "clm_100",
+                "decision": "approve",
+                "approved_minor": 100000,
+                "idempotency_key": "approve-for-retry",
+            },
+            {"claim:decide"},
+        )
+    )
+    assert decision.status is ToolResultStatus.SUCCESS
+    payment_arguments = {
+        "claim_id": "clm_100",
+        "amount_minor": 100000,
+        "currency": "USD",
+        "idempotency_key": "pay-retry-once",
+    }
+    first = await world.invoke(
+        _call(run_id, "issue_claim_payment", payment_arguments, {"claim:pay"})
+    )
+    assert first.status is ToolResultStatus.SUCCESS
+    after_first_payment = await world.snapshot()
+    events_after_first_payment = await world.events()
+    assert [event.event_type for event in events_after_first_payment] == [
+        "claim.decided",
+        "claim.payment_issued",
+    ]
+    # A retried request carries a new call ID (the worker/adapter transport layer never
+    # reuses one) but the same idempotency_key and identical arguments -- exactly the
+    # signal the world's idempotency table keys on.
+    retry = await world.invoke(
+        _call(
+            run_id,
+            "issue_claim_payment",
+            payment_arguments,
+            {"claim:pay"},
+        )
+    )
+    assert retry.status is ToolResultStatus.SUCCESS
+    assert retry.output == first.output
+    after_retry = await world.snapshot()
+    events_after_retry = await world.events()
+    assert after_retry.state == after_first_payment.state
+    assert events_after_retry == events_after_first_payment
+    assert [event.event_type for event in events_after_retry] == [
+        "claim.decided",
+        "claim.payment_issued",
+    ]
+    claims = cast(list[dict[str, Any]], after_retry.state["claims"])
+    paid_claim = next(item for item in claims if item["id"] == "clm_100")
+    assert paid_claim["paid_minor"] == 100000
+    payments = cast(list[dict[str, Any]], after_retry.state["payments"])
+    assert len(payments) == 1
     await world.close()
 
 
