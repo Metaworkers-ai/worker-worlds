@@ -35,7 +35,7 @@ set -a; source .env; set +a
 ```
 
 Do not use scenarios under `examples/scenarios` with live adapters. They are deterministic harness
-fixtures retained for stub tests; live adapters are restricted to the 224 reviewed/generated
+fixtures retained for stub tests; live adapters are restricted to the 225 reviewed/generated
 scenarios under `scenarios/release` and `scenarios/enterprise`.
 
 Factories use explicit `module:callable` paths in `worker-worlds.yaml`. OpenAI

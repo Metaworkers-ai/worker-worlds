@@ -11,7 +11,7 @@ and compares semantic outcome distributions.
 
 The implemented worlds cover commerce customers, orders, products, inventory, refunds, shipments,
 tickets, email, and escalation plus supply-chain and insurance claims workflows. The live corpus is
-224 YAML scenarios: 200 commerce, 12 supply-chain, and 12 insurance. Ten legacy demonstration
+225 YAML scenarios: 200 commerce, 13 supply-chain, and 12 insurance. Ten legacy demonstration
 fixtures are stub-only. Deterministic fake/local LangGraph and OpenAI Agents SDK paths are covered by
 the release gate. One explicitly authorized pre-hardening OpenAI insurance run passed 6 of 12 and
 revealed prompts that allowed clarification or inaction; it is not a current release result. All 224

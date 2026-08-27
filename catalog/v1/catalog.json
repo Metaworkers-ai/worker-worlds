@@ -6,7 +6,7 @@
       "id": "claims-adjustment",
       "label": "Claims adjustment",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "description": "Evaluate fulfillment coordination behavior in deterministic commerce worlds.",
@@ -14,7 +14,7 @@
       "id": "fulfillment-coordination",
       "label": "Fulfillment coordination",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "description": "Evaluate inventory control behavior in deterministic commerce worlds.",
@@ -22,7 +22,7 @@
       "id": "inventory-control",
       "label": "Inventory control",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "description": "Evaluate operational reliability behavior in deterministic commerce worlds.",
@@ -30,7 +30,7 @@
       "id": "operational-reliability",
       "label": "Operational reliability",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "description": "Evaluate order operations behavior in deterministic commerce worlds.",
@@ -38,7 +38,7 @@
       "id": "order-operations",
       "label": "Order operations",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "description": "Evaluate policy resilience behavior in deterministic commerce worlds.",
@@ -46,7 +46,7 @@
       "id": "policy-resilience",
       "label": "Policy resilience",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "description": "Evaluate refund resolution behavior in deterministic commerce worlds.",
@@ -54,7 +54,7 @@
       "id": "refund-resolution",
       "label": "Refund resolution",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "description": "Evaluate supply-chain analysis behavior in deterministic commerce worlds.",
@@ -62,7 +62,7 @@
       "id": "supply-chain-analysis",
       "label": "Supply-chain analysis",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "description": "Evaluate support escalation behavior in deterministic commerce worlds.",
@@ -70,10 +70,10 @@
       "id": "support-escalation",
       "label": "Support escalation",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     }
   ],
-  "catalog_version": "1.0.0",
+  "catalog_version": "1.1.0",
   "classifications": [
     {
       "capability_id": "policy-resilience",
@@ -3387,7 +3387,7 @@
         "support-escalation-manager"
       ],
       "schema_version": "1.0",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "world_names": [
         "postgres-commerce",
         "postgres-commerce-supply-chain",
@@ -3405,7 +3405,7 @@
         "claims-adjuster"
       ],
       "schema_version": "1.0",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "world_names": [
         "postgres-insurance"
       ]
@@ -3421,7 +3421,7 @@
       "id": "claims-adjuster",
       "label": "Claims Adjuster",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "capability_ids": [
@@ -3436,7 +3436,7 @@
       "id": "customer-support-agent",
       "label": "Customer Support Agent",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "capability_ids": [
@@ -3449,7 +3449,7 @@
       "id": "fulfillment-coordinator",
       "label": "Fulfillment Coordinator",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "capability_ids": [
@@ -3462,7 +3462,7 @@
       "id": "inventory-controller",
       "label": "Inventory Controller",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "capability_ids": [
@@ -3477,7 +3477,7 @@
       "id": "order-operations-specialist",
       "label": "Order Operations Specialist",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "capability_ids": [
@@ -3490,7 +3490,7 @@
       "id": "refund-specialist",
       "label": "Refund Specialist",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "capability_ids": [
@@ -3501,7 +3501,7 @@
       "id": "supply-chain-analyst",
       "label": "Supply Chain Analyst",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "capability_ids": [
@@ -3514,7 +3514,7 @@
       "id": "support-escalation-manager",
       "label": "Support Escalation Manager",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     }
   ],
   "schema_version": "1.0",
@@ -3542,7 +3542,7 @@
       "estimated_duration_s": 0,
       "id": "commerce.customer-support-agent.custom",
       "label": "Customer Support Agent Custom",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "customer-support-agent",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -3571,7 +3571,7 @@
       "estimated_duration_s": 456,
       "id": "commerce.customer-support-agent.full",
       "label": "Customer Support Agent Full",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "customer-support-agent",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -3749,7 +3749,7 @@
       "estimated_duration_s": 18,
       "id": "commerce.customer-support-agent.smoke",
       "label": "Customer Support Agent Smoke",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "customer-support-agent",
       "scenario_ids": [
         "commerce.refunds-payments.001",
@@ -3781,7 +3781,7 @@
       "estimated_duration_s": 90,
       "id": "commerce.customer-support-agent.standard",
       "label": "Customer Support Agent Standard",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "customer-support-agent",
       "scenario_ids": [
         "commerce.refunds-payments.001",
@@ -3839,7 +3839,7 @@
       "estimated_duration_s": 0,
       "id": "commerce.fulfillment-coordinator.custom",
       "label": "Fulfillment Coordinator Custom",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "fulfillment-coordinator",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -3866,7 +3866,7 @@
       "estimated_duration_s": 258,
       "id": "commerce.fulfillment-coordinator.full",
       "label": "Fulfillment Coordinator Full",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "fulfillment-coordinator",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -3978,7 +3978,7 @@
       "estimated_duration_s": 18,
       "id": "commerce.fulfillment-coordinator.smoke",
       "label": "Fulfillment Coordinator Smoke",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "fulfillment-coordinator",
       "scenario_ids": [
         "commerce.shipping-fulfillment.001",
@@ -4011,7 +4011,7 @@
       "estimated_duration_s": 90,
       "id": "commerce.fulfillment-coordinator.standard",
       "label": "Fulfillment Coordinator Standard",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "fulfillment-coordinator",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -4069,7 +4069,7 @@
       "estimated_duration_s": 0,
       "id": "commerce.inventory-controller.custom",
       "label": "Inventory Controller Custom",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "inventory-controller",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -4096,7 +4096,7 @@
       "estimated_duration_s": 258,
       "id": "commerce.inventory-controller.full",
       "label": "Inventory Controller Full",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "inventory-controller",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -4208,7 +4208,7 @@
       "estimated_duration_s": 18,
       "id": "commerce.inventory-controller.smoke",
       "label": "Inventory Controller Smoke",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "inventory-controller",
       "scenario_ids": [
         "commerce.inventory-catalog.001",
@@ -4241,7 +4241,7 @@
       "estimated_duration_s": 90,
       "id": "commerce.inventory-controller.standard",
       "label": "Inventory Controller Standard",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "inventory-controller",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -4301,7 +4301,7 @@
       "estimated_duration_s": 0,
       "id": "commerce.order-operations-specialist.custom",
       "label": "Order Operations Specialist Custom",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "order-operations-specialist",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -4330,7 +4330,7 @@
       "estimated_duration_s": 402,
       "id": "commerce.order-operations-specialist.full",
       "label": "Order Operations Specialist Full",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "order-operations-specialist",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -4490,7 +4490,7 @@
       "estimated_duration_s": 18,
       "id": "commerce.order-operations-specialist.smoke",
       "label": "Order Operations Specialist Smoke",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "order-operations-specialist",
       "scenario_ids": [
         "commerce.orders-identity.001",
@@ -4523,7 +4523,7 @@
       "estimated_duration_s": 90,
       "id": "commerce.order-operations-specialist.standard",
       "label": "Order Operations Specialist Standard",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "order-operations-specialist",
       "scenario_ids": [
         "commerce.inventory-catalog.001",
@@ -4581,7 +4581,7 @@
       "estimated_duration_s": 0,
       "id": "commerce.refund-specialist.custom",
       "label": "Refund Specialist Custom",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "refund-specialist",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -4608,7 +4608,7 @@
       "estimated_duration_s": 312,
       "id": "commerce.refund-specialist.full",
       "label": "Refund Specialist Full",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "refund-specialist",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -4738,7 +4738,7 @@
       "estimated_duration_s": 18,
       "id": "commerce.refund-specialist.smoke",
       "label": "Refund Specialist Smoke",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "refund-specialist",
       "scenario_ids": [
         "commerce.refunds-payments.001",
@@ -4770,7 +4770,7 @@
       "estimated_duration_s": 90,
       "id": "commerce.refund-specialist.standard",
       "label": "Refund Specialist Standard",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "refund-specialist",
       "scenario_ids": [
         "commerce.refunds-payments.001",
@@ -4826,7 +4826,7 @@
       "estimated_duration_s": 0,
       "id": "commerce.supply-chain-analyst.custom",
       "label": "Supply Chain Analyst Custom",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "supply-chain-analyst",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -4851,7 +4851,7 @@
       "estimated_duration_s": 39,
       "id": "commerce.supply-chain-analyst.full",
       "label": "Supply Chain Analyst Full",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "supply-chain-analyst",
       "scenario_ids": [
         "commerce.supply-chain.001",
@@ -4890,7 +4890,7 @@
       "estimated_duration_s": 18,
       "id": "commerce.supply-chain-analyst.smoke",
       "label": "Supply Chain Analyst Smoke",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "supply-chain-analyst",
       "scenario_ids": [
         "commerce.supply-chain.001",
@@ -4922,7 +4922,7 @@
       "estimated_duration_s": 30,
       "id": "commerce.supply-chain-analyst.standard",
       "label": "Supply Chain Analyst Standard",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "supply-chain-analyst",
       "scenario_ids": [
         "commerce.supply-chain.001",
@@ -4960,7 +4960,7 @@
       "estimated_duration_s": 0,
       "id": "commerce.support-escalation-manager.custom",
       "label": "Support Escalation Manager Custom",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "support-escalation-manager",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -4987,7 +4987,7 @@
       "estimated_duration_s": 258,
       "id": "commerce.support-escalation-manager.full",
       "label": "Support Escalation Manager Full",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "support-escalation-manager",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -5099,7 +5099,7 @@
       "estimated_duration_s": 18,
       "id": "commerce.support-escalation-manager.smoke",
       "label": "Support Escalation Manager Smoke",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "support-escalation-manager",
       "scenario_ids": [
         "commerce.tickets-escalation.001",
@@ -5132,7 +5132,7 @@
       "estimated_duration_s": 90,
       "id": "commerce.support-escalation-manager.standard",
       "label": "Support Escalation Manager Standard",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "support-escalation-manager",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -5188,7 +5188,7 @@
       "estimated_duration_s": 0,
       "id": "insurance.claims-adjuster.custom",
       "label": "Claims Adjuster Custom",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "claims-adjuster",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -5213,7 +5213,7 @@
       "estimated_duration_s": 36,
       "id": "insurance.claims-adjuster.full",
       "label": "Claims Adjuster Full",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "claims-adjuster",
       "scenario_ids": [
         "insurance.claims.001",
@@ -5251,7 +5251,7 @@
       "estimated_duration_s": 18,
       "id": "insurance.claims-adjuster.smoke",
       "label": "Claims Adjuster Smoke",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "claims-adjuster",
       "scenario_ids": [
         "insurance.claims.001",
@@ -5283,7 +5283,7 @@
       "estimated_duration_s": 30,
       "id": "insurance.claims-adjuster.standard",
       "label": "Claims Adjuster Standard",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "claims-adjuster",
       "scenario_ids": [
         "insurance.claims.001",

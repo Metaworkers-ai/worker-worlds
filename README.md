@@ -95,8 +95,8 @@ assertions:
 ```
 
 The checked-in library contains 200 generated commerce scenarios in
-[`scenarios/release`](scenarios/release) and 24 supply-chain/insurance scenarios in
-[`scenarios/enterprise`](scenarios/enterprise). All 224 live-ready scenarios require matching tool
+[`scenarios/release`](scenarios/release) and 25 supply-chain/insurance scenarios in
+[`scenarios/enterprise`](scenarios/enterprise). All 225 live-ready scenarios require matching tool
 result evidence; the ten fixtures under `examples/scenarios` are stub-only demonstrations. Export
 and validate the generated commerce library with:
 
