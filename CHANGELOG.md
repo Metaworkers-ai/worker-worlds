@@ -13,7 +13,8 @@
 - Register real OpenAI Agents SDK and LangGraph project factories with credential-redacted readiness
   diagnostics and explicit paid-smoke authorization.
 - Make all 225 live scenario prompts self-contained and require matching tool-result evidence so
-  inaction cannot pass; retain ten legacy demonstration fixtures for the local stub only.
+  inaction cannot pass; retain ten legacy demonstration fixtures for the local stub only, excluded
+  from live suites (235 classified scenarios in total).
 - Add the engineering handover runbook and safe local environment template.
 
 ## 1.0.0rc1 - 2026-08-19

@@ -2,7 +2,7 @@
 
 | Area | Status | Evidence / limitation |
 |---|---|---|
-| Functional completeness | Ready locally | 225 live-ready commerce/supply-chain/insurance scenarios plus ten stub demonstrations; specialized mutation matrices pass |
+| Functional completeness | Ready locally | 225 live-ready commerce/supply-chain/insurance scenarios plus ten stub demonstrations (235 classified in total); specialized mutation matrices pass |
 | Contract/schema compatibility | Ready | v1 fixtures and drift check |
 | Database migrations | Ready | empty-database migration and checksums |
 | Determinism | Ready | canonical fixtures, snapshots, replay tests |

@@ -107,6 +107,13 @@ def test_live_smoke_workflow_is_credential_gated_bounded_and_never_leaks_a_secre
     ):
         assert required_env in env
 
+    # The ceiling *values* themselves must stay within the release-test maximum enforced by
+    # tests/live/test_live_adapters.py::_live_ceilings() -- not just be present. A workflow that
+    # widened these values would silently defeat the point of having a ceiling at all.
+    assert 1 <= int(env["WORKER_WORLDS_LIVE_MAX_TOKENS"]) <= 64
+    assert 0 < int(env["WORKER_WORLDS_LIVE_MAX_COST_MINOR"]) <= 5
+    assert 0 <= int(env["WORKER_WORLDS_LIVE_MAX_RETRIES"]) <= 2
+
     # Both real adapters remain covered by whatever this workflow invokes -- verified statically,
     # without requiring a real provider call for this contract test itself.
     live_test_text = Path("tests/live/test_live_adapters.py").read_text()
