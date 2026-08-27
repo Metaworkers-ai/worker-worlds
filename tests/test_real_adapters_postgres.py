@@ -13,7 +13,9 @@ from langchain_core.messages import AIMessage
 from worker_worlds.adapters import LangGraphAdapter, OpenAIAgentsAdapter
 from worker_worlds.contracts import Scenario, TerminalReason
 from worker_worlds.database import DatabaseSettings, connect, migrate
+from worker_worlds.enterprise_scenarios import enterprise_scenarios
 from worker_worlds.grading import DeterministicGrader
+from worker_worlds.insurance import InsuranceWorld
 from worker_worlds.langgraph_runtime import LangGraphRuntime
 from worker_worlds.openai_agents_runtime import OpenAIAgentsRuntime
 from worker_worlds.openai_testing import ScriptedModel, assistant_message, function_call
@@ -219,3 +221,78 @@ async def test_cancel_during_postgres_mutation_cleans_namespace(
         assert namespace_exists is None
     finally:
         await connection.close()
+
+
+@pytest.mark.parametrize("adapter_name", ["openai-agents", "langgraph"])
+async def test_real_adapter_contract_against_insurance_postgres(
+    adapter_name: str,
+    real_adapter_postgres_settings: DatabaseSettings,
+) -> None:
+    """Prove the same real adapters work against InsuranceWorld, not just commerce."""
+    scenario = next(
+        item for item in enterprise_scenarios() if str(item.id) == "insurance.claims.005"
+    )
+    decide_arguments: dict[str, object] = {
+        "claim_id": "clm_100",
+        "decision": "approve",
+        "approved_minor": 100000,
+        "idempotency_key": "claim-decision-1",
+    }
+    pay_arguments: dict[str, object] = {
+        "claim_id": "clm_100",
+        "amount_minor": 100000,
+        "currency": "USD",
+        "idempotency_key": "claim-payment-1",
+    }
+    if adapter_name == "openai-agents":
+        model = ScriptedModel(
+            [
+                [function_call("decide_claim", decide_arguments, call_id="call_decide_insurance")],
+                [function_call("issue_claim_payment", pay_arguments, call_id="call_pay_insurance")],
+                [assistant_message("complete")],
+            ]
+        )
+        adapter: OpenAIAgentsAdapter | LangGraphAdapter = OpenAIAgentsAdapter(
+            OpenAIAgentsRuntime(Agent(name="insurance-openai", model=model))
+        )
+    else:
+        graph_model = ToolAwareFakeChatModel(
+            responses=[
+                AIMessage(
+                    content="",
+                    tool_calls=[
+                        {
+                            "name": "decide_claim",
+                            "args": decide_arguments,
+                            "id": "call_decide_langgraph_insurance",
+                            "type": "tool_call",
+                        }
+                    ],
+                ),
+                AIMessage(
+                    content="",
+                    tool_calls=[
+                        {
+                            "name": "issue_claim_payment",
+                            "args": pay_arguments,
+                            "id": "call_pay_langgraph_insurance",
+                            "type": "tool_call",
+                        }
+                    ],
+                ),
+                AIMessage(content="complete"),
+            ]
+        )
+        adapter = LangGraphAdapter(
+            LangGraphRuntime(lambda tools, _context: create_agent(graph_model, cast(Any, tools)))
+        )
+    world = InsuranceWorld(real_adapter_postgres_settings, f"e2e.insurance.{adapter_name}")
+    record = await Runner(DeterministicGrader()).run(scenario, world, adapter)
+    assert record.terminal_reason is TerminalReason.COMPLETED
+    assert record.passed, record.model_dump_json()
+    assert record.tool_call_count == 2
+    assert [event.event_type for event in record.events] == [
+        "claim.decided",
+        "claim.payment_issued",
+    ]
+    assert record.cleanup_succeeded

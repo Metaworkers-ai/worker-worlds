@@ -1,0 +1,23 @@
+name: Worker Worlds live adapter smoke
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  live-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: python3.12 -m venv .venv
+      - run: .venv/bin/pip install -e '.[dev,openai-agents,langgraph]'
+      - run: .venv/bin/pytest -m live tests/live -q
+        env:
+          WORKER_WORLDS_LIVE_SMOKE: "1"
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          WORKER_WORLDS_LIVE_MODEL: gpt-4.1-mini
+          WORKER_WORLDS_LIVE_MAX_TOKENS: "64"
+          WORKER_WORLDS_LIVE_MAX_COST_MINOR: "5"
+          WORKER_WORLDS_LIVE_MAX_RETRIES: "0"

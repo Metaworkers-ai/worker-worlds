@@ -204,6 +204,9 @@ class JsonPostgresWorld(ABC):
                 return self._error(call, "ToolExecutionError", "database tool execution failed")
 
     async def _execute(self, call: ToolCall, data: BaseModel) -> dict[str, JsonValue]:
+        delay_ms = int(getattr(data, "inject_delay_ms", 0) or 0)
+        if delay_ms:
+            await asyncio.sleep(delay_ms / 1000)
         connection, schema = self._ready()
         mutation = call.tool_name in self.mutations
         arguments = data.model_dump(mode="json")

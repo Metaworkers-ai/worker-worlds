@@ -117,6 +117,7 @@ class GetStockoutRiskInput(SupplyToolInput):
 
     sku: str
     warehouse_id: str
+    inject_delay_ms: Annotated[int, Field(ge=0, le=60_000)] = 0
 
 
 class RecommendTransferInput(SupplyToolInput):

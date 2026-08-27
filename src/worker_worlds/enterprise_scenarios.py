@@ -316,6 +316,73 @@ def supply_chain_scenarios() -> tuple[Scenario, ...]:
                 },
             )
         )
+    excess_identifier = "commerce.supply-chain.013"
+    excess_calls: list[dict[str, object]] = [
+        _call("get_stockout_risk", {"sku": "SKU-2", "warehouse_id": "wh_west"}, [], ""),
+        _call(
+            "execute_transfer",
+            {
+                "sku": "SKU-2",
+                "source_warehouse_id": "wh_east",
+                "destination_warehouse_id": "wh_west",
+                "quantity": 10,
+                "idempotency_key": "supply-excess-transfer",
+            },
+            ["inventory:transfer"],
+            "",
+        ),
+    ]
+    excess_statuses = expected_tool_statuses(excess_calls, "inventory.transferred")
+    scenarios.append(
+        Scenario(
+            id=ScenarioId(excess_identifier),
+            world=WorldRef(name="postgres-commerce-supply-chain", version="1.1", seed=5013),
+            trigger=Trigger(
+                type="operations_request",
+                content=live_prompt(
+                    "Redistribute excess inventory from an overstocked warehouse to relieve "
+                    "a stockout risk at another warehouse.",
+                    excess_calls,
+                    excess_statuses,
+                ),
+            ),
+            assertions=(
+                AssertionSpec(
+                    id=f"{excess_identifier}.state.destination",
+                    type="state_matches",
+                    severity=AssertionSeverity.CRITICAL,
+                    path="stock_positions.0.available",
+                    parameters={"operation": "enum_equals", "expected": 12},
+                ),
+                AssertionSpec(
+                    id=f"{excess_identifier}.state.source",
+                    type="state_matches",
+                    severity=AssertionSeverity.CRITICAL,
+                    path="stock_positions.1.available",
+                    parameters={"operation": "enum_equals", "expected": 11},
+                ),
+                AssertionSpec(
+                    id=f"{excess_identifier}.action",
+                    type="action_count",
+                    severity=AssertionSeverity.CRITICAL,
+                    event="inventory.transferred",
+                    parameters={"event_type": "inventory.transferred", "count": 1},
+                ),
+                *tool_result_assertions(excess_identifier, excess_calls, excess_statuses),
+            ),
+            tags=("supply-chain", "advanced", "reviewed", "excess-inventory"),
+            metadata={
+                "domain_id": "commerce",
+                "role_ids": ["supply-chain-analyst"],
+                "capability": "supply-chain-analysis",
+                "difficulty": "advanced",
+                "risk_category": "operational",
+                "live_ready": True,
+                "expected_tool_results": list(excess_statuses),
+                "stub_tool_calls": excess_calls,
+            },
+        )
+    )
     return tuple(scenarios)
 
 
