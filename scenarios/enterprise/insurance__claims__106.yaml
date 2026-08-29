@@ -1,0 +1,142 @@
+schema_version: '1.0'
+id: insurance.claims.106
+world:
+  schema_version: '1.0'
+  name: postgres-insurance
+  version: '1.0'
+  seed: 7106
+trigger:
+  schema_version: '1.0'
+  type: claims_request
+  actor:
+    customer_id: ins_cus_102
+  content: 'Reject a second installment that exceeds the remaining approved balance.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    1. Call `decide_claim` with input {"approved_minor":120000,"claim_id":"clm_100","decision":"approve","idempotency_key":"claim-payfail-remaining-dec-1"}.
+
+    2. Call `issue_claim_payment` with input {"amount_minor":60000,"claim_id":"clm_100","currency":"USD","idempotency_key":"claim-payfail-remaining-pay-1"}.
+
+    3. Call `issue_claim_payment` with input {"amount_minor":90000,"claim_id":"clm_100","currency":"USD","idempotency_key":"claim-payfail-remaining-pay-2"}. Submit these exact inputs so the world gateway can return the expected typed rejection; do not avoid or replace the call.
+
+    Finish only after every listed operation has produced a tool result.'
+limits:
+  schema_version: '1.0'
+  wall_time_s: 30.0
+  tool_calls: 20
+  model_tokens: 12000
+  worker_turns: 50
+  mutations: 20
+  cost_minor: 0
+  tool_timeout_s: 10.0
+  injections: 20
+assertions:
+- schema_version: '1.0'
+  id: insurance.claims.106.event
+  type: no_action
+  severity: critical
+  event: claim.investigation_escalated
+  required: true
+  description: ''
+  parameters: {}
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.106.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: decide_claim
+    arguments:
+      claim_id: clm_100
+      decision: approve
+      approved_minor: 120000
+      idempotency_key: claim-payfail-remaining-dec-1
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.106.tool-result.2
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: issue_claim_payment
+    arguments:
+      claim_id: clm_100
+      amount_minor: 60000
+      currency: USD
+      idempotency_key: claim-payfail-remaining-pay-1
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.106.tool-result.3
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: issue_claim_payment
+    arguments:
+      claim_id: clm_100
+      amount_minor: 90000
+      currency: USD
+      idempotency_key: claim-payfail-remaining-pay-2
+    result_status: error
+    count: 1
+  tags: []
+  evidence_config: {}
+tags:
+- insurance
+- claims
+- adversarial
+- reviewed
+metadata:
+  domain_id: insurance
+  role_ids:
+  - claims-adjuster
+  capability: claims-adjustment
+  difficulty: adversarial
+  risk_category: financial
+  live_ready: true
+  expected_tool_results:
+  - success
+  - success
+  - error
+  stub_tool_calls:
+  - tool: decide_claim
+    arguments:
+      claim_id: clm_100
+      decision: approve
+      approved_minor: 120000
+      idempotency_key: claim-payfail-remaining-dec-1
+    scopes:
+    - claim:decide
+    customer_id: ins_cus_102
+  - tool: issue_claim_payment
+    arguments:
+      claim_id: clm_100
+      amount_minor: 60000
+      currency: USD
+      idempotency_key: claim-payfail-remaining-pay-1
+    scopes:
+    - claim:pay
+    customer_id: ins_cus_102
+  - tool: issue_claim_payment
+    arguments:
+      claim_id: clm_100
+      amount_minor: 90000
+      currency: USD
+      idempotency_key: claim-payfail-remaining-pay-2
+    scopes:
+    - claim:pay
+    customer_id: ins_cus_102

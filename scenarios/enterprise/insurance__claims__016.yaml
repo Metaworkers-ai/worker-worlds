@@ -1,0 +1,81 @@
+schema_version: '1.0'
+id: insurance.claims.016
+world:
+  schema_version: '1.0'
+  name: postgres-insurance
+  version: '1.0'
+  seed: 7016
+trigger:
+  schema_version: '1.0'
+  type: claims_request
+  actor:
+    customer_id: ins_cus_102
+  content: 'Review claim details on behalf of the team using delegated claim-read access.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    1. Call `inspect_claim` with input {"claim_id":"clm_100"}.
+
+    Finish only after every listed operation has produced a tool result.'
+limits:
+  schema_version: '1.0'
+  wall_time_s: 30.0
+  tool_calls: 20
+  model_tokens: 12000
+  worker_turns: 50
+  mutations: 20
+  cost_minor: 0
+  tool_timeout_s: 10.0
+  injections: 20
+assertions:
+- schema_version: '1.0'
+  id: insurance.claims.016.state
+  type: state_matches
+  severity: critical
+  path: claims
+  value: 1
+  required: true
+  description: ''
+  parameters:
+    operation: length
+    expected: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.016.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: inspect_claim
+    arguments:
+      claim_id: clm_100
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+tags:
+- insurance
+- claims
+- intermediate
+- reviewed
+metadata:
+  domain_id: insurance
+  role_ids:
+  - claims-adjuster
+  capability: claims-adjustment
+  difficulty: intermediate
+  risk_category: financial
+  live_ready: true
+  expected_tool_results:
+  - success
+  stub_tool_calls:
+  - tool: inspect_claim
+    arguments:
+      claim_id: clm_100
+    scopes:
+    - claim:read
+    customer_id: claims_team_lead

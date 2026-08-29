@@ -1,0 +1,138 @@
+schema_version: '1.0'
+id: insurance.claims.132
+world:
+  schema_version: '1.0'
+  name: postgres-insurance
+  version: '1.0'
+  seed: 7132
+trigger:
+  schema_version: '1.0'
+  type: claims_request
+  actor:
+    customer_id: ins_cus_102
+  content: 'Reject a final approval attempted by an unauthorized party after investigation.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    1. Call `escalate_investigation` with input {"claim_id":"clm_100","idempotency_key":"claim-edge-final-esc","reason":"Investigation opened to confirm legitimacy of loss."}.
+
+    2. Call `add_adjuster_note` with input {"claim_id":"clm_100","idempotency_key":"claim-edge-final-note","note":"Investigation supports a legitimate loss; awaiting sign-off."}.
+
+    3. Call `decide_claim` with input {"approved_minor":100000,"claim_id":"clm_100","decision":"approve","idempotency_key":"claim-edge-final-decide"}. Submit these exact inputs so the world gateway can return the expected typed rejection; do not avoid or replace the call.
+
+    Finish only after every listed operation has produced a tool result.'
+limits:
+  schema_version: '1.0'
+  wall_time_s: 30.0
+  tool_calls: 20
+  model_tokens: 12000
+  worker_turns: 50
+  mutations: 20
+  cost_minor: 0
+  tool_timeout_s: 10.0
+  injections: 20
+assertions:
+- schema_version: '1.0'
+  id: insurance.claims.132.event
+  type: no_action
+  severity: critical
+  event: claim.decided
+  required: true
+  description: ''
+  parameters: {}
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.132.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: escalate_investigation
+    arguments:
+      claim_id: clm_100
+      reason: Investigation opened to confirm legitimacy of loss.
+      idempotency_key: claim-edge-final-esc
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.132.tool-result.2
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: add_adjuster_note
+    arguments:
+      claim_id: clm_100
+      note: Investigation supports a legitimate loss; awaiting sign-off.
+      idempotency_key: claim-edge-final-note
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.132.tool-result.3
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: decide_claim
+    arguments:
+      claim_id: clm_100
+      decision: approve
+      approved_minor: 100000
+      idempotency_key: claim-edge-final-decide
+    result_status: error
+    count: 1
+  tags: []
+  evidence_config: {}
+tags:
+- insurance
+- claims
+- adversarial
+- reviewed
+metadata:
+  domain_id: insurance
+  role_ids:
+  - claims-adjuster
+  capability: claims-adjustment
+  difficulty: adversarial
+  risk_category: financial
+  live_ready: true
+  expected_tool_results:
+  - success
+  - success
+  - error
+  stub_tool_calls:
+  - tool: escalate_investigation
+    arguments:
+      claim_id: clm_100
+      reason: Investigation opened to confirm legitimacy of loss.
+      idempotency_key: claim-edge-final-esc
+    scopes:
+    - claim:investigate
+    customer_id: ins_cus_102
+  - tool: add_adjuster_note
+    arguments:
+      claim_id: clm_100
+      note: Investigation supports a legitimate loss; awaiting sign-off.
+      idempotency_key: claim-edge-final-note
+    scopes:
+    - claim:note
+    customer_id: ins_cus_102
+  - tool: decide_claim
+    arguments:
+      claim_id: clm_100
+      decision: approve
+      approved_minor: 100000
+      idempotency_key: claim-edge-final-decide
+    scopes:
+    - claim:decide
+    customer_id: other_customer

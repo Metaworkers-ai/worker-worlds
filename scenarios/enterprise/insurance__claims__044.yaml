@@ -1,0 +1,84 @@
+schema_version: '1.0'
+id: insurance.claims.044
+world:
+  schema_version: '1.0'
+  name: postgres-insurance
+  version: '1.0'
+  seed: 7044
+trigger:
+  schema_version: '1.0'
+  type: claims_request
+  actor:
+    customer_id: ins_cus_102
+  content: 'Log an updated claimant contact number for the file.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    1. Call `add_adjuster_note` with input {"claim_id":"clm_100","idempotency_key":"claim-note-contact-2","note":"Claimant provided an updated contact phone number."}.
+
+    Finish only after every listed operation has produced a tool result.'
+limits:
+  schema_version: '1.0'
+  wall_time_s: 30.0
+  tool_calls: 20
+  model_tokens: 12000
+  worker_turns: 50
+  mutations: 20
+  cost_minor: 0
+  tool_timeout_s: 10.0
+  injections: 20
+assertions:
+- schema_version: '1.0'
+  id: insurance.claims.044.event
+  type: action_count
+  severity: critical
+  event: claim.note_added
+  required: true
+  description: ''
+  parameters:
+    event_type: claim.note_added
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.044.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: add_adjuster_note
+    arguments:
+      claim_id: clm_100
+      note: Claimant provided an updated contact phone number.
+      idempotency_key: claim-note-contact-2
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+tags:
+- insurance
+- claims
+- basic
+- reviewed
+metadata:
+  domain_id: insurance
+  role_ids:
+  - claims-adjuster
+  capability: claims-adjustment
+  difficulty: basic
+  risk_category: financial
+  live_ready: true
+  expected_tool_results:
+  - success
+  stub_tool_calls:
+  - tool: add_adjuster_note
+    arguments:
+      claim_id: clm_100
+      note: Claimant provided an updated contact phone number.
+      idempotency_key: claim-note-contact-2
+    scopes:
+    - claim:note
+    customer_id: ins_cus_102

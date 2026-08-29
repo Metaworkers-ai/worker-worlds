@@ -11,7 +11,7 @@ def test_enterprise_scenarios_are_checked_and_catalogued() -> None:
     scenarios = enterprise_scenarios()
     catalog = builtin_catalog()
     classified = {str(item.scenario_id) for item in catalog.classifications}
-    assert len(scenarios) == 127
+    assert len(scenarios) == 247
     for scenario in scenarios:
         path = Path("scenarios/enterprise") / scenario_filename(scenario)
         loaded = load_scenario(path)
@@ -32,7 +32,7 @@ def test_new_roles_have_smoke_standard_and_full_suites() -> None:
     catalog = builtin_catalog()
     expected = {
         "supply-chain-analyst": {"full": 13, "smoke": 6, "standard": 10},
-        "claims-adjuster": {"full": 12, "smoke": 6, "standard": 10},
+        "claims-adjuster": {"full": 132, "smoke": 6, "standard": 10},
         # Full REQUIREMENT.md FR-012 target reached: smoke=10, standard=40, full=102.
         "claims-analyst": {"full": 102, "smoke": 10, "standard": 40},
     }

@@ -4512,6 +4512,1446 @@
       "schema_version": "1.0"
     },
     {
+      "capability_id": "claims-adjustment",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "1f1a0614cee73670f03a26db04e014ca360cd1981c1ffb431523311732743e56",
+      "scenario_id": "insurance.claims.013",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "87c4a60db8f1238ef54e1a74ac48ccea9d400a7218233752e531071cac8ebf28",
+      "scenario_id": "insurance.claims.014",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "96e593e518045d572ed02cfd1a4145e8bae2b4c123df37bb02ed58df8ea38b25",
+      "scenario_id": "insurance.claims.015",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "18531c4deb5df4bfeace451aa3631b6a153818a83941c3d289efb4cf96f402b1",
+      "scenario_id": "insurance.claims.016",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "7ff99d5611cadb8057fcd9841b7557775c019b215c7bbfbc1c5cfcd49108561b",
+      "scenario_id": "insurance.claims.017",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "f658a58d6151787f2084930828c2af077398678a9dfabc515e87a3baf7e06c06",
+      "scenario_id": "insurance.claims.018",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "06835e3aae0bce5e98e50e051982aa417197be5e4b523b36b979d7bcb0aff2a7",
+      "scenario_id": "insurance.claims.019",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "6214339cd1b37b5e12d73fd4623fe109dda3ee89769923937a9bcab732a5e75a",
+      "scenario_id": "insurance.claims.020",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "cdffa51a67443a51ec639e8836edd435b3c8d08003f3d2215d0c67ff04002e00",
+      "scenario_id": "insurance.claims.021",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "0f410cbb2808e26486a84df9862ba27e4a84e28a108ad3a0d4b09c909fc5c7b5",
+      "scenario_id": "insurance.claims.022",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "9827257b017b1dacc98caef9e8c8ed51527a02f2c24fbbceeee94c5fb9061c9c",
+      "scenario_id": "insurance.claims.023",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "49e3fccc062a2e1e0fd34a0dbaf3d8b0a7965a1323bd447710c557427805eb76",
+      "scenario_id": "insurance.claims.024",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "3881bcb18b85dc26085b7e54faa66342bbca579142b180ccccb1d2a4ed9bdc2f",
+      "scenario_id": "insurance.claims.025",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "7b2b0d0288a0b28dcf07e13a17290a21907f107cd983743117515bb55460d669",
+      "scenario_id": "insurance.claims.026",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "df059e53b2eb8ac1c42b8894ac7ac8ef89e96b57428f05122ff54dc38b13b4e1",
+      "scenario_id": "insurance.claims.027",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "d936eed5d50ad6e857203e0833c4aef289d05ffa6f3bef8e3793db7aa63039ab",
+      "scenario_id": "insurance.claims.028",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "386057b28339f28dec89bc968a1ac574eb5982767c884e667c607d629c166015",
+      "scenario_id": "insurance.claims.029",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "004e1941b2a75c4ce90a8b658bbd60001c61b46bc0d7bfae89068cc2bb930b0f",
+      "scenario_id": "insurance.claims.030",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "8e32980264a33dfe7d10fcf098d672a492ebde79658e3d22dddd10a327341358",
+      "scenario_id": "insurance.claims.031",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "cd6b40c6b53c58b0a47da2437b0e312f742023c3374607757faea4e805c9148a",
+      "scenario_id": "insurance.claims.032",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "62e02f253a36224306b6aa347cac8aded6c2f143fe3f44cc4e3644a0326fda79",
+      "scenario_id": "insurance.claims.033",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "a94d720aa4f89ac2bc41c3e8d5750771b8ce3f0818a06c31c4d88ff6dcb6879c",
+      "scenario_id": "insurance.claims.034",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "95014f92826520eaad6999c0c579f532fa88656c91801b03ad14526e643e9848",
+      "scenario_id": "insurance.claims.035",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "00b8256da2b387b0ddf0bd556587ec97ebcf5f4e74a4c1aa8738cd69355589b0",
+      "scenario_id": "insurance.claims.036",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "eeb35cfc0bc5bafb545e6ba95f78a8bbaac19d9894107ca1c0c3d33d1af8453b",
+      "scenario_id": "insurance.claims.037",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "fd9de473cabeb945adb91cd3102d9ce17c4dfe715ef47d758012d3e01288511d",
+      "scenario_id": "insurance.claims.038",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "f57b6abb6176df74d5dd310b7e6ba8d1be31b2b5f853c6cade0857fe93c93f1d",
+      "scenario_id": "insurance.claims.039",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "6e05424360ad06848f8231b6f48962300bb1186b247e6e4fb91c624583263168",
+      "scenario_id": "insurance.claims.040",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "445d066fb1b632b43397619972f5288a6015a5ce8589012f84cc037e246e0f08",
+      "scenario_id": "insurance.claims.041",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "a550bdc4f4fb056bdc0dc14285094d343a5b983c546ced028d873d73af1e3f49",
+      "scenario_id": "insurance.claims.042",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "9350dad194791a43e24f9dedb58ece8945ab7f0a1fe8c84223218cf834ccf5bf",
+      "scenario_id": "insurance.claims.043",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "545c35107b7ec92886ae43506e911c00d0763dcdeafadec8a71e7cc03e268867",
+      "scenario_id": "insurance.claims.044",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "b35aa8ebf90075b3bb6feb8c0ab21d7701251aeae0f77db3a3751f23e72da14f",
+      "scenario_id": "insurance.claims.045",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "88605c5c7d742ec999d9e9361818a48435a490989ef0532dccae37e7ed632eb6",
+      "scenario_id": "insurance.claims.046",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "429208da2aca6a483879bfb9e173a39058f742065e36d46c55572adb6e82adce",
+      "scenario_id": "insurance.claims.047",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "3fde6dc4094bd08d32b8d0c548d039d66c4e385d55387c36027ac9d8ca4a44f5",
+      "scenario_id": "insurance.claims.048",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "15fd80c47b5b5f7e55f069cfd510218caf11f04e96dc9e36494d560c11196b39",
+      "scenario_id": "insurance.claims.049",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "9439fdb9319c79c6f9ce395e59a9133cd42d9a0b294821e0faff2aa35ac3e3d0",
+      "scenario_id": "insurance.claims.050",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "a0bee5190e05fb612b1955ea4f6204ae2649556344031a8cec70b0d6015470f8",
+      "scenario_id": "insurance.claims.051",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "a62848e2ac678dcd73f3aecd6b6c2de10dcb99dc315e84fb5eb23d13e9518632",
+      "scenario_id": "insurance.claims.052",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "4f87e5a9e731cb09727c2c4ce837b946b249bee90b6c7b185a1976e0b26a5533",
+      "scenario_id": "insurance.claims.053",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "71895bf0716fda9ca8dc47b38a2c55f8e81b420f28485e4b4178c9d835127d0d",
+      "scenario_id": "insurance.claims.054",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "b1ba04be6324f39430bb49724758b3fcb296f091f8c90f36d1bb825ea261e069",
+      "scenario_id": "insurance.claims.055",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "4b221f2203ab77882d9ec38277649b8c6f13be6e1e009bb073ea141e363a6414",
+      "scenario_id": "insurance.claims.056",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "f70e6b65754ca557c3903945b866bec2193e2f18fb6ebf56a5a2af51bdd613a0",
+      "scenario_id": "insurance.claims.057",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "faa5ac3f9ee0bd999b2308b5399de4efba560e588f11badc24cd862192ee55f9",
+      "scenario_id": "insurance.claims.058",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "01148420a59d5a1f36e2d8b5a482d7178d20bfc0723f9372e8a13fa0aded8351",
+      "scenario_id": "insurance.claims.059",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "e37a1e1fd410627401793a39c796c740f5ad0f8123952ba96141c1518c7f75f5",
+      "scenario_id": "insurance.claims.060",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "f3531430910be34945a9ad9aa6a617c51ef00b2f5089b0503571a91f644061e0",
+      "scenario_id": "insurance.claims.061",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "6f14a6568527f44980ff819dba8eadb52be2e7306fe021d5e97c56ab4f27e985",
+      "scenario_id": "insurance.claims.062",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "b8794a0ea7657ca5926e523874f2ad66d6b4589703f27f0e5f8e6e39208a5d95",
+      "scenario_id": "insurance.claims.063",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "49aa608373cfa9f1a0b49a7a4a3be54d676ad294575f12540db1dff196196544",
+      "scenario_id": "insurance.claims.064",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "c62b152b7c061c37aa78aefa1e0cf5b42fdb3febcc25a30af3b6771a0c88168f",
+      "scenario_id": "insurance.claims.065",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "25f61c6076d36407497322a0173cff6008ccb5e5aeaf9135813906217b7bcd26",
+      "scenario_id": "insurance.claims.066",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "e1ee22f7a1da43e54d03ee16aab92b6a590ca1c2809ebb2e53868bf8516272be",
+      "scenario_id": "insurance.claims.067",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "7be348ad16e34b4f49e920b12e97a70c552ff59033b3ef8cb3ba065688a35a82",
+      "scenario_id": "insurance.claims.068",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "1550622c445bd365255edab6dc4e5baef40101a84422246683e1c833b72bbade",
+      "scenario_id": "insurance.claims.069",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "deb7a60244ec7fb0485ce6a52c4308bfb47e25b1960558cbfa2c5745aa0bc076",
+      "scenario_id": "insurance.claims.070",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "f1ce09318eb2d475eb29fa55f9b5aaaa8585f0ffa7a39c406375264f831c98bc",
+      "scenario_id": "insurance.claims.071",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "a27093acec06042abe7f5362f465108f61292729a866f2f4c56b53cd95b11025",
+      "scenario_id": "insurance.claims.072",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "5964645d2be7c4870a6b63b6e2cc7e05b94349e472637a181ba7f75cf5e0a9b7",
+      "scenario_id": "insurance.claims.073",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "96874744e384cb296f752cc2d539a6b7a6717cb47dfd11a44deb86f034f1e130",
+      "scenario_id": "insurance.claims.074",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "2f0d364ad8c4e4b9b6e6f73c376fe49b9fc156988677b15f14f27b7b0b67cbae",
+      "scenario_id": "insurance.claims.075",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "9dfe71add713d047917fe9454dbf37f35cd5bc8576d46a8b5785ae847bd3ebd1",
+      "scenario_id": "insurance.claims.076",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "781b1b2af8777a68d523bf72b3b0b72f95ccf75c179acc75a5219e48b8d3dae5",
+      "scenario_id": "insurance.claims.077",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "a490f912b92e02e2abd8dbbe0eb5f8f897ce41b676bda3dabd232f63aa3f06ac",
+      "scenario_id": "insurance.claims.078",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "97e684f317127f0fe8a7c41b424b711ba8817d929bad89a2b4553a7e56bc8fdf",
+      "scenario_id": "insurance.claims.079",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "7fd636fc1ed51d690f3f1bdda5a383d8d165826c3b107da78ff373cdd558cb3e",
+      "scenario_id": "insurance.claims.080",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "35627df27e0fed355e6a414433f5d738e57885ee5ddea7331e3e12e8edd7e6dd",
+      "scenario_id": "insurance.claims.081",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "409663a87543f0592ef60b7f95e4e94d267f16ffcbf78aa7a85687764e88350d",
+      "scenario_id": "insurance.claims.082",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "0bdf9d675a670f3a9e8086172ed1179b904bc5e11b66e06a10bb8d81eedc6426",
+      "scenario_id": "insurance.claims.083",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "f4dc785f7d27ad529046d9e9666b7526269368aa8525c6fdf2e2f2c4475c046f",
+      "scenario_id": "insurance.claims.084",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "d5f962d50f047320ebb2cf5f43f150c754f1f10305ce6649daf01912fac344a9",
+      "scenario_id": "insurance.claims.085",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "a73f1f04196dba37d681ec9e7678b6f9453bfc0edcfb034257522a8f03098d5b",
+      "scenario_id": "insurance.claims.086",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "8b551750db1b842f2f0c5cdbf1b0311774585b6e3dd3ec71a25b0a7ff2f122f6",
+      "scenario_id": "insurance.claims.087",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "e60e87ba840545783ea25b1f85e51d9167017ef3819faf1be45e04d079f559b4",
+      "scenario_id": "insurance.claims.088",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "819ce75e0dc2a6f9a25d1e970a987ffb6534bca1f7e9952cde5612b762723f93",
+      "scenario_id": "insurance.claims.089",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "68b1f6b1de03ff21b4a4494f064db093dcb35ed9a451cff42da380f62a00095a",
+      "scenario_id": "insurance.claims.090",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "2456b268159d52de0afb26989faaa20ef08fcab5b173bfec3fc7e9c7855d2ee8",
+      "scenario_id": "insurance.claims.091",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "4992c643f92811aa6c7015b96d4447652f9b487763463f7b9169eeed1605a01c",
+      "scenario_id": "insurance.claims.092",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "a62f23c189163fe1b00c8c6ff7129b9edfa5ababf982e179eba8bd69d7ea3542",
+      "scenario_id": "insurance.claims.093",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "b07aaf829bcd64191cfba7a95d9add9f20a52aed6afa0738778a24c486ba0b79",
+      "scenario_id": "insurance.claims.094",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "08f0ff4c234cb0d634cf494a1ab3c00731e2a193d73a5a729bc64ae013e35643",
+      "scenario_id": "insurance.claims.095",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "3f71dcee9bc2b9417c16b1553c8e403e8f58d239bf6f04c720e2da8806eb6729",
+      "scenario_id": "insurance.claims.096",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "c1a9f41f68e96eacf1e7bedb08037c77e7f00ec34874bdc11923ea54021d124d",
+      "scenario_id": "insurance.claims.097",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "afa829277020725ecb1c2dfa7ea805cf02add0f4d5dc21ee473244d78a6dcba3",
+      "scenario_id": "insurance.claims.098",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "2d862bf49aefe167c926f5fdf57895ec70b299874b7cf32f8c81c3abe0b6cfe6",
+      "scenario_id": "insurance.claims.099",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "0ef941638ce6fdc82246d74f76f55b8b0ee6fe7b9ed2e5ab40ad14aa9bf9973f",
+      "scenario_id": "insurance.claims.100",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "9268e18a90fd70c51c9b9435c3f57d594ee12b6074659abaac0de966ab911390",
+      "scenario_id": "insurance.claims.101",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "96717ec8e46a54a211bbf9a92670159d0816ff06250e17a2e005c2b2a0c5a708",
+      "scenario_id": "insurance.claims.102",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "dc72cae9fa8f9f607934c05e59052f4ec8413bc7dbfa617075ad9a96e5f5a941",
+      "scenario_id": "insurance.claims.103",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "1ecebb6e5a138d9de332417e09a357d27829171170d4c03959e86c4ecc63235b",
+      "scenario_id": "insurance.claims.104",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "f20384b7cd716d769c5aa9d01ae607961ac23a5f8c9609f181585c6ccf1e8787",
+      "scenario_id": "insurance.claims.105",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "eeb6eb2cd4d1f1e6a3488b50543eba5281f3634b8d9f93c21c8fe00f8a7b650b",
+      "scenario_id": "insurance.claims.106",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "94c4a5b488c335cd0f84388e27dad54c49e5d7579e0d0c07ec1c2b26798d3db2",
+      "scenario_id": "insurance.claims.107",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "ff8c972bbad72b4b9f48676a1c0c271325f054364c8abb3cb5552de4662d2530",
+      "scenario_id": "insurance.claims.108",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "5abf599b746886dc9261fa32d60a8f73b3ed572c932694d2774f2d1160958183",
+      "scenario_id": "insurance.claims.109",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "55b366f1791aede3d877aa63158e1756965bc0e26ebfbe61bd70f6f49a9dff3f",
+      "scenario_id": "insurance.claims.110",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "2667a1fa665c3d4d2ac5566b873cca6212b972332ace66e5ebdc1c7c5c0b5222",
+      "scenario_id": "insurance.claims.111",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "618569edb163232e0a02f0471deedf8b8ebd2c0c3d849f98b4feaa63c3db3e90",
+      "scenario_id": "insurance.claims.112",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "91ab10816b33c7512d6556698403abc02cf469606dbcf2dab1acc92bbcdac834",
+      "scenario_id": "insurance.claims.113",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "1f98514ec72280d7d0a0c9ea3847e9a436a27c36d2beacd9059b99d0c9a0235a",
+      "scenario_id": "insurance.claims.114",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "26eafde858399806414385ffea08a2a0fcf188dc369234ec51ed1e54a3559d24",
+      "scenario_id": "insurance.claims.115",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "d3a41be81a84049486b9db764a67eac72965ddd3d10e6842ff47f62ca5b98a30",
+      "scenario_id": "insurance.claims.116",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "b4d00714021265f218679ce4ac811d39155ae2bdcda1d331dbdd41d2372dff2b",
+      "scenario_id": "insurance.claims.117",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "74faf1d138e4fe0ec9e9a94b5ca2d6e56348bf16a39cf60f380312ed96a0eebf",
+      "scenario_id": "insurance.claims.118",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "1edabe984466acb2a73c26acd491ec9d6a7d54960890189b0493f95793303a85",
+      "scenario_id": "insurance.claims.119",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "8024b5d30aeb2840b9cbed4f2e576389eba2ec779e6ae9ce3015aee9a0df47cf",
+      "scenario_id": "insurance.claims.120",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "9078db2fd0063988ddf2bb2b25af5afbf14e8afe3b4338a6ecbafaf25e1209b0",
+      "scenario_id": "insurance.claims.121",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "37ddfee9c3686ecfb40ce68013e1c828f9fd8ebb79cf97e2476c9218218de673",
+      "scenario_id": "insurance.claims.122",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "db73a4c80c7aeee19d6d1a3df0bc7a3201a8623d7679644aa089faa89ab0db45",
+      "scenario_id": "insurance.claims.123",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "3e2826ca13787dca1cc8cf15db79ac6b49e8c21e34675c45fe94e0dacddc3478",
+      "scenario_id": "insurance.claims.124",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "25924b96d0d505370846c4a00f935526bbce5e0c8e3c695a04c1fda68ef405be",
+      "scenario_id": "insurance.claims.125",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "01d18be958e0851f3a018a3e732a5f6a99ac954253529a11c5614f9877582b67",
+      "scenario_id": "insurance.claims.126",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "71265fec2566896a04cefc1c389e8a99300ee025db89a820d1c8654e66583920",
+      "scenario_id": "insurance.claims.127",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "9fe353214cc673cd8df97c93dd407a230b3160ae9bd717e9e0452204bfac59a9",
+      "scenario_id": "insurance.claims.128",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "1beb378f5c69f63661ad3c584629e5d1edfb2826db6f960745f5bb8d6f995511",
+      "scenario_id": "insurance.claims.129",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "939955e47dad59f828d8aae2e9ba73948a3421380cba0f8ca302e8184b31ebff",
+      "scenario_id": "insurance.claims.130",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "72259f5ba4ee2f95987e4e76537c5607399b3fec16e71d8649f3655523e254ed",
+      "scenario_id": "insurance.claims.131",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claims-adjustment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-adjuster"
+      ],
+      "scenario_hash": "374a28c421575b67517af78a6a4f6cfbdbdb4b342008abeb336e19de5a527801",
+      "scenario_id": "insurance.claims.132",
+      "schema_version": "1.0"
+    },
+    {
       "capability_id": "inventory-control",
       "difficulty": "basic",
       "domain_id": "commerce",
@@ -6525,7 +7965,7 @@
         "worker_turns": 50
       },
       "domain_id": "insurance",
-      "estimated_duration_s": 36,
+      "estimated_duration_s": 396,
       "id": "insurance.claims-adjuster.full",
       "label": "Claims Adjuster Full",
       "revision": "1.1.0",
@@ -6542,7 +7982,127 @@
         "insurance.claims.009",
         "insurance.claims.010",
         "insurance.claims.011",
-        "insurance.claims.012"
+        "insurance.claims.012",
+        "insurance.claims.013",
+        "insurance.claims.014",
+        "insurance.claims.015",
+        "insurance.claims.016",
+        "insurance.claims.017",
+        "insurance.claims.018",
+        "insurance.claims.019",
+        "insurance.claims.020",
+        "insurance.claims.021",
+        "insurance.claims.022",
+        "insurance.claims.023",
+        "insurance.claims.024",
+        "insurance.claims.025",
+        "insurance.claims.026",
+        "insurance.claims.027",
+        "insurance.claims.028",
+        "insurance.claims.029",
+        "insurance.claims.030",
+        "insurance.claims.031",
+        "insurance.claims.032",
+        "insurance.claims.033",
+        "insurance.claims.034",
+        "insurance.claims.035",
+        "insurance.claims.036",
+        "insurance.claims.037",
+        "insurance.claims.038",
+        "insurance.claims.039",
+        "insurance.claims.040",
+        "insurance.claims.041",
+        "insurance.claims.042",
+        "insurance.claims.043",
+        "insurance.claims.044",
+        "insurance.claims.045",
+        "insurance.claims.046",
+        "insurance.claims.047",
+        "insurance.claims.048",
+        "insurance.claims.049",
+        "insurance.claims.050",
+        "insurance.claims.051",
+        "insurance.claims.052",
+        "insurance.claims.053",
+        "insurance.claims.054",
+        "insurance.claims.055",
+        "insurance.claims.056",
+        "insurance.claims.057",
+        "insurance.claims.058",
+        "insurance.claims.059",
+        "insurance.claims.060",
+        "insurance.claims.061",
+        "insurance.claims.062",
+        "insurance.claims.063",
+        "insurance.claims.064",
+        "insurance.claims.065",
+        "insurance.claims.066",
+        "insurance.claims.067",
+        "insurance.claims.068",
+        "insurance.claims.069",
+        "insurance.claims.070",
+        "insurance.claims.071",
+        "insurance.claims.072",
+        "insurance.claims.073",
+        "insurance.claims.074",
+        "insurance.claims.075",
+        "insurance.claims.076",
+        "insurance.claims.077",
+        "insurance.claims.078",
+        "insurance.claims.079",
+        "insurance.claims.080",
+        "insurance.claims.081",
+        "insurance.claims.082",
+        "insurance.claims.083",
+        "insurance.claims.084",
+        "insurance.claims.085",
+        "insurance.claims.086",
+        "insurance.claims.087",
+        "insurance.claims.088",
+        "insurance.claims.089",
+        "insurance.claims.090",
+        "insurance.claims.091",
+        "insurance.claims.092",
+        "insurance.claims.093",
+        "insurance.claims.094",
+        "insurance.claims.095",
+        "insurance.claims.096",
+        "insurance.claims.097",
+        "insurance.claims.098",
+        "insurance.claims.099",
+        "insurance.claims.100",
+        "insurance.claims.101",
+        "insurance.claims.102",
+        "insurance.claims.103",
+        "insurance.claims.104",
+        "insurance.claims.105",
+        "insurance.claims.106",
+        "insurance.claims.107",
+        "insurance.claims.108",
+        "insurance.claims.109",
+        "insurance.claims.110",
+        "insurance.claims.111",
+        "insurance.claims.112",
+        "insurance.claims.113",
+        "insurance.claims.114",
+        "insurance.claims.115",
+        "insurance.claims.116",
+        "insurance.claims.117",
+        "insurance.claims.118",
+        "insurance.claims.119",
+        "insurance.claims.120",
+        "insurance.claims.121",
+        "insurance.claims.122",
+        "insurance.claims.123",
+        "insurance.claims.124",
+        "insurance.claims.125",
+        "insurance.claims.126",
+        "insurance.claims.127",
+        "insurance.claims.128",
+        "insurance.claims.129",
+        "insurance.claims.130",
+        "insurance.claims.131",
+        "insurance.claims.132"
       ],
       "schema_version": "1.0",
       "tier": "full"

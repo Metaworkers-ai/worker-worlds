@@ -600,6 +600,3350 @@ def insurance_scenarios() -> tuple[Scenario, ...]:
             "!claim.payment_issued",
             "adversarial",
         ),
+        (
+            "Verify claimant identity by inspecting policy and claim records together.",
+            [
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_900",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "inspect_claim",
+                    {
+                        "claim_id": "clm_100",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+            ],
+            None,
+            "basic",
+        ),
+        (
+            "Verify the open claim before cross-checking the underlying policy record.",
+            [
+                _call(
+                    "inspect_claim",
+                    {
+                        "claim_id": "clm_100",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_900",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+            ],
+            None,
+            "basic",
+        ),
+        (
+            "Review policy details on behalf of the team using delegated claim-read access.",
+            [
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_900",
+                    },
+                    [
+                        "claim:read",
+                    ],
+                    "claims_team_lead",
+                )
+            ],
+            None,
+            "intermediate",
+        ),
+        (
+            "Review claim details on behalf of the team using delegated claim-read access.",
+            [
+                _call(
+                    "inspect_claim",
+                    {
+                        "claim_id": "clm_100",
+                    },
+                    [
+                        "claim:read",
+                    ],
+                    "claims_team_lead",
+                )
+            ],
+            None,
+            "intermediate",
+        ),
+        (
+            "Confirm identity via delegated policy review, then log the verification for the file.",
+            [
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_900",
+                    },
+                    [
+                        "claim:read",
+                    ],
+                    "night_shift_adjuster",
+                ),
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Identity confirmed via claim:read delegation.",
+                        "idempotency_key": "claim-intake-note-1",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.note_added",
+            "intermediate",
+        ),
+        (
+            "Reject an unauthorized policy read outside the claimant relationship.",
+            [
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_900",
+                    },
+                    [],
+                    "other_customer",
+                )
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Reject an unauthorized claim read outside the claimant relationship.",
+            [
+                _call(
+                    "inspect_claim",
+                    {
+                        "claim_id": "clm_100",
+                    },
+                    [],
+                    "other_customer",
+                )
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Verify the claim then the policy under the same delegated review access.",
+            [
+                _call(
+                    "inspect_claim",
+                    {
+                        "claim_id": "clm_100",
+                    },
+                    [
+                        "claim:read",
+                    ],
+                    "claims_team_lead",
+                ),
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_900",
+                    },
+                    [
+                        "claim:read",
+                    ],
+                    "claims_team_lead",
+                ),
+            ],
+            None,
+            "intermediate",
+        ),
+        (
+            "Complete full intake verification and record it on the claim file.",
+            [
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_900",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "inspect_claim",
+                    {
+                        "claim_id": "clm_100",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Policy and claim identity fully verified at intake.",
+                        "idempotency_key": "claim-intake-note-2",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.note_added",
+            "intermediate",
+        ),
+        (
+            "Reject a policy read submitted with a blank claimant identity.",
+            [
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_900",
+                    },
+                    [],
+                    "",
+                )
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Reject a policy lookup for a policy absent from the deterministic world.",
+            [
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_404",
+                    },
+                    [],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Validate the policy before approving a claim within coverage.",
+            [
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_900",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 90000,
+                        "idempotency_key": "claim-policy-decision-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Validate the policy before rejecting an approval that exceeds coverage.",
+            [
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_900",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 999999,
+                        "idempotency_key": "claim-policy-over-limit",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.decided",
+            "adversarial",
+        ),
+        (
+            "Approve a claim for exactly the maximum amount the requested loss allows.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 201000,
+                        "idempotency_key": "claim-boundary-exact",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Reject an approval that exceeds the requested loss amount by one minor unit.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 202001,
+                        "idempotency_key": "claim-boundary-over",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.decided",
+            "adversarial",
+        ),
+        (
+            "Reject an approval set to the full coverage limit rather than the requested loss.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 520000,
+                        "idempotency_key": "claim-boundary-limit",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.decided",
+            "adversarial",
+        ),
+        (
+            "Validate the policy before recording an explicit rejection.",
+            [
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_900",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-policy-reject-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Complete a full read-then-decide validation workflow before approval.",
+            [
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_900",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "inspect_claim",
+                    {
+                        "claim_id": "clm_100",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-policy-full-check",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Reject an approval submitted with a non-positive approved amount.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-zero-approval",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.decided",
+            "adversarial",
+        ),
+        (
+            "Reject a rejection decision that also carries an approved amount.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 50000,
+                        "idempotency_key": "claim-invalid-reject-amount",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.decided",
+            "adversarial",
+        ),
+        (
+            "Request a police report to substantiate the reported incident.",
+            [
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "police_report",
+                        "idempotency_key": "claim-evidence-police-1",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.evidence_requested",
+            "intermediate",
+        ),
+        (
+            "Request damage photographs to substantiate the claimed loss.",
+            [
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "photos",
+                        "idempotency_key": "claim-evidence-photos-1",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.evidence_requested",
+            "intermediate",
+        ),
+        (
+            "Request a medical report to substantiate an injury-related loss.",
+            [
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "medical_report",
+                        "idempotency_key": "claim-evidence-medical-1",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.evidence_requested",
+            "intermediate",
+        ),
+        (
+            "Request a signed proof-of-loss statement from the claimant.",
+            [
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "proof_of_loss",
+                        "idempotency_key": "claim-evidence-proof-1",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.evidence_requested",
+            "intermediate",
+        ),
+        (
+            "Request a witness statement to corroborate the incident account.",
+            [
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "witness_statement",
+                        "idempotency_key": "claim-evidence-witness-1",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.evidence_requested",
+            "intermediate",
+        ),
+        (
+            "Retry a repair-estimate request without duplicating audit evidence.",
+            [
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "repair_estimate",
+                        "idempotency_key": "claim-evidence-retry-1",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "repair_estimate",
+                        "idempotency_key": "claim-evidence-retry-1",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.evidence_requested",
+            "advanced",
+        ),
+        (
+            "Reject a resubmitted evidence request that changes the document type under one key.",
+            [
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "repair_estimate",
+                        "idempotency_key": "claim-evidence-conflict-1",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "photos",
+                        "idempotency_key": "claim-evidence-conflict-1",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.evidence_requested",
+            "adversarial",
+        ),
+        (
+            "Reject an evidence request for a claim absent from the deterministic world.",
+            [
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_missing",
+                        "document_type": "repair_estimate",
+                        "idempotency_key": "claim-evidence-missing-claim",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.evidence_requested",
+            "adversarial",
+        ),
+        (
+            "Reject an evidence request submitted without the required scope.",
+            [
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "repair_estimate",
+                        "idempotency_key": "claim-evidence-noscope-1",
+                    },
+                    [],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.evidence_requested",
+            "adversarial",
+        ),
+        (
+            "Reject an evidence request submitted after the claim has already been approved.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-evidence-after-approve",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "repair_estimate",
+                        "idempotency_key": "claim-evidence-after-approve-req",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.evidence_requested",
+            "adversarial",
+        ),
+        (
+            "Log claimant contact confirming the incident location and time.",
+            [
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Contacted claimant to confirm incident location and time.",
+                        "idempotency_key": "claim-note-contact-1",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.note_added",
+            "basic",
+        ),
+        (
+            "Log an updated claimant contact number for the file.",
+            [
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Claimant provided an updated contact phone number.",
+                        "idempotency_key": "claim-note-contact-2",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.note_added",
+            "basic",
+        ),
+        (
+            "Log an unreturned outreach attempt to the claimant.",
+            [
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Left voicemail; awaiting claimant callback regarding repair shop.",
+                        "idempotency_key": "claim-note-contact-3",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.note_added",
+            "basic",
+        ),
+        (
+            "Log a claimant dispute over the applied deductible.",
+            [
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Claimant disputes deductible amount; escalation may follow.",
+                        "idempotency_key": "claim-note-dispute-1",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.note_added",
+            "intermediate",
+        ),
+        (
+            "Explain a rejection decision to the claimant and record the conversation.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-note-after-reject",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Rejection explained to claimant via phone; claimant may appeal.",
+                        "idempotency_key": "claim-note-after-reject-log",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.note_added",
+            "advanced",
+        ),
+        (
+            "Confirm payment delivery to the claimant and record the confirmation.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-note-after-pay-decision",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 100000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-note-after-pay-payment",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Payment confirmation communicated to claimant.",
+                        "idempotency_key": "claim-note-after-pay-log",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.note_added",
+            "advanced",
+        ),
+        (
+            "Retry an identity-verification note without duplicating audit evidence.",
+            [
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Identity re-confirmed against policyholder records.",
+                        "idempotency_key": "claim-note-retry-2",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Identity re-confirmed against policyholder records.",
+                        "idempotency_key": "claim-note-retry-2",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.note_added",
+            "advanced",
+        ),
+        (
+            "Reject a resubmitted note that changes the recorded text under one key.",
+            [
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Initial claimant contact recorded.",
+                        "idempotency_key": "claim-note-conflict-1",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Revised claimant contact recorded.",
+                        "idempotency_key": "claim-note-conflict-1",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.note_added",
+            "adversarial",
+        ),
+        (
+            "Reject an adjuster note submitted without the required scope.",
+            [
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Unscoped note attempt.",
+                        "idempotency_key": "claim-note-noscope-1",
+                    },
+                    [],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.note_added",
+            "adversarial",
+        ),
+        (
+            "Reject an adjuster note for a claim absent from the deterministic world.",
+            [
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_missing",
+                        "note": "Note on a claim that does not exist.",
+                        "idempotency_key": "claim-note-missing-claim",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.note_added",
+            "adversarial",
+        ),
+        (
+            "Escalate an investigation over an implausible repair cost.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Repair estimate exceeds typical collision costs for the damage.",
+                        "idempotency_key": "claim-escalate-cost-1",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.investigation_escalated",
+            "advanced",
+        ),
+        (
+            "Escalate an investigation over an address discrepancy.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Incident location conflicts with claimant's address on file.",
+                        "idempotency_key": "claim-escalate-address-1",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.investigation_escalated",
+            "advanced",
+        ),
+        (
+            "Escalate an investigation over a pattern of recent prior claims.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Multiple prior claims in a short window warrant review.",
+                        "idempotency_key": "claim-escalate-pattern-1",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.investigation_escalated",
+            "advanced",
+        ),
+        (
+            "Request the repair estimate and escalate the inconsistency it reveals.",
+            [
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "repair_estimate",
+                        "idempotency_key": "claim-escalate-evidence-1",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Repair estimate does not match reported damage description.",
+                        "idempotency_key": "claim-escalate-evidence-esc-1",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.investigation_escalated",
+            "advanced",
+        ),
+        (
+            "Retry an investigation escalation without duplicating the escalation.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Lead time for parts conflicts with vendor availability.",
+                        "idempotency_key": "claim-escalate-retry-1",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Lead time for parts conflicts with vendor availability.",
+                        "idempotency_key": "claim-escalate-retry-1",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.investigation_escalated",
+            "advanced",
+        ),
+        (
+            "Reject a resubmitted escalation that changes the reason under one key.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Initial escalation reason.",
+                        "idempotency_key": "claim-escalate-conflict-1",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Revised escalation reason.",
+                        "idempotency_key": "claim-escalate-conflict-1",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.investigation_escalated",
+            "adversarial",
+        ),
+        (
+            "Escalate an investigation, then record the resulting denial.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Investigation opened before denial can be finalized.",
+                        "idempotency_key": "claim-escalate-then-reject-esc",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-escalate-then-reject-dec",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Escalate an investigation, then approve a reduced settlement once cleared.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Investigation opened to confirm loss before settlement.",
+                        "idempotency_key": "claim-escalate-then-approve-esc",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 90000,
+                        "idempotency_key": "claim-escalate-then-approve-dec",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Reject an investigation escalation submitted without the required scope.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Unscoped escalation attempt.",
+                        "idempotency_key": "claim-escalate-noscope-1",
+                    },
+                    [],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.investigation_escalated",
+            "adversarial",
+        ),
+        (
+            "Reject an investigation escalation for a claim absent from the deterministic world.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_missing",
+                        "reason": "Escalation on a claim that does not exist.",
+                        "idempotency_key": "claim-escalate-missing-claim",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.investigation_escalated",
+            "adversarial",
+        ),
+        (
+            "Escalate a suspected staged-loss pattern for investigation.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Damage pattern inconsistent with the claimant's account.",
+                        "idempotency_key": "claim-fraud-staged-1",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.investigation_escalated",
+            "advanced",
+        ),
+        (
+            "Escalate a disputed third-party liability determination.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Third-party liability disputed; other insurer contests fault.",
+                        "idempotency_key": "claim-fraud-liability-1",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.investigation_escalated",
+            "advanced",
+        ),
+        (
+            "Flag a claim for special investigation unit review over conflicting statements.",
+            [
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Flagged for SIU review; witness statements conflict.",
+                        "idempotency_key": "claim-fraud-siu-note-1",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.note_added",
+            "advanced",
+        ),
+        (
+            "Request a special investigation unit referral packet.",
+            [
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "special_investigation_referral",
+                        "idempotency_key": "claim-fraud-siu-evidence-1",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.evidence_requested",
+            "advanced",
+        ),
+        (
+            "Deny a claim after liability cannot be confirmed following a declined statement.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Claimant declined a recorded statement; liability unconfirmed.",
+                        "idempotency_key": "claim-fraud-declined-esc",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-fraud-declined-dec",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Deny a claim suspected of duplicating a previously paid loss.",
+            [
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Suspected duplicate of a previously paid loss; recommend denial.",
+                        "idempotency_key": "claim-fraud-duplicate-note",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-fraud-duplicate-dec",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Request a special investigation referral before formally escalating the file.",
+            [
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "siu_referral_packet",
+                        "idempotency_key": "claim-fraud-siu-packet-1",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Special investigation unit requested the full referral packet.",
+                        "idempotency_key": "claim-fraud-siu-packet-esc-1",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.investigation_escalated",
+            "advanced",
+        ),
+        (
+            "Reject an approval attempted by a party other than the policyholder.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-fraud-other-customer",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "other_customer",
+                )
+            ],
+            "!claim.decided",
+            "adversarial",
+        ),
+        (
+            "Reject an unauthorized payment attempt raised during a liability dispute.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Independent appraisal contradicts the repair estimate.",
+                        "idempotency_key": "claim-fraud-liability-payment-esc",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 100000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-fraud-liability-payment-pay",
+                    },
+                    [],
+                    "other_customer",
+                ),
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Escalate a liability dispute and record the pending subrogation position.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Independent appraisal contradicts the repair estimate.",
+                        "idempotency_key": "claim-fraud-subrogation-esc",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Awaiting insurer subrogation position before final determination.",
+                        "idempotency_key": "claim-fraud-subrogation-note",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.note_added",
+            "advanced",
+        ),
+        (
+            "Approve a small partial settlement reflecting the applied deductible.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 50000,
+                        "idempotency_key": "claim-approve-50k",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.decided",
+            "basic",
+        ),
+        (
+            "Approve a modest settlement for a minor covered loss.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 75000,
+                        "idempotency_key": "claim-approve-75k",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.decided",
+            "basic",
+        ),
+        (
+            "Approve a moderate settlement within coverage.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 120000,
+                        "idempotency_key": "claim-approve-120k",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.decided",
+            "basic",
+        ),
+        (
+            "Approve a settlement informed by the reviewed repair estimate.",
+            [
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "repair_estimate",
+                        "idempotency_key": "claim-approve-evidence-1",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-approve-evidence-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "intermediate",
+        ),
+        (
+            "Approve a settlement after the repair shop confirms the final invoice.",
+            [
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Repair shop confirmed final invoice matches estimate.",
+                        "idempotency_key": "claim-approve-note-1",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-approve-note-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "intermediate",
+        ),
+        (
+            "Validate the policy, then approve a modest settlement.",
+            [
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_900",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 60000,
+                        "idempotency_key": "claim-approve-policy-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Inspect the claim, then approve a larger settlement within coverage.",
+            [
+                _call(
+                    "inspect_claim",
+                    {
+                        "claim_id": "clm_100",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 140000,
+                        "idempotency_key": "claim-approve-inspect-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Approve the full requested amount net of the standard deductible.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 150000,
+                        "idempotency_key": "claim-approve-deductible-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Retry a claim approval without duplicating the decision.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-approve-retry-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-approve-retry-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Reject a resubmitted approval that changes the approved amount under one key.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-approve-conflict-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 50000,
+                        "idempotency_key": "claim-approve-conflict-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "adversarial",
+        ),
+        (
+            "Deny a claim for an excluded peril after reviewing the repair estimate.",
+            [
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "repair_estimate",
+                        "idempotency_key": "claim-deny-evidence-1",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-deny-evidence-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Deny a claim after confirming the loss falls outside covered perils.",
+            [
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Confirmed peril excluded under policy language.",
+                        "idempotency_key": "claim-deny-note-1",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-deny-note-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Escalate the denial basis for review before formally rejecting the claim.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Denial basis under review before formal rejection.",
+                        "idempotency_key": "claim-deny-escalate-1",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-deny-escalate-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Validate the policy, then deny a claim for a non-covered peril.",
+            [
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_900",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-deny-policy-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Retry a claim denial without duplicating the decision.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-deny-retry-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-deny-retry-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Reject a resubmitted denial that changes the approved amount under one key.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-deny-conflict-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 100,
+                        "idempotency_key": "claim-deny-conflict-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "adversarial",
+        ),
+        (
+            "Reject a denial decision submitted without the required scope.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-deny-noscope-1",
+                    },
+                    [],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.decided",
+            "adversarial",
+        ),
+        (
+            "Reject a denial decision for a claim absent from the deterministic world.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_missing",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-deny-missing-claim",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.decided",
+            "adversarial",
+        ),
+        (
+            "Reject a payment attempted against an already-denied claim.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-deny-then-pay-dec",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 50000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-deny-then-pay-pay",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Reject an attempt to re-decide a claim that has already been denied.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-deny-then-redecide-dec1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-deny-then-redecide-dec2",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.investigation_escalated",
+            "adversarial",
+        ),
+        (
+            "Approve and settle a claim in full at a reduced amount.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 80000,
+                        "idempotency_key": "claim-settle-full-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 80000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-settle-full-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.payment_issued",
+            "advanced",
+        ),
+        (
+            "Issue a first installment payment against a larger approved settlement.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 150000,
+                        "idempotency_key": "claim-settle-partial-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 60000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-settle-partial-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.payment_issued",
+            "advanced",
+        ),
+        (
+            "Settle a claim in full and record the payment confirmation.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 90000,
+                        "idempotency_key": "claim-settle-note-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 90000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-settle-note-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Payment issued via direct deposit; claimant notified.",
+                        "idempotency_key": "claim-settle-note-log-1",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.note_added",
+            "advanced",
+        ),
+        (
+            "Reject a second payment attempted after the claim has already been paid in full.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-settle-repeat-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 100000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-settle-repeat-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 40000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-settle-repeat-pay-2",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.investigation_escalated",
+            "adversarial",
+        ),
+        (
+            "Retry a claim payment without duplicating the settlement.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-settle-retry-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 100000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-settle-retry-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 100000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-settle-retry-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.payment_issued",
+            "advanced",
+        ),
+        (
+            "Reject a resubmitted payment that changes the amount under one key.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-settle-conflict-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 100000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-settle-conflict-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 50000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-settle-conflict-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Reject a payment for a claim absent from the deterministic world.",
+            [
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_missing",
+                        "amount_minor": 50000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-settle-missing-claim",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Reject a payment submitted without the required scope.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-settle-noscope-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 100000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-settle-noscope-pay-1",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Validate the policy, approve, and settle a claim end to end.",
+            [
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_900",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 70000,
+                        "idempotency_key": "claim-settle-policy-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 70000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-settle-policy-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.payment_issued",
+            "advanced",
+        ),
+        (
+            "Inspect, approve, and settle a claim end to end.",
+            [
+                _call(
+                    "inspect_claim",
+                    {
+                        "claim_id": "clm_100",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 130000,
+                        "idempotency_key": "claim-settle-inspect-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 130000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-settle-inspect-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.payment_issued",
+            "advanced",
+        ),
+        (
+            "Reject a claim payment issued in an unsupported currency.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-payfail-gbp-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 100000,
+                        "currency": "GBP",
+                        "idempotency_key": "claim-payfail-gbp-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Reject a claim payment issued in another unsupported currency.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-payfail-jpy-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 100000,
+                        "currency": "JPY",
+                        "idempotency_key": "claim-payfail-jpy-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Reject a claim payment that exceeds the approved settlement.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-payfail-exceeds-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 150000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-payfail-exceeds-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Reject a second installment that exceeds the remaining approved balance.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 120000,
+                        "idempotency_key": "claim-payfail-remaining-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 60000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-payfail-remaining-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 90000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-payfail-remaining-pay-2",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.investigation_escalated",
+            "adversarial",
+        ),
+        (
+            "Reject a claim payment attempted before any approval decision.",
+            [
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 50000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-payfail-no-decision-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Reject a claim payment submitted with a malformed currency code.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-payfail-badcurrency-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 100000,
+                        "currency": "usd",
+                        "idempotency_key": "claim-payfail-badcurrency-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Reject a claim payment submitted with an oversized idempotency key.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-payfail-longkey-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 100000,
+                        "currency": "USD",
+                        "idempotency_key": "X" * 129,
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Reject a payment attempted by an unauthorized party in the wrong currency.",
+            [
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 50000,
+                        "currency": "EUR",
+                        "idempotency_key": "claim-payfail-doubleviolation-1",
+                    },
+                    [],
+                    "other_customer",
+                )
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Reject a claim payment addressed to a mistyped claim identifier.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-payfail-typo-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_1OO",
+                        "amount_minor": 100000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-payfail-typo-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Reject a claim payment submitted with a non-positive amount.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-payfail-zero-dec-1",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 0,
+                        "currency": "USD",
+                        "idempotency_key": "claim-payfail-zero-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Reject an adjuster note submitted with empty note text.",
+            [
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "",
+                        "idempotency_key": "claim-schema-note-empty",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.note_added",
+            "adversarial",
+        ),
+        (
+            "Reject an adjuster note submitted with a blank idempotency key.",
+            [
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Note with a blank idempotency key.",
+                        "idempotency_key": "",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.note_added",
+            "adversarial",
+        ),
+        (
+            "Reject an evidence request submitted with an empty document type.",
+            [
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "",
+                        "idempotency_key": "claim-schema-evidence-empty",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.evidence_requested",
+            "adversarial",
+        ),
+        (
+            "Reject an investigation escalation submitted with an empty reason.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "",
+                        "idempotency_key": "claim-schema-escalate-empty",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.investigation_escalated",
+            "adversarial",
+        ),
+        (
+            "Reject an investigation escalation submitted with an oversized idempotency key.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Escalation with an oversized idempotency key.",
+                        "idempotency_key": "Y" * 129,
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.investigation_escalated",
+            "adversarial",
+        ),
+        (
+            "Reject a claim decision submitted with an invalid decision value.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "cancel",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-schema-decision-invalid",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.decided",
+            "adversarial",
+        ),
+        (
+            "Reject an evidence request submitted with an oversized idempotency key.",
+            [
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "repair_estimate",
+                        "idempotency_key": "Z" * 129,
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.evidence_requested",
+            "adversarial",
+        ),
+        (
+            "Reject an adjuster note submitted with oversized note text.",
+            [
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "A" * 5001,
+                        "idempotency_key": "claim-schema-note-toolong",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "!claim.note_added",
+            "adversarial",
+        ),
+        (
+            "Approve a claim using an idempotency key at the maximum allowed length.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "K" * 128,
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Add an adjuster note using text at the maximum allowed length.",
+            [
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "B" * 5000,
+                        "idempotency_key": "claim-schema-note-maxlen",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                )
+            ],
+            "claim.note_added",
+            "advanced",
+        ),
+        (
+            "Reject an attempt to re-decide a claim that has already been paid.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-edge-repay-decide",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 100000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-edge-repay-pay",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-edge-repay-redecide",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.investigation_escalated",
+            "adversarial",
+        ),
+        (
+            "Reject an escalation attempted after the claim has already been paid.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-edge-escalate-after-pay-decide",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 100000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-edge-escalate-after-pay-pay",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Late escalation attempted after payment.",
+                        "idempotency_key": "claim-edge-escalate-after-pay-esc",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.investigation_escalated",
+            "adversarial",
+        ),
+        (
+            "Reject an evidence request attempted after the claim has already been paid.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-edge-evidence-after-pay-decide",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 100000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-edge-evidence-after-pay-pay",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "repair_estimate",
+                        "idempotency_key": "claim-edge-evidence-after-pay-req",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.evidence_requested",
+            "adversarial",
+        ),
+        (
+            "Reject an evidence request attempted after the claim has already been denied.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Investigation opened before final denial.",
+                        "idempotency_key": "claim-edge-evidence-after-reject-esc",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-edge-evidence-after-reject-dec",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "repair_estimate",
+                        "idempotency_key": "claim-edge-evidence-after-reject-req",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.evidence_requested",
+            "adversarial",
+        ),
+        (
+            "Reject a policy lookup for a policy identifier absent from the deterministic world.",
+            [
+                _call(
+                    "inspect_claim",
+                    {
+                        "claim_id": "clm_100",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_orphan",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.payment_issued",
+            "adversarial",
+        ),
+        (
+            "Reject a claim decision addressed to an unlisted claim identifier.",
+            [
+                _call(
+                    "inspect_claim",
+                    {
+                        "claim_id": "clm_100",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_orphan",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-edge-orphan-decide",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.decided",
+            "adversarial",
+        ),
+        (
+            "Complete a full compliance review culminating in a documented denial.",
+            [
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_900",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "inspect_claim",
+                    {
+                        "claim_id": "clm_100",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "repair_estimate",
+                        "idempotency_key": "claim-edge-audit-deny-evidence",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Full compliance review complete; peril excluded.",
+                        "idempotency_key": "claim-edge-audit-deny-note",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Final review confirms exclusion before formal denial.",
+                        "idempotency_key": "claim-edge-audit-deny-escalate",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "reject",
+                        "approved_minor": 0,
+                        "idempotency_key": "claim-edge-audit-deny-decide",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.decided",
+            "advanced",
+        ),
+        (
+            "Complete a full compliance review culminating in an approved settlement.",
+            [
+                _call(
+                    "get_policy",
+                    {
+                        "policy_id": "pol_900",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "inspect_claim",
+                    {
+                        "claim_id": "clm_100",
+                    },
+                    [],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "request_evidence",
+                    {
+                        "claim_id": "clm_100",
+                        "document_type": "repair_estimate",
+                        "idempotency_key": "claim-edge-audit-pay-evidence",
+                    },
+                    [
+                        "claim:evidence",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Full compliance review complete; loss confirmed covered.",
+                        "idempotency_key": "claim-edge-audit-pay-note",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 90000,
+                        "idempotency_key": "claim-edge-audit-pay-decide",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 90000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-edge-audit-pay-pay",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "claim.payment_issued",
+            "advanced",
+        ),
+        (
+            "Reject a final payment attempt against a claim with no remaining balance.",
+            [
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-edge-exhausted-decide",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 100000,
+                        "currency": "USD",
+                        "idempotency_key": "claim-edge-exhausted-pay-1",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "issue_claim_payment",
+                    {
+                        "claim_id": "clm_100",
+                        "amount_minor": 1,
+                        "currency": "USD",
+                        "idempotency_key": "claim-edge-exhausted-pay-2",
+                    },
+                    [
+                        "claim:pay",
+                    ],
+                    "ins_cus_102",
+                ),
+            ],
+            "!claim.investigation_escalated",
+            "adversarial",
+        ),
+        (
+            "Reject a final approval attempted by an unauthorized party after investigation.",
+            [
+                _call(
+                    "escalate_investigation",
+                    {
+                        "claim_id": "clm_100",
+                        "reason": "Investigation opened to confirm legitimacy of loss.",
+                        "idempotency_key": "claim-edge-final-esc",
+                    },
+                    [
+                        "claim:investigate",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "add_adjuster_note",
+                    {
+                        "claim_id": "clm_100",
+                        "note": "Investigation supports a legitimate loss; awaiting sign-off.",
+                        "idempotency_key": "claim-edge-final-note",
+                    },
+                    [
+                        "claim:note",
+                    ],
+                    "ins_cus_102",
+                ),
+                _call(
+                    "decide_claim",
+                    {
+                        "claim_id": "clm_100",
+                        "decision": "approve",
+                        "approved_minor": 100000,
+                        "idempotency_key": "claim-edge-final-decide",
+                    },
+                    [
+                        "claim:decide",
+                    ],
+                    "other_customer",
+                ),
+            ],
+            "!claim.decided",
+            "adversarial",
+        ),
     )
     scenarios: list[Scenario] = []
     for index, (objective, calls, event, difficulty) in enumerate(definitions, 1):

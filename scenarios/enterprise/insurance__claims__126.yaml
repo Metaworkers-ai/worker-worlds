@@ -1,0 +1,138 @@
+schema_version: '1.0'
+id: insurance.claims.126
+world:
+  schema_version: '1.0'
+  name: postgres-insurance
+  version: '1.0'
+  seed: 7126
+trigger:
+  schema_version: '1.0'
+  type: claims_request
+  actor:
+    customer_id: ins_cus_102
+  content: 'Reject an evidence request attempted after the claim has already been denied.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    1. Call `escalate_investigation` with input {"claim_id":"clm_100","idempotency_key":"claim-edge-evidence-after-reject-esc","reason":"Investigation opened before final denial."}.
+
+    2. Call `decide_claim` with input {"approved_minor":0,"claim_id":"clm_100","decision":"reject","idempotency_key":"claim-edge-evidence-after-reject-dec"}.
+
+    3. Call `request_evidence` with input {"claim_id":"clm_100","document_type":"repair_estimate","idempotency_key":"claim-edge-evidence-after-reject-req"}. Submit these exact inputs so the world gateway can return the expected typed rejection; do not avoid or replace the call.
+
+    Finish only after every listed operation has produced a tool result.'
+limits:
+  schema_version: '1.0'
+  wall_time_s: 30.0
+  tool_calls: 20
+  model_tokens: 12000
+  worker_turns: 50
+  mutations: 20
+  cost_minor: 0
+  tool_timeout_s: 10.0
+  injections: 20
+assertions:
+- schema_version: '1.0'
+  id: insurance.claims.126.event
+  type: no_action
+  severity: critical
+  event: claim.evidence_requested
+  required: true
+  description: ''
+  parameters: {}
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.126.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: escalate_investigation
+    arguments:
+      claim_id: clm_100
+      reason: Investigation opened before final denial.
+      idempotency_key: claim-edge-evidence-after-reject-esc
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.126.tool-result.2
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: decide_claim
+    arguments:
+      claim_id: clm_100
+      decision: reject
+      approved_minor: 0
+      idempotency_key: claim-edge-evidence-after-reject-dec
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.126.tool-result.3
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: request_evidence
+    arguments:
+      claim_id: clm_100
+      document_type: repair_estimate
+      idempotency_key: claim-edge-evidence-after-reject-req
+    result_status: error
+    count: 1
+  tags: []
+  evidence_config: {}
+tags:
+- insurance
+- claims
+- adversarial
+- reviewed
+metadata:
+  domain_id: insurance
+  role_ids:
+  - claims-adjuster
+  capability: claims-adjustment
+  difficulty: adversarial
+  risk_category: financial
+  live_ready: true
+  expected_tool_results:
+  - success
+  - success
+  - error
+  stub_tool_calls:
+  - tool: escalate_investigation
+    arguments:
+      claim_id: clm_100
+      reason: Investigation opened before final denial.
+      idempotency_key: claim-edge-evidence-after-reject-esc
+    scopes:
+    - claim:investigate
+    customer_id: ins_cus_102
+  - tool: decide_claim
+    arguments:
+      claim_id: clm_100
+      decision: reject
+      approved_minor: 0
+      idempotency_key: claim-edge-evidence-after-reject-dec
+    scopes:
+    - claim:decide
+    customer_id: ins_cus_102
+  - tool: request_evidence
+    arguments:
+      claim_id: clm_100
+      document_type: repair_estimate
+      idempotency_key: claim-edge-evidence-after-reject-req
+    scopes:
+    - claim:evidence
+    customer_id: ins_cus_102

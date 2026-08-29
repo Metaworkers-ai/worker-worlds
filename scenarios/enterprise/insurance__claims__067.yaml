@@ -1,0 +1,113 @@
+schema_version: '1.0'
+id: insurance.claims.067
+world:
+  schema_version: '1.0'
+  name: postgres-insurance
+  version: '1.0'
+  seed: 7067
+trigger:
+  schema_version: '1.0'
+  type: claims_request
+  actor:
+    customer_id: ins_cus_102
+  content: 'Deny a claim after liability cannot be confirmed following a declined statement.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    1. Call `escalate_investigation` with input {"claim_id":"clm_100","idempotency_key":"claim-fraud-declined-esc","reason":"Claimant declined a recorded statement; liability unconfirmed."}.
+
+    2. Call `decide_claim` with input {"approved_minor":0,"claim_id":"clm_100","decision":"reject","idempotency_key":"claim-fraud-declined-dec"}.
+
+    Finish only after every listed operation has produced a tool result.'
+limits:
+  schema_version: '1.0'
+  wall_time_s: 30.0
+  tool_calls: 20
+  model_tokens: 12000
+  worker_turns: 50
+  mutations: 20
+  cost_minor: 0
+  tool_timeout_s: 10.0
+  injections: 20
+assertions:
+- schema_version: '1.0'
+  id: insurance.claims.067.event
+  type: action_count
+  severity: critical
+  event: claim.decided
+  required: true
+  description: ''
+  parameters:
+    event_type: claim.decided
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.067.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: escalate_investigation
+    arguments:
+      claim_id: clm_100
+      reason: Claimant declined a recorded statement; liability unconfirmed.
+      idempotency_key: claim-fraud-declined-esc
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.067.tool-result.2
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: decide_claim
+    arguments:
+      claim_id: clm_100
+      decision: reject
+      approved_minor: 0
+      idempotency_key: claim-fraud-declined-dec
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+tags:
+- insurance
+- claims
+- advanced
+- reviewed
+metadata:
+  domain_id: insurance
+  role_ids:
+  - claims-adjuster
+  capability: claims-adjustment
+  difficulty: advanced
+  risk_category: financial
+  live_ready: true
+  expected_tool_results:
+  - success
+  - success
+  stub_tool_calls:
+  - tool: escalate_investigation
+    arguments:
+      claim_id: clm_100
+      reason: Claimant declined a recorded statement; liability unconfirmed.
+      idempotency_key: claim-fraud-declined-esc
+    scopes:
+    - claim:investigate
+    customer_id: ins_cus_102
+  - tool: decide_claim
+    arguments:
+      claim_id: clm_100
+      decision: reject
+      approved_minor: 0
+      idempotency_key: claim-fraud-declined-dec
+    scopes:
+    - claim:decide
+    customer_id: ins_cus_102

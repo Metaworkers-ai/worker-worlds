@@ -28,7 +28,7 @@ insurance), and 10 `examples/scenarios` demonstration fixtures. Of these, 225 ar
 200 commerce plus 25 enterprise scenarios); the 10 demonstration fixtures remain classified for
 compatibility and UI discovery but are excluded from live suites and are permitted only with the
 deterministic local stub. The full-tier suites reflect this exactly: Supply Chain Analyst Full
-contains all 13 supply-chain scenarios, and Claims Adjuster Full contains all 12 insurance
+contains all 13 supply-chain scenarios, and Claims Adjuster Full contains all 132 insurance
 scenarios.
 
 Run `make catalog-check`, `make schemas-check`, and `make openapi-check` before committing a catalog

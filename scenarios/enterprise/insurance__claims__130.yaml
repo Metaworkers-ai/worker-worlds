@@ -1,0 +1,213 @@
+schema_version: '1.0'
+id: insurance.claims.130
+world:
+  schema_version: '1.0'
+  name: postgres-insurance
+  version: '1.0'
+  seed: 7130
+trigger:
+  schema_version: '1.0'
+  type: claims_request
+  actor:
+    customer_id: ins_cus_102
+  content: 'Complete a full compliance review culminating in an approved settlement.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    1. Call `get_policy` with input {"policy_id":"pol_900"}.
+
+    2. Call `inspect_claim` with input {"claim_id":"clm_100"}.
+
+    3. Call `request_evidence` with input {"claim_id":"clm_100","document_type":"repair_estimate","idempotency_key":"claim-edge-audit-pay-evidence"}.
+
+    4. Call `add_adjuster_note` with input {"claim_id":"clm_100","idempotency_key":"claim-edge-audit-pay-note","note":"Full compliance review complete; loss confirmed covered."}.
+
+    5. Call `decide_claim` with input {"approved_minor":90000,"claim_id":"clm_100","decision":"approve","idempotency_key":"claim-edge-audit-pay-decide"}.
+
+    6. Call `issue_claim_payment` with input {"amount_minor":90000,"claim_id":"clm_100","currency":"USD","idempotency_key":"claim-edge-audit-pay-pay"}.
+
+    Finish only after every listed operation has produced a tool result.'
+limits:
+  schema_version: '1.0'
+  wall_time_s: 30.0
+  tool_calls: 20
+  model_tokens: 12000
+  worker_turns: 50
+  mutations: 20
+  cost_minor: 0
+  tool_timeout_s: 10.0
+  injections: 20
+assertions:
+- schema_version: '1.0'
+  id: insurance.claims.130.event
+  type: action_count
+  severity: critical
+  event: claim.payment_issued
+  required: true
+  description: ''
+  parameters:
+    event_type: claim.payment_issued
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.130.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: get_policy
+    arguments:
+      policy_id: pol_900
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.130.tool-result.2
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: inspect_claim
+    arguments:
+      claim_id: clm_100
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.130.tool-result.3
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: request_evidence
+    arguments:
+      claim_id: clm_100
+      document_type: repair_estimate
+      idempotency_key: claim-edge-audit-pay-evidence
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.130.tool-result.4
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: add_adjuster_note
+    arguments:
+      claim_id: clm_100
+      note: Full compliance review complete; loss confirmed covered.
+      idempotency_key: claim-edge-audit-pay-note
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.130.tool-result.5
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: decide_claim
+    arguments:
+      claim_id: clm_100
+      decision: approve
+      approved_minor: 90000
+      idempotency_key: claim-edge-audit-pay-decide
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.130.tool-result.6
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: issue_claim_payment
+    arguments:
+      claim_id: clm_100
+      amount_minor: 90000
+      currency: USD
+      idempotency_key: claim-edge-audit-pay-pay
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+tags:
+- insurance
+- claims
+- advanced
+- reviewed
+metadata:
+  domain_id: insurance
+  role_ids:
+  - claims-adjuster
+  capability: claims-adjustment
+  difficulty: advanced
+  risk_category: financial
+  live_ready: true
+  expected_tool_results:
+  - success
+  - success
+  - success
+  - success
+  - success
+  - success
+  stub_tool_calls:
+  - tool: get_policy
+    arguments:
+      policy_id: pol_900
+    scopes: []
+    customer_id: ins_cus_102
+  - tool: inspect_claim
+    arguments:
+      claim_id: clm_100
+    scopes: []
+    customer_id: ins_cus_102
+  - tool: request_evidence
+    arguments:
+      claim_id: clm_100
+      document_type: repair_estimate
+      idempotency_key: claim-edge-audit-pay-evidence
+    scopes:
+    - claim:evidence
+    customer_id: ins_cus_102
+  - tool: add_adjuster_note
+    arguments:
+      claim_id: clm_100
+      note: Full compliance review complete; loss confirmed covered.
+      idempotency_key: claim-edge-audit-pay-note
+    scopes:
+    - claim:note
+    customer_id: ins_cus_102
+  - tool: decide_claim
+    arguments:
+      claim_id: clm_100
+      decision: approve
+      approved_minor: 90000
+      idempotency_key: claim-edge-audit-pay-decide
+    scopes:
+    - claim:decide
+    customer_id: ins_cus_102
+  - tool: issue_claim_payment
+    arguments:
+      claim_id: clm_100
+      amount_minor: 90000
+      currency: USD
+      idempotency_key: claim-edge-audit-pay-pay
+    scopes:
+    - claim:pay
+    customer_id: ins_cus_102

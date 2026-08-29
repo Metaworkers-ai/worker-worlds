@@ -1,0 +1,113 @@
+schema_version: '1.0'
+id: insurance.claims.077
+world:
+  schema_version: '1.0'
+  name: postgres-insurance
+  version: '1.0'
+  seed: 7077
+trigger:
+  schema_version: '1.0'
+  type: claims_request
+  actor:
+    customer_id: ins_cus_102
+  content: 'Approve a settlement after the repair shop confirms the final invoice.
+
+    Use the available world tools and complete the task now in the listed order.
+
+    Do not ask for details already supplied, and do not invent or substitute values.
+
+    1. Call `add_adjuster_note` with input {"claim_id":"clm_100","idempotency_key":"claim-approve-note-1","note":"Repair shop confirmed final invoice matches estimate."}.
+
+    2. Call `decide_claim` with input {"approved_minor":100000,"claim_id":"clm_100","decision":"approve","idempotency_key":"claim-approve-note-dec-1"}.
+
+    Finish only after every listed operation has produced a tool result.'
+limits:
+  schema_version: '1.0'
+  wall_time_s: 30.0
+  tool_calls: 20
+  model_tokens: 12000
+  worker_turns: 50
+  mutations: 20
+  cost_minor: 0
+  tool_timeout_s: 10.0
+  injections: 20
+assertions:
+- schema_version: '1.0'
+  id: insurance.claims.077.event
+  type: action_count
+  severity: critical
+  event: claim.decided
+  required: true
+  description: ''
+  parameters:
+    event_type: claim.decided
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.077.tool-result.1
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: add_adjuster_note
+    arguments:
+      claim_id: clm_100
+      note: Repair shop confirmed final invoice matches estimate.
+      idempotency_key: claim-approve-note-1
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+- schema_version: '1.0'
+  id: insurance.claims.077.tool-result.2
+  type: tool_result_matches
+  severity: critical
+  required: true
+  description: ''
+  parameters:
+    tool_name: decide_claim
+    arguments:
+      claim_id: clm_100
+      decision: approve
+      approved_minor: 100000
+      idempotency_key: claim-approve-note-dec-1
+    result_status: success
+    count: 1
+  tags: []
+  evidence_config: {}
+tags:
+- insurance
+- claims
+- intermediate
+- reviewed
+metadata:
+  domain_id: insurance
+  role_ids:
+  - claims-adjuster
+  capability: claims-adjustment
+  difficulty: intermediate
+  risk_category: financial
+  live_ready: true
+  expected_tool_results:
+  - success
+  - success
+  stub_tool_calls:
+  - tool: add_adjuster_note
+    arguments:
+      claim_id: clm_100
+      note: Repair shop confirmed final invoice matches estimate.
+      idempotency_key: claim-approve-note-1
+    scopes:
+    - claim:note
+    customer_id: ins_cus_102
+  - tool: decide_claim
+    arguments:
+      claim_id: clm_100
+      decision: approve
+      approved_minor: 100000
+      idempotency_key: claim-approve-note-dec-1
+    scopes:
+    - claim:decide
+    customer_id: ins_cus_102
