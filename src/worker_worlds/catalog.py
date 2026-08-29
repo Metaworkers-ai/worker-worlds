@@ -17,7 +17,7 @@ from worker_worlds.scenario_identity import scenario_content_hash
 from worker_worlds.scenario_library import reviewed_scenarios
 from worker_worlds.scenarios import load_scenario
 
-CATALOG_VERSION = "1.0.0"
+CATALOG_VERSION = "1.1.0"
 CATALOG_PATH = Path("catalog/v1/catalog.json")
 CatalogId = Annotated[str, Field(pattern=r"^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$")]
 SemanticVersion = Annotated[str, Field(pattern=r"^[0-9]+\.[0-9]+\.[0-9]+$")]

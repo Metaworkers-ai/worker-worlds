@@ -28,8 +28,9 @@ The repository currently provides:
 - durable PostgreSQL-backed suite jobs with leases, cancellation, bounded retry, recovery, and
   content-addressed evidence;
 - a local FastAPI control plane and Next.js evaluation dashboard;
-- 200 reviewed/generated commerce scenarios and 24 enterprise scenarios. These 224 scenarios are
-  live-ready and require tool-result evidence. Ten legacy example fixtures remain stub-only;
+- 200 reviewed/generated commerce scenarios and 25 enterprise scenarios. These 225 scenarios are
+  live-ready and require tool-result evidence. Ten legacy example fixtures remain stub-only and
+  excluded from live suites, bringing the total classified scenario count to 235;
 - deterministic contextual comparisons for compatible completed suites.
 
 ## Fresh checkout
