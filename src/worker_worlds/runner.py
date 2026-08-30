@@ -53,7 +53,21 @@ _TOOL_SCOPE_POLICY = {
     "decide_claim": "claim:decide",
     "escalate_investigation": "claim:investigate",
     "issue_claim_payment": "claim:pay",
+    "search_claims": "claim:read",
+    "get_coverage": "claim:read",
+    "inspect_incident": "claim:read",
+    "list_claim_evidence": "claim:read",
+    "get_evidence": "claim:read",
+    "get_related_claims": "claim:read",
+    "calculate_coverage_analysis": "claim:read",
+    "add_analyst_note": "claim:analyst-note",
+    "record_claim_recommendation": "claim:recommend",
+    "flag_claim_for_review": "claim:flag",
 }
+
+# Tool names an Insurance Claims Analyst run must never be able to authorize,
+# regardless of what any scenario or worker requests (FR-007).
+INSURANCE_ANALYST_PROHIBITED_TOOLS = frozenset({"decide_claim", "issue_claim_payment"})
 
 
 class Runner:

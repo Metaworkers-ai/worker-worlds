@@ -80,8 +80,8 @@ const catalog = {
       label: "Insurance",
       description: "Claims evaluations",
       world_names: ["postgres-insurance"],
-      role_ids: ["claims-adjuster"],
-      capability_ids: ["claims-adjustment"],
+      role_ids: ["claims-adjuster", "claims-analyst"],
+      capability_ids: ["claims-adjustment", "claim-intake-review"],
     },
   ],
   roles: [
@@ -103,6 +103,15 @@ const catalog = {
       description: "Claims evaluations",
       capability_ids: ["claims-adjustment"],
     },
+    {
+      schema_version: "1.0",
+      id: "claims-analyst",
+      domain_id: "insurance",
+      version: "1.0.0",
+      label: "Insurance Claims Analyst",
+      description: "Claims analysis evaluations",
+      capability_ids: ["claim-intake-review"],
+    },
   ],
   capabilities: [
     {
@@ -120,6 +129,14 @@ const catalog = {
       version: "1.0.0",
       label: "Claims adjustment",
       description: "Resolve claims safely",
+    },
+    {
+      schema_version: "1.0",
+      id: "claim-intake-review",
+      domain_id: "insurance",
+      version: "1.0.0",
+      label: "Claim intake and assignment review",
+      description: "Review claim intake and assignment",
     },
   ],
   suites: [
@@ -192,6 +209,29 @@ const catalog = {
         injections: 20,
       },
     },
+    {
+      schema_version: "1.0",
+      id: "insurance.claims-analyst.smoke",
+      domain_id: "insurance",
+      role_id: "claims-analyst",
+      revision: "1.0.0",
+      label: "Insurance Claims Analyst Smoke",
+      tier: "smoke",
+      scenario_ids: ["insurance.claims-analyst.001"],
+      capability_ids: ["claim-intake-review"],
+      estimated_duration_s: 4,
+      default_limits: {
+        schema_version: "1.0",
+        wall_time_s: 30,
+        tool_calls: 20,
+        model_tokens: 12000,
+        worker_turns: 50,
+        mutations: 20,
+        cost_minor: 0,
+        tool_timeout_s: 10,
+        injections: 20,
+      },
+    },
   ],
   classifications: [
     {
@@ -211,6 +251,16 @@ const catalog = {
       domain_id: "insurance",
       role_ids: ["claims-adjuster"],
       capability_id: "claims-adjustment",
+      difficulty: "basic",
+      risk_category: "financial",
+    },
+    {
+      schema_version: "1.0",
+      scenario_id: "insurance.claims-analyst.001",
+      scenario_hash: "c".repeat(64),
+      domain_id: "insurance",
+      role_ids: ["claims-analyst"],
+      capability_id: "claim-intake-review",
       difficulty: "basic",
       risk_category: "financial",
     },
@@ -408,6 +458,30 @@ test("selects insurance and submits advanced deterministic budgets", async ({ pa
       model_tokens: 5000,
       mutations: 3,
     },
+  });
+});
+
+test("selects the claims-analyst role and submits its own smoke suite", async ({ page }) => {
+  let submitted: Record<string, unknown> | null = null;
+  await mockDashboardApi(page, () => undefined, (body) => {
+    submitted = body;
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Run evaluation" }).click();
+  await page.getByLabel("Choose domain").selectOption("insurance");
+  await expect(page.getByLabel("Choose job role")).toHaveValue("claims-adjuster");
+  await page.getByLabel("Choose job role").selectOption("claims-analyst");
+  await expect(page.getByLabel("Suite world")).toHaveValue("insurance");
+  await expect(page.getByLabel("Evaluation suite")).toHaveValue(
+    "insurance.claims-analyst.smoke",
+  );
+  await page.getByRole("button", { name: "Start evaluation suite" }).click();
+  await expect.poll(() => submitted).not.toBeNull();
+  expect(submitted).toMatchObject({
+    domain_id: "insurance",
+    role_id: "claims-analyst",
+    suite_id: "insurance.claims-analyst.smoke",
+    world: "insurance",
   });
 });
 

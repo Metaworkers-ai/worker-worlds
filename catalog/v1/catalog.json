@@ -1,10 +1,58 @@
 {
   "capabilities": [
     {
+      "description": "Evaluate claim intake and assignment review behavior in deterministic commerce worlds.",
+      "domain_id": "insurance",
+      "id": "claim-intake-review",
+      "label": "Claim intake and assignment review",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
       "description": "Evaluate claims adjustment behavior in deterministic commerce worlds.",
       "domain_id": "insurance",
       "id": "claims-adjustment",
       "label": "Claims adjustment",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "description": "Evaluate decision recommendation behavior in deterministic commerce worlds.",
+      "domain_id": "insurance",
+      "id": "decision-recommendation",
+      "label": "Decision recommendation",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "description": "Evaluate evidence assessment behavior in deterministic commerce worlds.",
+      "domain_id": "insurance",
+      "id": "evidence-assessment",
+      "label": "Evidence assessment",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "description": "Evaluate evidence request and customer follow-up behavior in deterministic commerce worlds.",
+      "domain_id": "insurance",
+      "id": "evidence-request-followup",
+      "label": "Evidence request and customer follow-up",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "description": "Evaluate financial exposure analysis behavior in deterministic commerce worlds.",
+      "domain_id": "insurance",
+      "id": "financial-exposure-analysis",
+      "label": "Financial exposure analysis",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "description": "Evaluate fraud and anomaly triage behavior in deterministic commerce worlds.",
+      "domain_id": "insurance",
+      "id": "fraud-anomaly-triage",
+      "label": "Fraud and anomaly triage",
       "schema_version": "1.0",
       "version": "1.0.0"
     },
@@ -25,6 +73,14 @@
       "version": "1.0.0"
     },
     {
+      "description": "Evaluate investigation escalation behavior in deterministic commerce worlds.",
+      "domain_id": "insurance",
+      "id": "investigation-escalation",
+      "label": "Investigation escalation",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
       "description": "Evaluate operational reliability behavior in deterministic commerce worlds.",
       "domain_id": "commerce",
       "id": "operational-reliability",
@@ -37,6 +93,14 @@
       "domain_id": "commerce",
       "id": "order-operations",
       "label": "Order operations",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "description": "Evaluate policy and coverage analysis behavior in deterministic commerce worlds.",
+      "domain_id": "insurance",
+      "id": "policy-coverage-analysis",
+      "label": "Policy and coverage analysis",
       "schema_version": "1.0",
       "version": "1.0.0"
     },
@@ -3080,6 +3144,1230 @@
       "schema_version": "1.0"
     },
     {
+      "capability_id": "policy-coverage-analysis",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "7479d3733cea67d5e5993400db62481db5aecb0dde0abe384a40279f6403a5db",
+      "scenario_id": "insurance.claims-analyst.001",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "bfc79c1f7219483e671df776f1cb2f90e9f7c279d348135914fd643a735354a1",
+      "scenario_id": "insurance.claims-analyst.002",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-coverage-analysis",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "171cad9b94f4644da66c8400ce2b759d16ca5d84a4a63e78b263e9e5a1f8947f",
+      "scenario_id": "insurance.claims-analyst.003",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "5429043428b09b320c3b4d47978b7d2792efbb062b46f38ed72db3e6acb6615f",
+      "scenario_id": "insurance.claims-analyst.004",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "evidence-assessment",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "70dda6878c8534926c9a16efec2014c53145eed5a55c57ad0249e5520b5513fa",
+      "scenario_id": "insurance.claims-analyst.005",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "evidence-assessment",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "f3a3583b26485feedd715aeddca38bb736a4b98f9b7e75aa39283b67bfbecea0",
+      "scenario_id": "insurance.claims-analyst.006",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "25829391060edd2bb6ecf4976b634c3df4433703fa437b799575159bfe0756cd",
+      "scenario_id": "insurance.claims-analyst.007",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "financial-exposure-analysis",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "2700e3707c2730468cbe49f832157ef04cd021c8c823e4a12eac61ce2b54ee9c",
+      "scenario_id": "insurance.claims-analyst.008",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "evidence-request-followup",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "28eaf9790b11e6e151edc7b9a3dca78cf9edf510bcef35701e22dbd2d7b6e1fa",
+      "scenario_id": "insurance.claims-analyst.009",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "09c403f66ff9c8b61cab78cc47ba3515d3529bb6cc07d901228508bb7fb6d0fa",
+      "scenario_id": "insurance.claims-analyst.010",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "e0d00543dde27cce1cb0203432d3d8365d4132adf53891e7ca5cc87e7e5c0e13",
+      "scenario_id": "insurance.claims-analyst.011",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "b75d55763244aaf39128bdf7c6406de8fffa3b4616d86813cec9d9e945890373",
+      "scenario_id": "insurance.claims-analyst.012",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "20b8c19b61bc6eee70a0ba620c5b3d7b117de84695a7a9d3a5b03d4c4bf66861",
+      "scenario_id": "insurance.claims-analyst.013",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "6abc6023b65ff6e5df8bcbbb51faddc6e3adc5b8ec6772f8667667bab87fdde1",
+      "scenario_id": "insurance.claims-analyst.014",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "83d3b2503d97821550ed441372f550c535f4bd111d1ccf402a1f2863a5955bde",
+      "scenario_id": "insurance.claims-analyst.015",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "investigation-escalation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "6c33f50e22cee84420876e2ce7b85d677f005330cdc0fdd38db85abb25192653",
+      "scenario_id": "insurance.claims-analyst.016",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "516a2d877a165129e1cb13bf2b24d500b7d9f033a570af95458a780a3ee773b3",
+      "scenario_id": "insurance.claims-analyst.017",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "21f18c79d1e7b831a68dd8b95329d641af0d0882416bfc0e9285a6c004c425df",
+      "scenario_id": "insurance.claims-analyst.018",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "authorization",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "3a459f7e892c3c0cf0137f509e9544a457ab1131ff4614742e49391713d498ba",
+      "scenario_id": "insurance.claims-analyst.019",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "authorization",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "4ad8a70c59c1307f6f8672d1e6ce41b03f2ab16473e8faf04d2780dbc9721f29",
+      "scenario_id": "insurance.claims-analyst.020",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "authorization",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "471199d94762c4206d7873436d16cb25dd652e767ce271c42e28ed773f56037d",
+      "scenario_id": "insurance.claims-analyst.021",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "evidence-request-followup",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "authorization",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "2e96830fb8672af2cde928dd03755a6e42a32edc6054d16d856429afc8583920",
+      "scenario_id": "insurance.claims-analyst.022",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "3129d449cccc385a7171f0352f5e83304de1c246ba1fc54f0399484eacfad7b4",
+      "scenario_id": "insurance.claims-analyst.023",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "financial-exposure-analysis",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "b11503fd7eff709a27a04ea14792cb9a92a7d02b4f57ea62d9a4b37ac78f99ea",
+      "scenario_id": "insurance.claims-analyst.024",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "bd886297ec5b6cd2ad8d990c30ece08f2e7e70cd79bb3540c5c422932bb1a41b",
+      "scenario_id": "insurance.claims-analyst.025",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "financial-exposure-analysis",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "d64cbc92489224fc26194769e042e465459e97fd9e450f07eba70efd03a1a5ee",
+      "scenario_id": "insurance.claims-analyst.026",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "8a3ff7560f3d241b86eef5901a831a2267420602a648da00437db500b0e275c9",
+      "scenario_id": "insurance.claims-analyst.027",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "financial-exposure-analysis",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "7bb323614d500859ee83c92590bc831431e790319dded9a355c6b338aa80906f",
+      "scenario_id": "insurance.claims-analyst.028",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "845c5f366a2b41667660db1bcb038e022ef08b70060332fe9fa328e535ce0169",
+      "scenario_id": "insurance.claims-analyst.029",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "financial-exposure-analysis",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "5b465e1772510aabc2669eb0a5a5b070b675ee6c0843674f49ee9b94c6ccb421",
+      "scenario_id": "insurance.claims-analyst.030",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "d993f0f665bb8219a1406baf7c8fed6be8502cc2aef5bfec18a9a160dc6517de",
+      "scenario_id": "insurance.claims-analyst.031",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "financial-exposure-analysis",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "54df8ef0fc71fc57adfcdda57e945b0c0998db79be1295051835943d18cd5456",
+      "scenario_id": "insurance.claims-analyst.032",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "e321d1f2ba16d2af6aeda45401973ca86ebaef275119549b372cebffa78755fb",
+      "scenario_id": "insurance.claims-analyst.033",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "investigation-escalation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "a1d99ba12674ae06fa22d3be764d59581d5b86a62190c2f252c1f4d221db927d",
+      "scenario_id": "insurance.claims-analyst.034",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "c4a24918dc798dabb09c0e9b012b6152c7a777c4ced2b1f3c8c8cacec9a3c455",
+      "scenario_id": "insurance.claims-analyst.035",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "6f8592dc7a6602e965c8fc01176ce693b06d47c462e5c3cae441661c1bd10c9d",
+      "scenario_id": "insurance.claims-analyst.036",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "e931215395737c79772aabe87020da8d2f57511e74587dcbe698f1986017af5a",
+      "scenario_id": "insurance.claims-analyst.037",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "evidence-assessment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "de6980819e27f1179dcd83c6d04e55916cc8781fdf80f90dcc1e319f9c3d468c",
+      "scenario_id": "insurance.claims-analyst.038",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "f44cbc3e0e3ea47e67f36c10d83990d6e1c9927fd1eafd32fdb200b6dbae4f2f",
+      "scenario_id": "insurance.claims-analyst.039",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "authorization",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "5af540b8351df7af8f2120a3bed9c4f8d85476e4ea499c8e37d9f4f440500081",
+      "scenario_id": "insurance.claims-analyst.040",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "authorization",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "2d4c6f891bacab7878ffc57864b779b9d6635558094564791e378a95309d7823",
+      "scenario_id": "insurance.claims-analyst.041",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "authorization",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "f9c694da85ad30702944fbf3b915a780e44f45ce2e5c17e635f9826683bc7c0c",
+      "scenario_id": "insurance.claims-analyst.042",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "investigation-escalation",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "authorization",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "316ccddea7ffba427adc1a36944feddc21ac8a84c90b53df95685e22f6aeb421",
+      "scenario_id": "insurance.claims-analyst.043",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "authorization",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "8423fa96afd133df762e526189ebf8b0c57dfdd7a43cd8b7bf07a4589a733778",
+      "scenario_id": "insurance.claims-analyst.044",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "dcbecdc81714a7bf0f6c079a8ec80f5716b30e462caa81e49fdcecc0162b45fa",
+      "scenario_id": "insurance.claims-analyst.045",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "evidence-assessment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "6752ff4d136aa9d79e7a034354682481762264332f790ee5d350aabb831f485e",
+      "scenario_id": "insurance.claims-analyst.046",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "investigation-escalation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "715780dc9fce1433c8ce49e78e02dbe544e54d419287b6f02052f0c3e0d69c80",
+      "scenario_id": "insurance.claims-analyst.047",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "7ae2225913a92e4e1fd8d2fa51a9fce4f78f7570cebffc1e76b50931c45d0542",
+      "scenario_id": "insurance.claims-analyst.048",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "financial-exposure-analysis",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "38be1254a9e4a0f582d4cef0162fb79e11b70635dec536b150c3e8c2e60d7ac6",
+      "scenario_id": "insurance.claims-analyst.049",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "eaa41e20c272daf0519473229627f562be7c1dabf9ee63317cd4a8aeb28f4478",
+      "scenario_id": "insurance.claims-analyst.050",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "8f2b55e870ecef0c723668b89ff897baeb426eb1b57045daeb2388fdbccbf019",
+      "scenario_id": "insurance.claims-analyst.051",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "35543d2553f2df4f3501a5409b05322a3446cc70b9d3832c87aa9afb476775e1",
+      "scenario_id": "insurance.claims-analyst.052",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "73057f3f57f4b1e74f1bca5fc670a4e7ddc7bb944702ec43cd9a2b6bb55fa8b1",
+      "scenario_id": "insurance.claims-analyst.053",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "evidence-request-followup",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "adfb06761d561a74c226b72884370a1d393059a0bd2c19b70a7af1654fb96d2f",
+      "scenario_id": "insurance.claims-analyst.054",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "investigation-escalation",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "160f3e4a646a249228bc63111e5a08bc43880aabac24550fbf791a7fd873752a",
+      "scenario_id": "insurance.claims-analyst.055",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "603fdd3d4ced060eb6b6ae710dbf6d48d6369ea6914a10a8672a1c9162603ff4",
+      "scenario_id": "insurance.claims-analyst.056",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "investigation-escalation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "94a8dce879d3070014da0bc9c659bd4a27dc58f1d1c98f93daa76b641cf743df",
+      "scenario_id": "insurance.claims-analyst.057",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "a6382a70dd7d39f3e79a0f976a889d9f986714a4a4b973bf2c5138a50e51dfb5",
+      "scenario_id": "insurance.claims-analyst.058",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "5e1e827a8ff8b3b865a5d6c474c6cf05c385bddc504ade87480ba5326f06a239",
+      "scenario_id": "insurance.claims-analyst.059",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "evidence-request-followup",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "f8dc98df8dab0d39fdbb811860f27626ece97e8b3b7aac904890a8ccfaec4f03",
+      "scenario_id": "insurance.claims-analyst.060",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "e7a3c932ae5c47eb8590eda1032677b5889c1d71816a1d084e4b3777c4b1ce16",
+      "scenario_id": "insurance.claims-analyst.061",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "financial-exposure-analysis",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "40f047d8125f7f4dcd0908b76e128e0643995d8ef6212d653f309573b8bd3069",
+      "scenario_id": "insurance.claims-analyst.062",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "175a574bbbec79a5d29c8345ee1f9081a6192773c4abb9504f5a6fdc00d9b627",
+      "scenario_id": "insurance.claims-analyst.063",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "6502495a1f248f890fc65732239df883c8b9b5e287ca2648e6204703e7ed10e2",
+      "scenario_id": "insurance.claims-analyst.064",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "financial-exposure-analysis",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "bea2202930204df99fb9e951b3788aff9884bc99524da5960f2af7adf5632af4",
+      "scenario_id": "insurance.claims-analyst.065",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "a9e6bfa41af1f17551c8b7d49c7ab1a5a6fc968b0506cc79daa21596e9ccfdc1",
+      "scenario_id": "insurance.claims-analyst.066",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "29267de822c498988fa5205f9cf1f72ba46656b1fb0bfdc358fda96edef713c3",
+      "scenario_id": "insurance.claims-analyst.067",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "0932aecac78e463e26af7a90aeff934f706c83d2c43a5f56299e267dad6c747d",
+      "scenario_id": "insurance.claims-analyst.068",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "investigation-escalation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "2839175572190e12735b750e122262deadde75410dbd4b92faab2058336254de",
+      "scenario_id": "insurance.claims-analyst.069",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "financial-exposure-analysis",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "8b56be6243ae741b19b88aa199d8c1e8d9d255e7318e5ba0127390178f20a14a",
+      "scenario_id": "insurance.claims-analyst.070",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "evidence-request-followup",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "9bb15d2bdbe70c08b322a2fae65e038afa3c26e608db1f6630a46a1962badb7d",
+      "scenario_id": "insurance.claims-analyst.071",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "evidence-request-followup",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "7c9870fc9346b999b0ffae3a18b6cc14d39025af8c92911a157f181ae30689f3",
+      "scenario_id": "insurance.claims-analyst.072",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "9e58e4baa2b4474091f876019dd5dd530b542b77c294de1b74e4d74a70df2c49",
+      "scenario_id": "insurance.claims-analyst.073",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "investigation-escalation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "9f97a71e9f010897dd47064f32a149ba2fc61ff565fc58c9dcbf7749049c5a4f",
+      "scenario_id": "insurance.claims-analyst.074",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "0e7eca7b7e7ffb46e2ffb1f5c2767cfe771a8b7274af1781aab3717c52ac0201",
+      "scenario_id": "insurance.claims-analyst.075",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "831540b8f6db69e7f9be63d96984ada981eedda576490a790dec2ec4fc9dd4b9",
+      "scenario_id": "insurance.claims-analyst.076",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "evidence-assessment",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "9eec22ff410a2624f143344fb6ea89896559014828951d1e68c6244ede35b231",
+      "scenario_id": "insurance.claims-analyst.077",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "882bc0d89d68c66b1a11839caabdb65a01ff0d766c62a792d340af9d27b1f49a",
+      "scenario_id": "insurance.claims-analyst.078",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-coverage-analysis",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "e51b9a77fb190494dd5b27122e905b882614cd563f238ab7713b1e3a0fa8ab9f",
+      "scenario_id": "insurance.claims-analyst.079",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "financial-exposure-analysis",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "108fd1dd7ce3689d3df48c5d8c1cc37df3c432ae0890dbc21771ea1ae11da9f2",
+      "scenario_id": "insurance.claims-analyst.080",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "650cc97a0cd848ce7de67a838b1b75eccb0fc7185fdda380ae8020174c75e6b4",
+      "scenario_id": "insurance.claims-analyst.081",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-coverage-analysis",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "6186cad60cfffbe4e312b3d2d1f00daada6aefe497518a5788952d9b6f177186",
+      "scenario_id": "insurance.claims-analyst.082",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "evidence-assessment",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "7ca32399e5fb9a674ac7c20671bd7ff161d9717514f7072ecdd9724b901f40ec",
+      "scenario_id": "insurance.claims-analyst.083",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "evidence-request-followup",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "5bbdd9aaf16536dc46da35aa53e40728402364b02b5860a4b67273726453218e",
+      "scenario_id": "insurance.claims-analyst.084",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "3f62c150adc98a958541497bbd9e46792e5920077813fe785e609195785887e5",
+      "scenario_id": "insurance.claims-analyst.085",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "financial-exposure-analysis",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "0ed76e51ceab2ecbb71f17e293ae77927c1793972898e84236586c71a5b4750d",
+      "scenario_id": "insurance.claims-analyst.086",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "adversarial",
+      "domain_id": "insurance",
+      "risk_category": "authorization",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "a797f807c6930522934842d363a27365b6b16ee370d4c38cbbf2124c0585d6ea",
+      "scenario_id": "insurance.claims-analyst.087",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "61599582b30bef0bee6bf3cd2963e28b5b21abab03ce1aacd90ea2641b2b3c62",
+      "scenario_id": "insurance.claims-analyst.088",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "f1ef0f9503109ab399c2d824351a2eaee75ddb8d761f5f9ca77f0bedf86e9829",
+      "scenario_id": "insurance.claims-analyst.089",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "evidence-assessment",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "b7903b87a9b04a1e10fcf04ef40d3cea85958cc9784e612cc502b1dd82172690",
+      "scenario_id": "insurance.claims-analyst.090",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "6bb312197ff14f262d9a9079e6437df15e4da0eb7ddd48f390a3b42ab765fcf3",
+      "scenario_id": "insurance.claims-analyst.091",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "ade75a2efe35aaa11d967454d0465d7ee0c15599a490da9bd461ea3c60b25e4c",
+      "scenario_id": "insurance.claims-analyst.092",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "9288c7b522be21087b0ab48500d0e196456e4e0c87d9b6d200ea7cffecee7585",
+      "scenario_id": "insurance.claims-analyst.093",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "policy-coverage-analysis",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "21b53d10292c6916bb4db4c24d635e86d63a1646bf2d4e178541178ef5d3c3ff",
+      "scenario_id": "insurance.claims-analyst.094",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "3dbcec1c3e8251eec07f67a6aaec0e5f25323eff5cf4b2b3128c2591242f3c18",
+      "scenario_id": "insurance.claims-analyst.095",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "fbbc49cc793195f286f9309fe02e45569f66cfe5f6ca79341cf01317c018ff1d",
+      "scenario_id": "insurance.claims-analyst.096",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "7dcbe0d69e27862adf91f852960a2e6fcdfc2acc8631f90ae0e33ad58cfe6013",
+      "scenario_id": "insurance.claims-analyst.097",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "investigation-escalation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "dde19738e0bf329df4b082bba3c812853aa1a8bf6a92612cde39d61ec80dd05f",
+      "scenario_id": "insurance.claims-analyst.098",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "financial-exposure-analysis",
+      "difficulty": "intermediate",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "973af4b276982abe56a0f197c4fb432783e5749d8b4ec79c906570260dec3e40",
+      "scenario_id": "insurance.claims-analyst.099",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "fraud-anomaly-triage",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "operational",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "260007233105ad549cb5515bcd5184f377d18957c156a54099537e5e97fd4982",
+      "scenario_id": "insurance.claims-analyst.100",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "decision-recommendation",
+      "difficulty": "advanced",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "60c472c6c804472a67a14a5f29038f79d9efe096c3844294edc69f1cdb6ed208",
+      "scenario_id": "insurance.claims-analyst.101",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "claim-intake-review",
+      "difficulty": "basic",
+      "domain_id": "insurance",
+      "risk_category": "financial",
+      "role_ids": [
+        "claims-analyst"
+      ],
+      "scenario_hash": "60f259626b89a1db211febe33748a4fb821c19ce6a830ccc3c215d67bb875185",
+      "scenario_id": "insurance.claims-analyst.102",
+      "schema_version": "1.0"
+    },
+    {
       "capability_id": "claims-adjustment",
       "difficulty": "basic",
       "domain_id": "insurance",
@@ -3396,13 +4684,22 @@
     },
     {
       "capability_ids": [
-        "claims-adjustment"
+        "claim-intake-review",
+        "claims-adjustment",
+        "decision-recommendation",
+        "evidence-assessment",
+        "evidence-request-followup",
+        "financial-exposure-analysis",
+        "fraud-anomaly-triage",
+        "investigation-escalation",
+        "policy-coverage-analysis"
       ],
       "description": "Policies, coverage, claims, evidence, investigations, and payments.",
       "id": "insurance",
       "label": "Insurance",
       "role_ids": [
-        "claims-adjuster"
+        "claims-adjuster",
+        "claims-analyst"
       ],
       "schema_version": "1.0",
       "version": "1.0.0",
@@ -3420,6 +4717,24 @@
       "domain_id": "insurance",
       "id": "claims-adjuster",
       "label": "Claims Adjuster",
+      "schema_version": "1.0",
+      "version": "1.0.0"
+    },
+    {
+      "capability_ids": [
+        "claim-intake-review",
+        "decision-recommendation",
+        "evidence-assessment",
+        "evidence-request-followup",
+        "financial-exposure-analysis",
+        "fraud-anomaly-triage",
+        "investigation-escalation",
+        "policy-coverage-analysis"
+      ],
+      "description": "Evaluate first-line claims investigation, coverage analysis, evidence assessment, fraud triage, and non-binding disposition recommendations. Distinct from claims-adjuster: cannot decide a claim or issue a payment.",
+      "domain_id": "insurance",
+      "id": "claims-analyst",
+      "label": "Insurance Claims Analyst",
       "schema_version": "1.0",
       "version": "1.0.0"
     },
@@ -5296,6 +6611,287 @@
         "insurance.claims.008",
         "insurance.claims.009",
         "insurance.claims.010"
+      ],
+      "schema_version": "1.0",
+      "tier": "standard"
+    },
+    {
+      "capability_ids": [
+        "claim-intake-review",
+        "decision-recommendation",
+        "evidence-assessment",
+        "evidence-request-followup",
+        "financial-exposure-analysis",
+        "fraud-anomaly-triage",
+        "investigation-escalation",
+        "policy-coverage-analysis"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "insurance",
+      "estimated_duration_s": 0,
+      "id": "insurance.claims-analyst.custom",
+      "label": "Insurance Claims Analyst Custom",
+      "revision": "1.0.0",
+      "role_id": "claims-analyst",
+      "scenario_ids": [],
+      "schema_version": "1.0",
+      "tier": "custom"
+    },
+    {
+      "capability_ids": [
+        "claim-intake-review",
+        "decision-recommendation",
+        "evidence-assessment",
+        "evidence-request-followup",
+        "financial-exposure-analysis",
+        "fraud-anomaly-triage",
+        "investigation-escalation",
+        "policy-coverage-analysis"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "insurance",
+      "estimated_duration_s": 306,
+      "id": "insurance.claims-analyst.full",
+      "label": "Insurance Claims Analyst Full",
+      "revision": "1.0.0",
+      "role_id": "claims-analyst",
+      "scenario_ids": [
+        "insurance.claims-analyst.001",
+        "insurance.claims-analyst.002",
+        "insurance.claims-analyst.003",
+        "insurance.claims-analyst.004",
+        "insurance.claims-analyst.005",
+        "insurance.claims-analyst.006",
+        "insurance.claims-analyst.007",
+        "insurance.claims-analyst.008",
+        "insurance.claims-analyst.009",
+        "insurance.claims-analyst.010",
+        "insurance.claims-analyst.011",
+        "insurance.claims-analyst.012",
+        "insurance.claims-analyst.013",
+        "insurance.claims-analyst.014",
+        "insurance.claims-analyst.015",
+        "insurance.claims-analyst.016",
+        "insurance.claims-analyst.017",
+        "insurance.claims-analyst.018",
+        "insurance.claims-analyst.019",
+        "insurance.claims-analyst.020",
+        "insurance.claims-analyst.021",
+        "insurance.claims-analyst.022",
+        "insurance.claims-analyst.023",
+        "insurance.claims-analyst.024",
+        "insurance.claims-analyst.025",
+        "insurance.claims-analyst.026",
+        "insurance.claims-analyst.027",
+        "insurance.claims-analyst.028",
+        "insurance.claims-analyst.029",
+        "insurance.claims-analyst.030",
+        "insurance.claims-analyst.031",
+        "insurance.claims-analyst.032",
+        "insurance.claims-analyst.033",
+        "insurance.claims-analyst.034",
+        "insurance.claims-analyst.035",
+        "insurance.claims-analyst.036",
+        "insurance.claims-analyst.037",
+        "insurance.claims-analyst.038",
+        "insurance.claims-analyst.039",
+        "insurance.claims-analyst.040",
+        "insurance.claims-analyst.041",
+        "insurance.claims-analyst.042",
+        "insurance.claims-analyst.043",
+        "insurance.claims-analyst.044",
+        "insurance.claims-analyst.045",
+        "insurance.claims-analyst.046",
+        "insurance.claims-analyst.047",
+        "insurance.claims-analyst.048",
+        "insurance.claims-analyst.049",
+        "insurance.claims-analyst.050",
+        "insurance.claims-analyst.051",
+        "insurance.claims-analyst.052",
+        "insurance.claims-analyst.053",
+        "insurance.claims-analyst.054",
+        "insurance.claims-analyst.055",
+        "insurance.claims-analyst.056",
+        "insurance.claims-analyst.057",
+        "insurance.claims-analyst.058",
+        "insurance.claims-analyst.059",
+        "insurance.claims-analyst.060",
+        "insurance.claims-analyst.061",
+        "insurance.claims-analyst.062",
+        "insurance.claims-analyst.063",
+        "insurance.claims-analyst.064",
+        "insurance.claims-analyst.065",
+        "insurance.claims-analyst.066",
+        "insurance.claims-analyst.067",
+        "insurance.claims-analyst.068",
+        "insurance.claims-analyst.069",
+        "insurance.claims-analyst.070",
+        "insurance.claims-analyst.071",
+        "insurance.claims-analyst.072",
+        "insurance.claims-analyst.073",
+        "insurance.claims-analyst.074",
+        "insurance.claims-analyst.075",
+        "insurance.claims-analyst.076",
+        "insurance.claims-analyst.077",
+        "insurance.claims-analyst.078",
+        "insurance.claims-analyst.079",
+        "insurance.claims-analyst.080",
+        "insurance.claims-analyst.081",
+        "insurance.claims-analyst.082",
+        "insurance.claims-analyst.083",
+        "insurance.claims-analyst.084",
+        "insurance.claims-analyst.085",
+        "insurance.claims-analyst.086",
+        "insurance.claims-analyst.087",
+        "insurance.claims-analyst.088",
+        "insurance.claims-analyst.089",
+        "insurance.claims-analyst.090",
+        "insurance.claims-analyst.091",
+        "insurance.claims-analyst.092",
+        "insurance.claims-analyst.093",
+        "insurance.claims-analyst.094",
+        "insurance.claims-analyst.095",
+        "insurance.claims-analyst.096",
+        "insurance.claims-analyst.097",
+        "insurance.claims-analyst.098",
+        "insurance.claims-analyst.099",
+        "insurance.claims-analyst.100",
+        "insurance.claims-analyst.101",
+        "insurance.claims-analyst.102"
+      ],
+      "schema_version": "1.0",
+      "tier": "full"
+    },
+    {
+      "capability_ids": [
+        "claim-intake-review",
+        "evidence-assessment",
+        "evidence-request-followup",
+        "financial-exposure-analysis",
+        "fraud-anomaly-triage",
+        "policy-coverage-analysis"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "insurance",
+      "estimated_duration_s": 30,
+      "id": "insurance.claims-analyst.smoke",
+      "label": "Insurance Claims Analyst Smoke",
+      "revision": "1.0.0",
+      "role_id": "claims-analyst",
+      "scenario_ids": [
+        "insurance.claims-analyst.001",
+        "insurance.claims-analyst.002",
+        "insurance.claims-analyst.003",
+        "insurance.claims-analyst.004",
+        "insurance.claims-analyst.005",
+        "insurance.claims-analyst.006",
+        "insurance.claims-analyst.007",
+        "insurance.claims-analyst.008",
+        "insurance.claims-analyst.009",
+        "insurance.claims-analyst.010"
+      ],
+      "schema_version": "1.0",
+      "tier": "smoke"
+    },
+    {
+      "capability_ids": [
+        "claim-intake-review",
+        "decision-recommendation",
+        "evidence-assessment",
+        "evidence-request-followup",
+        "financial-exposure-analysis",
+        "fraud-anomaly-triage",
+        "investigation-escalation",
+        "policy-coverage-analysis"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "insurance",
+      "estimated_duration_s": 120,
+      "id": "insurance.claims-analyst.standard",
+      "label": "Insurance Claims Analyst Standard",
+      "revision": "1.0.0",
+      "role_id": "claims-analyst",
+      "scenario_ids": [
+        "insurance.claims-analyst.001",
+        "insurance.claims-analyst.002",
+        "insurance.claims-analyst.003",
+        "insurance.claims-analyst.004",
+        "insurance.claims-analyst.005",
+        "insurance.claims-analyst.006",
+        "insurance.claims-analyst.007",
+        "insurance.claims-analyst.008",
+        "insurance.claims-analyst.009",
+        "insurance.claims-analyst.010",
+        "insurance.claims-analyst.011",
+        "insurance.claims-analyst.012",
+        "insurance.claims-analyst.013",
+        "insurance.claims-analyst.014",
+        "insurance.claims-analyst.015",
+        "insurance.claims-analyst.016",
+        "insurance.claims-analyst.017",
+        "insurance.claims-analyst.018",
+        "insurance.claims-analyst.019",
+        "insurance.claims-analyst.020",
+        "insurance.claims-analyst.021",
+        "insurance.claims-analyst.022",
+        "insurance.claims-analyst.023",
+        "insurance.claims-analyst.024",
+        "insurance.claims-analyst.025",
+        "insurance.claims-analyst.026",
+        "insurance.claims-analyst.027",
+        "insurance.claims-analyst.028",
+        "insurance.claims-analyst.029",
+        "insurance.claims-analyst.030",
+        "insurance.claims-analyst.031",
+        "insurance.claims-analyst.032",
+        "insurance.claims-analyst.033",
+        "insurance.claims-analyst.034",
+        "insurance.claims-analyst.035",
+        "insurance.claims-analyst.036",
+        "insurance.claims-analyst.037",
+        "insurance.claims-analyst.038",
+        "insurance.claims-analyst.039",
+        "insurance.claims-analyst.040"
       ],
       "schema_version": "1.0",
       "tier": "standard"

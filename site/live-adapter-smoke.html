@@ -35,4 +35,16 @@ the fake-model conformance, cold-install, and guarded live-smoke contracts pass.
 Live smoke authorization is separate from ordinary test execution. Default CI,
 `make verify`, package builds, and fake-model conformance tests never set
 `WORKER_WORLDS_LIVE_SMOKE` and therefore cannot make paid calls.
+
+## CI
+
+`.github/workflows/worker-worlds-live-smoke.yml` runs this exact smoke on a hosted runner,
+gated on manual `workflow_dispatch` and the repository&#x27;s `OPENAI_API_KEY` secret. It never
+runs on a pull request, push, or schedule, so it can never fire without a maintainer
+deliberately dispatching it. See `.github/HOSTED_VALIDATION.md` for its acceptance criteria.
+
+A test run that actually reached the provider prints `runtime_exercised=true` and a
+non-empty `provider_response_ids`; the two setup-only tests in this file
+(`test_live_cost_measurement_is_directional`, `test_live_retry_ceiling_is_enforced_without_a_provider_call`)
+never print that line because they never call a provider.
 </pre></main></body></html>

@@ -11,8 +11,10 @@ import pytest
 from worker_worlds.catalog import builtin_catalog
 from worker_worlds.contracts import Scenario, SuiteRecord, ToolResult, WorkerTurn, WorldSnapshot
 from worker_worlds.database import DatabaseSettings, connect
+from worker_worlds.enterprise_scenarios import claims_analyst_scenarios
 from worker_worlds.errors import InfrastructureError
 from worker_worlds.ids import prefixed_ulid
+from worker_worlds.insurance import InsuranceWorld
 from worker_worlds.scenario_library import reviewed_scenarios
 from worker_worlds.scenarios import load_scenario
 from worker_worlds.stubs import StubWorkerAdapter, StubWorld
@@ -374,6 +376,78 @@ async def test_ten_concurrent_suite_jobs_keep_progress_and_evidence_isolated(
         completed = await asyncio.gather(*(service.wait(job.id) for job in jobs))
         assert all(item.status is SuiteJobStatus.COMPLETED for item in completed)
         assert all(item.completed_scenarios == 1 for item in completed)
+        assert len({item.suite_record_path for item in completed}) == 10
+        evidence_exists = await asyncio.gather(
+            *(
+                asyncio.to_thread(
+                    (tmp_path / str(item.suite_record_path)).parent.joinpath("evidence.zip").is_file
+                )
+                for item in completed
+            )
+        )
+        assert all(evidence_exists)
+    finally:
+        connection = await connect(settings)
+        try:
+            await connection.execute(
+                "DELETE FROM worker_worlds.suite_jobs WHERE id=ANY($1::text[])",
+                [job.id for job in jobs],
+            )
+        finally:
+            await connection.close()
+
+
+async def test_ten_concurrent_claims_analyst_suite_jobs_keep_progress_and_evidence_isolated(
+    tmp_path: Path,
+) -> None:
+    """The same isolation guarantee, exercised with real InsuranceWorld/Postgres worlds."""
+    url = os.environ.get("WORKER_WORLDS_TEST_DATABASE_URL")
+    if not url:
+        pytest.skip("WORKER_WORLDS_TEST_DATABASE_URL is not explicitly set")
+    settings = DatabaseSettings(url=url)
+    scenario = claims_analyst_scenarios()[0]
+    repository = PostgresSuiteJobRepository(settings)
+    jobs = await asyncio.gather(
+        *(
+            repository.create(
+                SuiteJobCreate(
+                    request_key=prefixed_ulid("request"),
+                    catalog_version="1.0.0",
+                    domain_id="insurance",
+                    role_id="claims-analyst",
+                    suite_id="insurance.claims-analyst.custom",
+                    suite_revision="1.0.0",
+                    agent_id="local-stub",
+                    world="insurance",
+                    scenario_ids=(str(scenario.id),),
+                    configuration={"concurrency": 1},
+                )
+            )
+            for _ in range(10)
+        )
+    )
+
+    async def worker() -> StubWorkerAdapter:
+        return StubWorkerAdapter()
+
+    def world_factory(target_scenario: Scenario) -> InsuranceWorld:
+        return InsuranceWorld(settings, str(target_scenario.id))
+
+    service = DurableSuiteService(
+        repository,
+        {str(scenario.id): scenario},
+        world_factory,
+        worker,
+        tmp_path,
+        concurrency=10,
+    )
+    try:
+        for job in jobs:
+            service.schedule(job.id)
+        completed = await asyncio.gather(*(service.wait(job.id) for job in jobs))
+        assert all(item.status is SuiteJobStatus.COMPLETED for item in completed)
+        assert all(item.completed_scenarios == 1 for item in completed)
+        assert all(item.passed_scenarios == 1 for item in completed)
         assert len({item.suite_record_path for item in completed}) == 10
         evidence_exists = await asyncio.gather(
             *(
