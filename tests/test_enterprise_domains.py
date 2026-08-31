@@ -416,6 +416,298 @@ async def test_insurance_payment_retry_is_idempotent_and_not_applied_twice(
     await world.close()
 
 
+def test_claims_analyst_fixture_seed_bands_are_deterministic_and_legacy_unchanged() -> None:
+    """`build_insurance_state` stays pure per band; legacy claims-adjuster shape is untouched."""
+    assert _hash(build_insurance_state(8001)) == _hash(build_insurance_state(8001))
+    assert _hash(build_insurance_state(8001)) != _hash(build_insurance_state(8002))
+    # Seeds below the analyst floor (8000) must still build the exact original
+    # single-claim, single-document claims-adjuster fixture, byte for byte.
+    legacy = build_insurance_state(7001)
+    assert len(cast(list[object], legacy["claims"])) == 1
+    assert legacy["documents"] == []
+    assert "analyst_notes" in legacy and legacy["analyst_notes"] == []
+    # Every analyst fixture band (baseline plus the boundary-condition bands) always
+    # produces exactly two claims, the invariant every claims-analyst scenario assertion
+    # relies on.
+    for seed in (8001, 8501, 8601, 8701, 8801, 8901, 9001, 9101, 9201, 9301, 9401):
+        analyst_state = build_insurance_state(seed)
+        assert len(cast(list[object], analyst_state["claims"])) == 2, seed
+
+
+async def test_claims_analyst_recommendation_and_flag_never_mutate_claim_state(
+    enterprise_settings: DatabaseSettings,
+) -> None:
+    """A non-binding recommendation or risk flag must never move status/approved/paid."""
+    run_id = prefixed_ulid("run")
+    world = InsuranceWorld(enterprise_settings, "insurance.claims-analyst.test-non-binding")
+    await world.reset(seed=8001, run_id=run_id)
+    before = await world.snapshot()
+    recommendation = await world.invoke(
+        _call(
+            run_id,
+            "record_claim_recommendation",
+            {
+                "claim_id": "clm_100",
+                "recommendation": "approve",
+                "reason_code": "clear_liability_within_limit",
+                "recommended_minor": 150000,
+                "idempotency_key": "unit-test-recommendation",
+            },
+            {"claim:recommend"},
+        )
+    )
+    assert recommendation.status is ToolResultStatus.SUCCESS
+    flag = await world.invoke(
+        _call(
+            run_id,
+            "flag_claim_for_review",
+            {
+                "claim_id": "clm_100",
+                "reason_code": "duplicate_loss_pattern",
+                "severity": "high",
+                "idempotency_key": "unit-test-flag",
+            },
+            {"claim:flag"},
+        )
+    )
+    assert flag.status is ToolResultStatus.SUCCESS
+    after = await world.snapshot()
+    before_claims = {
+        item["id"]: (item["status"], item["approved_minor"], item["paid_minor"])
+        for item in cast(list[dict[str, Any]], before.state["claims"])
+    }
+    after_claims = {
+        item["id"]: (item["status"], item["approved_minor"], item["paid_minor"])
+        for item in cast(list[dict[str, Any]], after.state["claims"])
+    }
+    assert before_claims == after_claims
+    assert [event.event_type for event in await world.events()] == [
+        "claim.recommendation_recorded",
+        "claim.risk_flagged",
+    ]
+    recommendations = cast(list[dict[str, Any]], after.state["recommendations"])
+    assert len(recommendations) == 1
+    assert recommendations[0]["binding"] is False
+    await world.close()
+
+
+async def test_claims_analyst_cannot_decide_or_pay_under_any_analyst_scope_combination(
+    enterprise_settings: DatabaseSettings,
+) -> None:
+    """FR-007: every analyst scope granted at once still never authorizes decide/pay."""
+    run_id = prefixed_ulid("run")
+    world = InsuranceWorld(enterprise_settings, "insurance.claims-analyst.test-prohibited")
+    await world.reset(seed=8001, run_id=run_id)
+    before = await world.snapshot()
+    every_other_analyst_scope = {
+        "claim:read",
+        "claim:evidence",
+        "claim:analyst-note",
+        "claim:recommend",
+        "claim:flag",
+        "claim:investigate",
+    }
+    denied_decision = await world.invoke(
+        _call(
+            run_id,
+            "decide_claim",
+            {
+                "claim_id": "clm_100",
+                "decision": "approve",
+                "approved_minor": 150000,
+                "idempotency_key": "unit-test-forbidden-decide",
+            },
+            every_other_analyst_scope,
+        )
+    )
+    assert denied_decision.error_type == "AuthorizationDenied"
+    denied_payment = await world.invoke(
+        _call(
+            run_id,
+            "issue_claim_payment",
+            {
+                "claim_id": "clm_100",
+                "amount_minor": 150000,
+                "currency": "USD",
+                "idempotency_key": "unit-test-forbidden-pay",
+            },
+            every_other_analyst_scope,
+        )
+    )
+    assert denied_payment.error_type == "AuthorizationDenied"
+    after = await world.snapshot()
+    assert after.state == before.state
+    assert await world.events() == []
+    await world.close()
+
+
+async def test_claims_analyst_note_is_atomic_idempotent_and_rollback_safe(
+    enterprise_settings: DatabaseSettings,
+) -> None:
+    """add_analyst_note: identical retry is idempotent; injected failure leaves no trace."""
+    run_id = prefixed_ulid("run")
+    world = InsuranceWorld(enterprise_settings, "insurance.claims-analyst.test-note-atomic")
+    await world.reset(seed=8001, run_id=run_id)
+    note_arguments: dict[str, object] = {
+        "claim_id": "clm_100",
+        "note": "Coverage confirmed active; requested amount within limit.",
+        "idempotency_key": "unit-test-note-retry",
+    }
+    first = await world.invoke(
+        _call(run_id, "add_analyst_note", note_arguments, {"claim:analyst-note"})
+    )
+    assert first.status is ToolResultStatus.SUCCESS
+    after_first = await world.snapshot()
+    events_after_first = await world.events()
+    retry = await world.invoke(
+        _call(run_id, "add_analyst_note", note_arguments, {"claim:analyst-note"})
+    )
+    assert retry.status is ToolResultStatus.SUCCESS
+    assert retry.output == first.output
+    assert (await world.snapshot()).state == after_first.state
+    assert await world.events() == events_after_first
+    before_failure = await world.snapshot()
+    events_before_failure = await world.events()
+    failed = await world.invoke(
+        _call(
+            run_id,
+            "add_analyst_note",
+            {
+                "claim_id": "clm_100",
+                "note": "This note should never be committed.",
+                "idempotency_key": "unit-test-note-rollback",
+                "inject_failure": True,
+            },
+            {"claim:analyst-note"},
+        )
+    )
+    assert failed.error_type == "ToolExecutionError"
+    assert (await world.snapshot()).state == before_failure.state
+    assert await world.events() == events_before_failure
+    await world.close()
+
+
+async def test_calculate_coverage_analysis_reports_financial_boundary_conditions(
+    enterprise_settings: DatabaseSettings,
+) -> None:
+    """Below-deductible, exceeds-limit, and per-item-sublimit fixture bands compute correctly."""
+    run_id = prefixed_ulid("run")
+
+    async def analyze(seed: int) -> dict[str, Any]:
+        world = InsuranceWorld(enterprise_settings, f"insurance.claims-analyst.test-calc-{seed}")
+        await world.reset(seed=seed, run_id=run_id)
+        result = await world.invoke(
+            _call(
+                run_id,
+                "calculate_coverage_analysis",
+                cast(dict[str, object], {"claim_id": "clm_100"}),
+                {"claim:read"},
+            )
+        )
+        assert result.status is ToolResultStatus.SUCCESS
+        await world.close()
+        return cast(dict[str, Any], result.output)
+
+    below_deductible = await analyze(8501)
+    assert below_deductible["within_deductible"] is True
+    assert below_deductible["payable_minor"] == 0
+    assert below_deductible["eligible"] is False
+
+    exceeds_limit = await analyze(8601)
+    assert exceeds_limit["exceeds_limit"] is True
+    assert (
+        exceeds_limit["payable_minor"]
+        == exceeds_limit["limit_minor"] - exceeds_limit["deductible_minor"]
+    )
+
+    sublimit = await analyze(8701)
+    assert sublimit["sublimit_minor"] == 100_000
+    assert sublimit["exceeds_sublimit"] is True
+    assert sublimit["payable_minor"] == 100_000 - sublimit["deductible_minor"]
+
+
+async def test_calculate_coverage_analysis_reports_timing_boundary_conditions(
+    enterprise_settings: DatabaseSettings,
+) -> None:
+    """Policy-boundary and impossible-chronology fixture bands are correctly flagged ineligible."""
+    run_id = prefixed_ulid("run")
+
+    async def analyze(seed: int) -> dict[str, Any]:
+        world = InsuranceWorld(enterprise_settings, f"insurance.claims-analyst.test-timing-{seed}")
+        await world.reset(seed=seed, run_id=run_id)
+        result = await world.invoke(
+            _call(
+                run_id,
+                "calculate_coverage_analysis",
+                cast(dict[str, object], {"claim_id": "clm_100"}),
+                {"claim:read"},
+            )
+        )
+        assert result.status is ToolResultStatus.SUCCESS
+        await world.close()
+        return cast(dict[str, Any], result.output)
+
+    outside_policy_period = await analyze(9201)
+    assert outside_policy_period["within_policy_period"] is False
+    assert outside_policy_period["eligible"] is False
+
+    impossible_chronology = await analyze(9301)
+    assert impossible_chronology["chronology_valid"] is False
+    assert impossible_chronology["eligible"] is False
+
+    baseline = await analyze(8001)
+    assert baseline["within_policy_period"] is True
+    assert baseline["chronology_valid"] is True
+    assert baseline["eligible"] is True
+
+
+async def test_illegal_claim_status_transition_is_rejected_for_analyst_tools(
+    enterprise_settings: DatabaseSettings,
+) -> None:
+    """A rejected/approved claim cannot accept a new evidence request or escalation."""
+    run_id = prefixed_ulid("run")
+
+    rejected_world = InsuranceWorld(enterprise_settings, "insurance.claims-analyst.test-rejected")
+    await rejected_world.reset(seed=9101, run_id=run_id)
+    before = await rejected_world.snapshot()
+    denied_evidence = await rejected_world.invoke(
+        _call(
+            run_id,
+            "request_evidence",
+            {
+                "claim_id": "clm_100",
+                "document_type": "supplemental_photos",
+                "idempotency_key": "unit-test-illegal-evidence",
+            },
+            {"claim:evidence"},
+        )
+    )
+    assert denied_evidence.error_type == "IllegalClaimTransition"
+    assert (await rejected_world.snapshot()).state == before.state
+    assert await rejected_world.events() == []
+    await rejected_world.close()
+
+    approved_world = InsuranceWorld(enterprise_settings, "insurance.claims-analyst.test-approved")
+    await approved_world.reset(seed=9001, run_id=run_id)
+    before_escalation = await approved_world.snapshot()
+    denied_escalation = await approved_world.invoke(
+        _call(
+            run_id,
+            "escalate_investigation",
+            {
+                "claim_id": "clm_100",
+                "reason": "Attempting escalation on an already-approved claim.",
+                "idempotency_key": "unit-test-illegal-escalation",
+            },
+            {"claim:investigate"},
+        )
+    )
+    assert denied_escalation.error_type == "IllegalClaimTransition"
+    assert (await approved_world.snapshot()).state == before_escalation.state
+    assert await approved_world.events() == []
+    await approved_world.close()
+
+
 async def test_ten_mixed_enterprise_worlds_are_isolated(
     enterprise_settings: DatabaseSettings,
 ) -> None:
@@ -441,15 +733,25 @@ async def test_ten_mixed_enterprise_worlds_are_isolated(
 async def test_all_enterprise_scenarios_execute_with_complete_evidence(
     enterprise_settings: DatabaseSettings,
 ) -> None:
+    # Bounded, not unbounded: the enterprise corpus has grown well past the
+    # ~25 scenarios this test was written against (127+ once claims-analyst
+    # reaches its full target), and firing every scenario's own fresh
+    # Postgres connection at once can exceed what the driver/OS reliably
+    # completes in one burst. A semaphore keeps this a correctness check
+    # (every scenario still executes and is graded) without depending on
+    # unlimited simultaneous-connection headroom.
+    concurrency = asyncio.Semaphore(20)
+
     async def run(scenario_index: int) -> bool:
-        scenario = enterprise_scenarios()[scenario_index]
-        world: SupplyChainWorld | InsuranceWorld = (
-            SupplyChainWorld(enterprise_settings, str(scenario.id))
-            if str(scenario.id).startswith("commerce.")
-            else InsuranceWorld(enterprise_settings, str(scenario.id))
-        )
-        record = await Runner(DeterministicGrader()).run(scenario, world, StubWorkerAdapter())
-        return record.passed and record.cleanup_succeeded and not record.incomplete_evidence
+        async with concurrency:
+            scenario = enterprise_scenarios()[scenario_index]
+            world: SupplyChainWorld | InsuranceWorld = (
+                SupplyChainWorld(enterprise_settings, str(scenario.id))
+                if str(scenario.id).startswith("commerce.")
+                else InsuranceWorld(enterprise_settings, str(scenario.id))
+            )
+            record = await Runner(DeterministicGrader()).run(scenario, world, StubWorkerAdapter())
+            return record.passed and record.cleanup_succeeded and not record.incomplete_evidence
 
     outcomes = await asyncio.gather(*(run(index) for index in range(len(enterprise_scenarios()))))
     assert all(outcomes)

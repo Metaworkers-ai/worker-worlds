@@ -98,3 +98,50 @@ async def test_new_critical_failure_cannot_pass_context_gate(happy_scenario: Sce
     assert result.report.verdict.new_critical == 1
     assert not result.report.verdict.passed
     assert result.passed is False
+
+
+def _insurance_context(scenario: Scenario, role_id: str, suite_id: str) -> EvaluationContext:
+    return EvaluationContext(
+        catalog_version="1.0.0",
+        domain_id="insurance",
+        role_id=role_id,
+        suite_id=suite_id,
+        suite_revision="1.0.0",
+        scenario_ids=(scenario.id,),
+        scenario_hashes={str(scenario.id): scenario.canonical_hash()},
+        agent_id="local-stub",
+        agent_version="1.0.0",
+        world_name="insurance",
+        world_version="1.0",
+        seeds=(scenario.world.seed,),
+        limits=scenario.limits,
+    )
+
+
+async def test_claims_analyst_and_claims_adjuster_results_are_incompatible(
+    happy_scenario: Scenario,
+) -> None:
+    """A Claims Analyst run can never be silently compared against a Claims Adjuster run."""
+    suite = await _suite(happy_scenario)
+    baseline = _insurance_context(
+        happy_scenario, "claims-adjuster", "insurance.claims-adjuster.smoke"
+    )
+    candidate = _insurance_context(
+        happy_scenario, "claims-analyst", "insurance.claims-analyst.smoke"
+    )
+    compatibility, reasons = context_compatibility(baseline, candidate)
+    result = compare_contextual_suites(suite, suite, baseline, candidate)
+    assert compatibility is ContextCompatibility.INCOMPATIBLE
+    assert "role id differs" in reasons
+    assert "suite id differs" in reasons
+    assert not result.passed
+
+
+async def test_claims_analyst_matching_context_compares_cleanly(happy_scenario: Scenario) -> None:
+    """Two Claims Analyst runs with the same evaluation context compare compatibly."""
+    suite = await _suite(happy_scenario)
+    context = _insurance_context(happy_scenario, "claims-analyst", "insurance.claims-analyst.smoke")
+    result = compare_contextual_suites(suite, suite, context, context)
+    assert result.compatibility is ContextCompatibility.COMPATIBLE
+    assert result.compatibility_reasons == ()
+    assert result.passed

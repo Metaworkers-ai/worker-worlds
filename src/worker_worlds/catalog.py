@@ -19,6 +19,11 @@ from worker_worlds.scenarios import load_scenario
 
 CATALOG_VERSION = "1.1.0"
 CATALOG_PATH = Path("catalog/v1/catalog.json")
+# Per-role smoke/standard suite-size overrides. Roles absent here keep the
+# smoke=6 / standard=30 defaults. `full` always covers every eligible scenario.
+_SUITE_SIZE_OVERRIDES: dict[str, dict[str, int]] = {
+    "claims-analyst": {"smoke": 10, "standard": 40},
+}
 CatalogId = Annotated[str, Field(pattern=r"^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$")]
 SemanticVersion = Annotated[str, Field(pattern=r"^[0-9]+\.[0-9]+\.[0-9]+$")]
 
@@ -379,6 +384,14 @@ def builtin_catalog() -> Catalog:
         "operational-reliability": ("Operational reliability", "commerce"),
         "supply-chain-analysis": ("Supply-chain analysis", "commerce"),
         "claims-adjustment": ("Claims adjustment", "insurance"),
+        "claim-intake-review": ("Claim intake and assignment review", "insurance"),
+        "policy-coverage-analysis": ("Policy and coverage analysis", "insurance"),
+        "evidence-assessment": ("Evidence assessment", "insurance"),
+        "financial-exposure-analysis": ("Financial exposure analysis", "insurance"),
+        "fraud-anomaly-triage": ("Fraud and anomaly triage", "insurance"),
+        "decision-recommendation": ("Decision recommendation", "insurance"),
+        "evidence-request-followup": ("Evidence request and customer follow-up", "insurance"),
+        "investigation-escalation": ("Investigation escalation", "insurance"),
     }
     capabilities = tuple(
         CapabilityDefinition(
@@ -437,6 +450,27 @@ def builtin_catalog() -> Catalog:
             ),
             capability_ids=("claims-adjustment",),
         ),
+        RoleDefinition(
+            id="claims-analyst",
+            domain_id="insurance",
+            version=CATALOG_VERSION,
+            label="Insurance Claims Analyst",
+            description=(
+                "Evaluate first-line claims investigation, coverage analysis, evidence "
+                "assessment, fraud triage, and non-binding disposition recommendations. "
+                "Distinct from claims-adjuster: cannot decide a claim or issue a payment."
+            ),
+            capability_ids=(
+                "claim-intake-review",
+                "policy-coverage-analysis",
+                "evidence-assessment",
+                "financial-exposure-analysis",
+                "fraud-anomaly-triage",
+                "decision-recommendation",
+                "evidence-request-followup",
+                "investigation-escalation",
+            ),
+        ),
     )
     scenarios = reviewed_scenarios()
     legacy_classifications = tuple(
@@ -490,9 +524,12 @@ def builtin_catalog() -> Catalog:
             for item in classifications
             if role.id in item.role_ids and item.scenario_id in live_scenario_ids
         )
-        standard_count = 10 if role.id in {"supply-chain-analyst", "claims-adjuster"} else 30
+        standard_count = _SUITE_SIZE_OVERRIDES.get(role.id, {}).get("standard", 30)
+        if role.id in {"supply-chain-analyst", "claims-adjuster"}:
+            standard_count = 10
+        smoke_count = _SUITE_SIZE_OVERRIDES.get(role.id, {}).get("smoke", 6)
         for tier, count in (
-            (SuiteTier.SMOKE, 6),
+            (SuiteTier.SMOKE, min(smoke_count, len(eligible))),
             (SuiteTier.STANDARD, min(standard_count, len(eligible))),
             (SuiteTier.FULL, len(eligible)),
         ):

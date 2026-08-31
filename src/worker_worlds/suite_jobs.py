@@ -13,7 +13,7 @@ from pydantic import Field
 
 from worker_worlds.catalog import CatalogId, SemanticVersion
 from worker_worlds.contracts import Contract, JsonValue, RunId, ScenarioId
-from worker_worlds.database import DatabaseSettings, connect, migrate
+from worker_worlds.database import DatabaseSettings, get_pool, migrate
 from worker_worlds.ids import prefixed_ulid
 
 
@@ -137,7 +137,8 @@ class PostgresSuiteJobRepository:
     async def create(self, request: SuiteJobCreate) -> SuiteJobRecord:
         """Create an idempotent queued job and its deterministic scenario rows."""
         await migrate(self._settings)
-        connection = await connect(self._settings)
+        pool = await get_pool(self._settings)
+        connection = await pool.acquire()
         now = datetime.now(UTC)
         identity = hashlib.sha256(request.canonical_json().encode()).hexdigest()
         job_id = "suitejob_" + prefixed_ulid("job").split("_", 1)[1]
@@ -187,21 +188,23 @@ class PostgresSuiteJobRepository:
                 )
                 return await self._get_with_connection(connection, job_id)
         finally:
-            await connection.close()
+            await pool.release(connection)
 
     async def get(self, job_id: str) -> SuiteJobRecord:
         """Load one job and every scenario progress row."""
-        connection = await connect(self._settings)
+        pool = await get_pool(self._settings)
+        connection = await pool.acquire()
         try:
             return await self._get_with_connection(connection, job_id)
         finally:
-            await connection.close()
+            await pool.release(connection)
 
     async def list(self, *, limit: int = 100) -> tuple[SuiteJobRecord, ...]:
         """List newest jobs with complete per-scenario progress."""
         if limit <= 0 or limit > 500:
             raise ValueError("suite job list limit must be between 1 and 500")
-        connection = await connect(self._settings)
+        pool = await get_pool(self._settings)
+        connection = await pool.acquire()
         try:
             identifiers = await connection.fetch(
                 "SELECT id FROM worker_worlds.suite_jobs ORDER BY created_at DESC,id DESC LIMIT $1",
@@ -214,11 +217,12 @@ class PostgresSuiteJobRepository:
                 ]
             )
         finally:
-            await connection.close()
+            await pool.release(connection)
 
     async def claim(self, job_id: str) -> bool:
         """Claim queued work or safely take over a job whose executor lease expired."""
-        connection = await connect(self._settings)
+        pool = await get_pool(self._settings)
+        connection = await pool.acquire()
         now = datetime.now(UTC)
         expires_at = now + timedelta(seconds=self._lease_seconds)
         try:
@@ -252,11 +256,12 @@ class PostgresSuiteJobRepository:
                 )
                 return True
         finally:
-            await connection.close()
+            await pool.release(connection)
 
     async def heartbeat(self, job_id: str) -> bool:
         """Extend this executor's lease without changing user-visible progress."""
-        connection = await connect(self._settings)
+        pool = await get_pool(self._settings)
+        connection = await pool.acquire()
         now = datetime.now(UTC)
         try:
             status = await connection.execute(
@@ -269,11 +274,12 @@ class PostgresSuiteJobRepository:
             )
             return status.endswith("1")
         finally:
-            await connection.close()
+            await pool.release(connection)
 
     async def recoverable(self) -> tuple[SuiteJobRecord, ...]:
         """List queued jobs and active jobs whose owning process stopped heartbeating."""
-        connection = await connect(self._settings)
+        pool = await get_pool(self._settings)
+        connection = await pool.acquire()
         now = datetime.now(UTC)
         try:
             rows = await connection.fetch(
@@ -287,11 +293,12 @@ class PostgresSuiteJobRepository:
                 [await self._get_with_connection(connection, str(row["id"])) for row in rows]
             )
         finally:
-            await connection.close()
+            await pool.release(connection)
 
     async def terminal_without_evidence(self) -> tuple[SuiteJobRecord, ...]:
         """List terminal jobs whose crash-safe evidence publication is unfinished."""
-        connection = await connect(self._settings)
+        pool = await get_pool(self._settings)
+        connection = await pool.acquire()
         try:
             rows = await connection.fetch(
                 "SELECT id FROM worker_worlds.suite_jobs "
@@ -302,11 +309,12 @@ class PostgresSuiteJobRepository:
                 [await self._get_with_connection(connection, str(row["id"])) for row in rows]
             )
         finally:
-            await connection.close()
+            await pool.release(connection)
 
     async def finalize_abandoned_cancellation(self, job_id: str) -> SuiteJobRecord:
         """Terminalize a cancelling job only after its prior executor lease expired."""
-        connection = await connect(self._settings)
+        pool = await get_pool(self._settings)
+        connection = await pool.acquire()
         now = datetime.now(UTC)
         try:
             async with connection.transaction():
@@ -323,11 +331,12 @@ class PostgresSuiteJobRepository:
                     return await self._get_with_connection(connection, job_id)
             return await self.finish(job_id)
         finally:
-            await connection.close()
+            await pool.release(connection)
 
     async def scenario_started(self, job_id: str, scenario_id: ScenarioId) -> bool:
         """Claim one pending scenario unless cancellation has begun."""
-        connection = await connect(self._settings)
+        pool = await get_pool(self._settings)
+        connection = await pool.acquire()
         now = datetime.now(UTC)
         try:
             status = await connection.execute(
@@ -343,11 +352,12 @@ class PostgresSuiteJobRepository:
             )
             return status.endswith("1")
         finally:
-            await connection.close()
+            await pool.release(connection)
 
     async def scenario_retrying(self, job_id: str, scenario_id: ScenarioId) -> bool:
         """Record a bounded retry while keeping the scenario actively claimed."""
-        connection = await connect(self._settings)
+        pool = await get_pool(self._settings)
+        connection = await pool.acquire()
         now = datetime.now(UTC)
         try:
             status = await connection.execute(
@@ -363,7 +373,7 @@ class PostgresSuiteJobRepository:
             )
             return status.endswith("1")
         finally:
-            await connection.close()
+            await pool.release(connection)
 
     async def register_run_evidence(
         self,
@@ -374,7 +384,8 @@ class PostgresSuiteJobRepository:
         relative_path: str,
     ) -> bool:
         """Register immutable attempt evidence only while this executor owns the lease."""
-        connection = await connect(self._settings)
+        pool = await get_pool(self._settings)
+        connection = await pool.acquire()
         now = datetime.now(UTC)
         try:
             status = await connection.execute(
@@ -394,11 +405,12 @@ class PostgresSuiteJobRepository:
             )
             return status.endswith("1")
         finally:
-            await connection.close()
+            await pool.release(connection)
 
     async def run_evidence(self, job_id: str) -> tuple[tuple[str, str, str], ...]:
         """Return registered run ID, hash, and relative path in creation order."""
-        connection = await connect(self._settings)
+        pool = await get_pool(self._settings)
+        connection = await pool.acquire()
         try:
             rows = await connection.fetch(
                 "SELECT run_id,record_hash,relative_path FROM worker_worlds.suite_run_evidence "
@@ -410,7 +422,7 @@ class PostgresSuiteJobRepository:
                 for row in rows
             )
         finally:
-            await connection.close()
+            await pool.release(connection)
 
     async def scenario_finished(
         self,
@@ -431,7 +443,8 @@ class PostgresSuiteJobRepository:
             SuiteScenarioStatus.ERROR,
         }:
             raise ValueError("scenario result must be terminal")
-        connection = await connect(self._settings)
+        pool = await get_pool(self._settings)
+        connection = await pool.acquire()
         now = datetime.now(UTC)
         try:
             async with connection.transaction():
@@ -468,11 +481,12 @@ class PostgresSuiteJobRepository:
                 )
                 return True
         finally:
-            await connection.close()
+            await pool.release(connection)
 
     async def request_cancel(self, job_id: str) -> SuiteJobRecord:
         """Idempotently request cancellation and terminalize queued work."""
-        connection = await connect(self._settings)
+        pool = await get_pool(self._settings)
+        connection = await pool.acquire()
         now = datetime.now(UTC)
         try:
             async with connection.transaction():
@@ -494,7 +508,7 @@ class PostgresSuiteJobRepository:
                 )
                 return await self._get_with_connection(connection, job_id)
         finally:
-            await connection.close()
+            await pool.release(connection)
 
     async def finish(
         self,
@@ -504,7 +518,8 @@ class PostgresSuiteJobRepository:
         error: Exception | None = None,
     ) -> SuiteJobRecord:
         """Move a claimed job to exactly one terminal state."""
-        connection = await connect(self._settings)
+        pool = await get_pool(self._settings)
+        connection = await pool.acquire()
         now = datetime.now(UTC)
         try:
             async with connection.transaction():
@@ -566,11 +581,12 @@ class PostgresSuiteJobRepository:
                 )
                 return await self._get_with_connection(connection, job_id)
         finally:
-            await connection.close()
+            await pool.release(connection)
 
     async def attach_evidence(self, job_id: str, suite_record_path: str) -> SuiteJobRecord:
         """Attach a relative evidence path to an already terminal job."""
-        connection = await connect(self._settings)
+        pool = await get_pool(self._settings)
+        connection = await pool.acquire()
         try:
             await connection.execute(
                 "UPDATE worker_worlds.suite_jobs SET suite_record_path=$2 "
@@ -581,10 +597,13 @@ class PostgresSuiteJobRepository:
             )
             return await self._get_with_connection(connection, job_id)
         finally:
-            await connection.close()
+            await pool.release(connection)
 
     async def _get_with_connection(
-        self, connection: asyncpg.Connection[asyncpg.Record], job_id: str
+        self,
+        connection: asyncpg.Connection[asyncpg.Record]
+        | asyncpg.pool.PoolConnectionProxy[asyncpg.Record],
+        job_id: str,
     ) -> SuiteJobRecord:
         row = await connection.fetchrow(
             "SELECT * FROM worker_worlds.suite_jobs WHERE id=$1", job_id

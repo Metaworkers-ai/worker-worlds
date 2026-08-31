@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import os
 import re
+import weakref
 from contextlib import suppress
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -104,10 +106,84 @@ async def connect(settings: DatabaseSettings) -> asyncpg.Connection[asyncpg.Reco
         ) from exc
 
 
+# An asyncpg.Pool (and the Lock guarding pool creation) is bound to the event
+# loop it was created under; reusing one from a different loop breaks asyncpg
+# internals. Scope the cache per running loop -- keyed with a WeakKeyDictionary
+# so a closed loop's entry (e.g. pytest-asyncio's function-scoped loop) is
+# dropped automatically once nothing else references that loop -- rather than
+# per process, so pools are still shared across concurrent callers *within*
+# one loop, which is the actual concurrency win.
+_state_by_loop: weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, _LoopPoolState] = (
+    weakref.WeakKeyDictionary()
+)
+
+
+@dataclass
+class _LoopPoolState:
+    lock: asyncio.Lock
+    pools: dict[str, asyncpg.Pool[asyncpg.Record]]
+
+
+def _loop_state() -> _LoopPoolState:
+    loop = asyncio.get_running_loop()
+    state = _state_by_loop.get(loop)
+    if state is None:
+        state = _LoopPoolState(lock=asyncio.Lock(), pools={})
+        _state_by_loop[loop] = state
+    return state
+
+
+async def get_pool(settings: DatabaseSettings) -> asyncpg.Pool[asyncpg.Record]:
+    """Return a connection pool for these settings, shared within the current event loop.
+
+    Callers that issue many short-lived queries under concurrency (durable
+    suite-job orchestration in particular) previously opened and closed a
+    fresh raw TCP connection per call. Under enough concurrent callers that
+    connection-establishment churn is expensive everywhere and, on Windows'
+    default ProactorEventLoop, can trip an asyncpg/event-loop interaction
+    (``InvalidStateError`` deep inside ``_ProactorReadPipeTransport``) well
+    before Postgres's own ``max_connections`` is reached. A small shared pool
+    bounds real connection count regardless of logical concurrency.
+    """
+    settings.validate()
+    state = _loop_state()
+    pool = state.pools.get(settings.url)
+    if pool is not None:
+        return pool
+    async with state.lock:
+        pool = state.pools.get(settings.url)
+        if pool is not None:
+            return pool
+        try:
+            pool = await asyncpg.create_pool(
+                settings.url, min_size=1, max_size=20, timeout=5, command_timeout=30
+            )
+        except (OSError, asyncpg.PostgresError, TimeoutError) as exc:
+            raise InfrastructureError(
+                "Postgres is unavailable; run 'docker compose up -d --wait postgres' "
+                "or set WORKER_WORLDS_DATABASE_URL"
+            ) from exc
+        if pool is None:  # pragma: no cover - asyncpg contract, defensive only
+            raise InfrastructureError("failed to create Postgres connection pool")
+        state.pools[settings.url] = pool
+        return pool
+
+
+async def close_all_pools() -> None:
+    """Close every pool cached for the current event loop; for tests and shutdown."""
+    state = _loop_state()
+    async with state.lock:
+        pools = list(state.pools.values())
+        state.pools.clear()
+    for pool in pools:
+        await pool.close()
+
+
 async def migrate(settings: DatabaseSettings) -> str:
     """Apply checksummed forward-only SQL migrations."""
     settings.validate()
-    connection = await connect(settings)
+    pool = await get_pool(settings)
+    connection = await pool.acquire()
     try:
         await connection.execute("SELECT pg_advisory_lock(hashtext('worker_worlds:migrations'))")
         await connection.execute(
@@ -143,34 +219,46 @@ async def migrate(settings: DatabaseSettings) -> str:
             await connection.execute(
                 "SELECT pg_advisory_unlock(hashtext('worker_worlds:migrations'))"
             )
-        await connection.close()
+        await pool.release(connection)
 
 
 async def database_health(settings: DatabaseSettings) -> tuple[bool, str]:
-    """Check connectivity and migration readiness."""
+    """Check connectivity and migration readiness.
+
+    Uses the shared pool rather than a fresh raw connection: this is called on
+    every dashboard page load (often alongside several other concurrent API
+    requests), and a long-running API process repeatedly opening one-off raw
+    connections is exactly the churn that can trip the Windows/asyncpg
+    connection-burst issue documented on ``get_pool``.
+    """
     try:
-        connection = await connect(settings)
-        version = await connection.fetchval("SHOW server_version")
-        table = await connection.fetchval(
-            "SELECT to_regclass('worker_worlds.schema_migrations')::text"
-        )
-        if table is None:
-            await connection.close()
-            return False, f"Postgres {version} reachable; migrations are not applied"
-        applied = int(
-            await connection.fetchval(
-                "SELECT COALESCE(MAX(version),0) FROM worker_worlds.schema_migrations"
-            )
-        )
-        await connection.close()
-        expected = max(int(path.name[:3]) for path in migration_files())
-        if applied != expected:
-            return False, f"Postgres reachable; migration {applied:03d}, expected {expected:03d}"
-        return True, (
-            f"Postgres {version} reachable ({settings.database_name}), migration {applied:03d}"
-        )
+        pool = await get_pool(settings)
     except InfrastructureError as exc:
         return False, str(exc)
+    try:
+        async with pool.acquire() as connection:
+            version = await connection.fetchval("SHOW server_version")
+            table = await connection.fetchval(
+                "SELECT to_regclass('worker_worlds.schema_migrations')::text"
+            )
+            if table is None:
+                return False, f"Postgres {version} reachable; migrations are not applied"
+            applied = int(
+                await connection.fetchval(
+                    "SELECT COALESCE(MAX(version),0) FROM worker_worlds.schema_migrations"
+                )
+            )
+    except (OSError, asyncpg.PostgresError, TimeoutError) as exc:
+        return False, (
+            "Postgres is unavailable; run 'docker compose up -d --wait postgres' "
+            f"or set WORKER_WORLDS_DATABASE_URL ({type(exc).__name__})"
+        )
+    expected = max(int(path.name[:3]) for path in migration_files())
+    if applied != expected:
+        return False, f"Postgres reachable; migration {applied:03d}, expected {expected:03d}"
+    return True, (
+        f"Postgres {version} reachable ({settings.database_name}), migration {applied:03d}"
+    )
 
 
 async def cleanup_abandoned(settings: DatabaseSettings) -> int:
