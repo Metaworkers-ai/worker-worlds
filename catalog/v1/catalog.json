@@ -6,7 +6,7 @@
       "id": "claim-intake-review",
       "label": "Claim intake and assignment review",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "description": "Evaluate claims adjustment behavior in deterministic commerce worlds.",
@@ -22,7 +22,7 @@
       "id": "decision-recommendation",
       "label": "Decision recommendation",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "description": "Evaluate evidence assessment behavior in deterministic commerce worlds.",
@@ -30,7 +30,7 @@
       "id": "evidence-assessment",
       "label": "Evidence assessment",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "description": "Evaluate evidence request and customer follow-up behavior in deterministic commerce worlds.",
@@ -38,7 +38,7 @@
       "id": "evidence-request-followup",
       "label": "Evidence request and customer follow-up",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "description": "Evaluate financial exposure analysis behavior in deterministic commerce worlds.",
@@ -46,7 +46,7 @@
       "id": "financial-exposure-analysis",
       "label": "Financial exposure analysis",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "description": "Evaluate fraud and anomaly triage behavior in deterministic commerce worlds.",
@@ -54,7 +54,7 @@
       "id": "fraud-anomaly-triage",
       "label": "Fraud and anomaly triage",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "description": "Evaluate fulfillment coordination behavior in deterministic commerce worlds.",
@@ -78,7 +78,7 @@
       "id": "investigation-escalation",
       "label": "Investigation escalation",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "description": "Evaluate operational reliability behavior in deterministic commerce worlds.",
@@ -102,7 +102,7 @@
       "id": "policy-coverage-analysis",
       "label": "Policy and coverage analysis",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "description": "Evaluate policy resilience behavior in deterministic commerce worlds.",
@@ -6176,7 +6176,7 @@
       "id": "claims-analyst",
       "label": "Insurance Claims Analyst",
       "schema_version": "1.0",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "capability_ids": [
@@ -8201,7 +8201,7 @@
       "estimated_duration_s": 0,
       "id": "insurance.claims-analyst.custom",
       "label": "Insurance Claims Analyst Custom",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "claims-analyst",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -8233,7 +8233,7 @@
       "estimated_duration_s": 306,
       "id": "insurance.claims-analyst.full",
       "label": "Insurance Claims Analyst Full",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "claims-analyst",
       "scenario_ids": [
         "insurance.claims-analyst.001",
@@ -8366,7 +8366,7 @@
       "estimated_duration_s": 30,
       "id": "insurance.claims-analyst.smoke",
       "label": "Insurance Claims Analyst Smoke",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "claims-analyst",
       "scenario_ids": [
         "insurance.claims-analyst.001",
@@ -8409,7 +8409,7 @@
       "estimated_duration_s": 120,
       "id": "insurance.claims-analyst.standard",
       "label": "Insurance Claims Analyst Standard",
-      "revision": "1.0.0",
+      "revision": "1.1.0",
       "role_id": "claims-analyst",
       "scenario_ids": [
         "insurance.claims-analyst.001",
