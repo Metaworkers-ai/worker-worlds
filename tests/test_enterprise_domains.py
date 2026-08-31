@@ -32,6 +32,11 @@ from worker_worlds.enterprise_scenarios import enterprise_scenarios
 from worker_worlds.grading import DeterministicGrader
 from worker_worlds.ids import prefixed_ulid
 from worker_worlds.insurance import InsuranceWorld, IssueClaimPaymentInput, build_insurance_state
+from worker_worlds.marketing import (
+    AllocateCampaignBudgetInput,
+    MarketingWorld,
+    build_marketing_state,
+)
 from worker_worlds.protocols import World
 from worker_worlds.runner import Runner
 from worker_worlds.scenario_library import reviewed_scenarios
@@ -708,6 +713,314 @@ async def test_illegal_claim_status_transition_is_rejected_for_analyst_tools(
     await approved_world.close()
 
 
+def test_campaign_analyst_fixture_seed_bands_are_deterministic() -> None:
+    """`build_marketing_state` stays a pure function of seed across every fixture band."""
+    assert _hash(build_marketing_state(1)) == _hash(build_marketing_state(1))
+    assert _hash(build_marketing_state(1)) != _hash(build_marketing_state(2))
+    with pytest.raises(ValidationError):
+        AllocateCampaignBudgetInput(
+            campaign_id="cmp_100",
+            amount_minor=0,
+            currency="USD",
+            idempotency_key="key",
+        )
+    # Every fixture band (baseline plus every boundary-condition band) always
+    # produces exactly two campaigns, the invariant every campaign-analyst
+    # scenario assertion relies on.
+    for seed in (1, 116, 217, 318, 413, 505, 603, 703, 803, 919, 1004, 1106, 1212):
+        state = build_marketing_state(seed)
+        assert len(cast(list[object], state["campaigns"])) == 2, seed
+
+
+async def test_campaign_analyst_recommendation_and_flag_never_mutate_campaign_state(
+    enterprise_settings: DatabaseSettings,
+) -> None:
+    """A non-binding recommendation or risk flag must never move status/budget/spend."""
+    run_id = prefixed_ulid("run")
+    world = MarketingWorld(enterprise_settings, "marketing.campaign-analyst.test-non-binding")
+    await world.reset(seed=1, run_id=run_id)
+    before = await world.snapshot()
+    recommendation = await world.invoke(
+        _call(
+            run_id,
+            "record_launch_recommendation",
+            {
+                "campaign_id": "cmp_100",
+                "recommendation": "approve_launch",
+                "reason_code": "clear_targeting_within_budget",
+                "recommended_budget_minor": 150000,
+                "idempotency_key": "unit-test-recommendation",
+            },
+            {"campaign:recommend"},
+        )
+    )
+    assert recommendation.status is ToolResultStatus.SUCCESS
+    flag = await world.invoke(
+        _call(
+            run_id,
+            "flag_campaign_for_review",
+            {
+                "campaign_id": "cmp_100",
+                "reason_code": "duplicate_segment_submission",
+                "severity": "high",
+                "idempotency_key": "unit-test-flag",
+            },
+            {"campaign:flag"},
+        )
+    )
+    assert flag.status is ToolResultStatus.SUCCESS
+    after = await world.snapshot()
+    before_campaigns = {
+        item["id"]: (item["status"], item["approved_budget_minor"], item["spent_minor"])
+        for item in cast(list[dict[str, Any]], before.state["campaigns"])
+    }
+    after_campaigns = {
+        item["id"]: (item["status"], item["approved_budget_minor"], item["spent_minor"])
+        for item in cast(list[dict[str, Any]], after.state["campaigns"])
+    }
+    assert before_campaigns == after_campaigns
+    assert [event.event_type for event in await world.events()] == [
+        "campaign.recommendation_recorded",
+        "campaign.risk_flagged",
+    ]
+    recommendations = cast(list[dict[str, Any]], after.state["recommendations"])
+    assert len(recommendations) == 1
+    assert recommendations[0]["binding"] is False
+    await world.close()
+
+
+async def test_campaign_analyst_cannot_launch_send_or_allocate_under_any_analyst_scope_combination(
+    enterprise_settings: DatabaseSettings,
+) -> None:
+    """ADR 008: every analyst scope granted at once still never authorizes launch/send/spend."""
+    run_id = prefixed_ulid("run")
+    world = MarketingWorld(enterprise_settings, "marketing.campaign-analyst.test-prohibited")
+    await world.reset(seed=1, run_id=run_id)
+    before = await world.snapshot()
+    every_analyst_scope = {
+        "campaign:read",
+        "campaign:analyst-note",
+        "campaign:recommend",
+        "campaign:flag",
+        "campaign:request",
+        "campaign:escalate",
+    }
+    denied_launch = await world.invoke(
+        _call(
+            run_id,
+            "launch_campaign",
+            {"campaign_id": "cmp_100", "idempotency_key": "unit-test-forbidden-launch"},
+            every_analyst_scope,
+        )
+    )
+    assert denied_launch.error_type == "AuthorizationDenied"
+    denied_send = await world.invoke(
+        _call(
+            run_id,
+            "send_campaign_communication",
+            {
+                "campaign_id": "cmp_100",
+                "channel": "email",
+                "idempotency_key": "unit-test-forbidden-send",
+            },
+            every_analyst_scope,
+        )
+    )
+    assert denied_send.error_type == "AuthorizationDenied"
+    denied_allocation = await world.invoke(
+        _call(
+            run_id,
+            "allocate_campaign_budget",
+            {
+                "campaign_id": "cmp_100",
+                "amount_minor": 150000,
+                "currency": "USD",
+                "idempotency_key": "unit-test-forbidden-allocate",
+            },
+            every_analyst_scope,
+        )
+    )
+    assert denied_allocation.error_type == "AuthorizationDenied"
+    after = await world.snapshot()
+    assert after.state == before.state
+    assert await world.events() == []
+    await world.close()
+
+
+async def test_campaign_analyst_note_is_atomic_idempotent_and_rollback_safe(
+    enterprise_settings: DatabaseSettings,
+) -> None:
+    """add_campaign_note: identical retry is idempotent; injected failure leaves no trace."""
+    run_id = prefixed_ulid("run")
+    world = MarketingWorld(enterprise_settings, "marketing.campaign-analyst.test-note-atomic")
+    await world.reset(seed=1, run_id=run_id)
+    note_arguments: dict[str, object] = {
+        "campaign_id": "cmp_100",
+        "note": "Targeting confirmed within budget; recommend approval.",
+        "idempotency_key": "unit-test-note-retry",
+    }
+    first = await world.invoke(
+        _call(run_id, "add_campaign_note", note_arguments, {"campaign:analyst-note"})
+    )
+    assert first.status is ToolResultStatus.SUCCESS
+    after_first = await world.snapshot()
+    events_after_first = await world.events()
+    retry = await world.invoke(
+        _call(run_id, "add_campaign_note", note_arguments, {"campaign:analyst-note"})
+    )
+    assert retry.status is ToolResultStatus.SUCCESS
+    assert retry.output == first.output
+    assert (await world.snapshot()).state == after_first.state
+    assert await world.events() == events_after_first
+    before_failure = await world.snapshot()
+    events_before_failure = await world.events()
+    failed = await world.invoke(
+        _call(
+            run_id,
+            "add_campaign_note",
+            {
+                "campaign_id": "cmp_100",
+                "note": "This note should never be committed.",
+                "idempotency_key": "unit-test-note-rollback",
+                "inject_failure": True,
+            },
+            {"campaign:analyst-note"},
+        )
+    )
+    assert failed.error_type == "ToolExecutionError"
+    assert (await world.snapshot()).state == before_failure.state
+    assert await world.events() == events_before_failure
+    await world.close()
+
+
+async def test_calculate_budget_exposure_reports_financial_boundary_conditions(
+    enterprise_settings: DatabaseSettings,
+) -> None:
+    """Below-platform-fee, exceeds-total-cap, and channel-sub-cap bands compute correctly."""
+    run_id = prefixed_ulid("run")
+
+    async def analyze(seed: int) -> dict[str, Any]:
+        world = MarketingWorld(enterprise_settings, f"marketing.campaign-analyst.test-calc-{seed}")
+        await world.reset(seed=seed, run_id=run_id)
+        result = await world.invoke(
+            _call(
+                run_id,
+                "calculate_budget_exposure",
+                cast(dict[str, object], {"campaign_id": "cmp_100"}),
+                {"campaign:read"},
+            )
+        )
+        assert result.status is ToolResultStatus.SUCCESS
+        await world.close()
+        return cast(dict[str, Any], result.output)
+
+    below_fee = await analyze(116)
+    assert below_fee["within_platform_fee"] is True
+    assert below_fee["net_deployable_minor"] == 0
+    assert below_fee["eligible"] is False
+
+    exceeds_total_cap = await analyze(217)
+    assert exceeds_total_cap["exceeds_total_cap"] is True
+    assert (
+        exceeds_total_cap["net_deployable_minor"]
+        == exceeds_total_cap["total_budget_cap_minor"] - exceeds_total_cap["platform_fee_minor"]
+    )
+
+    exceeds_channel_cap = await analyze(318)
+    assert exceeds_channel_cap["channel_sub_cap_minor"] == 100_000
+    assert exceeds_channel_cap["exceeds_channel_cap"] is True
+    assert (
+        exceeds_channel_cap["net_deployable_minor"]
+        == 100_000 - exceeds_channel_cap["platform_fee_minor"]
+    )
+
+
+async def test_calculate_budget_exposure_reports_timing_boundary_conditions(
+    enterprise_settings: DatabaseSettings,
+) -> None:
+    """Flight-window and impossible-chronology fixture bands are correctly flagged ineligible."""
+    run_id = prefixed_ulid("run")
+
+    async def analyze(seed: int) -> dict[str, Any]:
+        world = MarketingWorld(
+            enterprise_settings, f"marketing.campaign-analyst.test-timing-{seed}"
+        )
+        await world.reset(seed=seed, run_id=run_id)
+        result = await world.invoke(
+            _call(
+                run_id,
+                "calculate_budget_exposure",
+                cast(dict[str, object], {"campaign_id": "cmp_100"}),
+                {"campaign:read"},
+            )
+        )
+        assert result.status is ToolResultStatus.SUCCESS
+        await world.close()
+        return cast(dict[str, Any], result.output)
+
+    outside_flight_window = await analyze(919)
+    assert outside_flight_window["within_flight_window"] is False
+    assert outside_flight_window["eligible"] is False
+
+    impossible_chronology = await analyze(1004)
+    assert impossible_chronology["intake_chronology_valid"] is False
+    assert impossible_chronology["eligible"] is False
+
+    baseline = await analyze(1)
+    assert baseline["within_flight_window"] is True
+    assert baseline["intake_chronology_valid"] is True
+    assert baseline["eligible"] is True
+
+
+async def test_illegal_campaign_status_transition_is_rejected_for_analyst_tools(
+    enterprise_settings: DatabaseSettings,
+) -> None:
+    """A rejected/live campaign cannot accept a new data request or escalation."""
+    run_id = prefixed_ulid("run")
+
+    rejected_world = MarketingWorld(
+        enterprise_settings, "marketing.campaign-analyst.test-rejected"
+    )
+    await rejected_world.reset(seed=803, run_id=run_id)
+    before = await rejected_world.snapshot()
+    denied_request = await rejected_world.invoke(
+        _call(
+            run_id,
+            "request_suppression_update",
+            {
+                "campaign_id": "cmp_100",
+                "document_type": "consent_confirmation",
+                "idempotency_key": "unit-test-illegal-request",
+            },
+            {"campaign:request"},
+        )
+    )
+    assert denied_request.error_type == "IllegalCampaignTransition"
+    assert (await rejected_world.snapshot()).state == before.state
+    assert await rejected_world.events() == []
+    await rejected_world.close()
+
+    live_world = MarketingWorld(enterprise_settings, "marketing.campaign-analyst.test-live")
+    await live_world.reset(seed=603, run_id=run_id)
+    before_escalation = await live_world.snapshot()
+    denied_escalation = await live_world.invoke(
+        _call(
+            run_id,
+            "escalate_compliance_review",
+            {
+                "campaign_id": "cmp_100",
+                "reason": "Attempting escalation on an already-live campaign.",
+                "idempotency_key": "unit-test-illegal-escalation",
+            },
+            {"campaign:escalate"},
+        )
+    )
+    assert denied_escalation.error_type == "IllegalCampaignTransition"
+    assert (await live_world.snapshot()).state == before_escalation.state
+    assert await live_world.events() == []
+    await live_world.close()
+
+
 async def test_ten_mixed_enterprise_worlds_are_isolated(
     enterprise_settings: DatabaseSettings,
 ) -> None:
@@ -745,11 +1058,13 @@ async def test_all_enterprise_scenarios_execute_with_complete_evidence(
     async def run(scenario_index: int) -> bool:
         async with concurrency:
             scenario = enterprise_scenarios()[scenario_index]
-            world: SupplyChainWorld | InsuranceWorld = (
-                SupplyChainWorld(enterprise_settings, str(scenario.id))
-                if str(scenario.id).startswith("commerce.")
-                else InsuranceWorld(enterprise_settings, str(scenario.id))
-            )
+            world: SupplyChainWorld | InsuranceWorld | MarketingWorld
+            if str(scenario.id).startswith("commerce."):
+                world = SupplyChainWorld(enterprise_settings, str(scenario.id))
+            elif str(scenario.id).startswith("marketing."):
+                world = MarketingWorld(enterprise_settings, str(scenario.id))
+            else:
+                world = InsuranceWorld(enterprise_settings, str(scenario.id))
             record = await Runner(DeterministicGrader()).run(scenario, world, StubWorkerAdapter())
             return record.passed and record.cleanup_succeeded and not record.incomplete_evidence
 
