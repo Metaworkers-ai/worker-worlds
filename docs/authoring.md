@@ -16,8 +16,9 @@ for user-visible inputs. A task that requires a tool interaction must include a
 typed result status, and expected count. Pair it with state or event assertions so a
 wrong call, a typed rejection where success was required, or simple inaction cannot pass.
 
-Supply-chain and Insurance scenarios (`insurance.claims-adjuster.*`,
-`insurance.claims-analyst.*`) don't start from an exported `scenarios/release` file --
+Supply-chain, Insurance, and Marketing scenarios (`insurance.claims-adjuster.*`,
+`insurance.claims-analyst.*`, `marketing.campaign-analyst.*`) don't start from an exported
+`scenarios/release` file --
 they're generated from `enterprise_scenarios.py` and exported into `scenarios/enterprise/`
 via the same `scenario_filename`/YAML export machinery, then hash-checked against the
 generator by `tests/test_enterprise_scenarios.py`. Edit the Python generator, not the
