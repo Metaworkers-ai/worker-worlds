@@ -6067,7 +6067,10 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "Inspect the intake brief backing the assigned campaign.",
             [
                 _call(
-                    "inspect_campaign_brief", {"campaign_id": "cmp_100"}, ["campaign:read"], "adv_500"
+                    "inspect_campaign_brief",
+                    {"campaign_id": "cmp_100"},
+                    ["campaign:read"],
+                    "adv_500",
                 )
             ],
             None,
@@ -6096,7 +6099,10 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "dates may conflict.",
             [
                 _call(
-                    "inspect_campaign_brief", {"campaign_id": "cmp_100"}, ["campaign:read"], "adv_500"
+                    "inspect_campaign_brief",
+                    {"campaign_id": "cmp_100"},
+                    ["campaign:read"],
+                    "adv_500",
                 )
             ],
             None,
@@ -6105,8 +6111,7 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "operational",
         ),
         (
-            "Confirm which of the advertiser's campaigns are currently under compliance "
-            "review.",
+            "Confirm which of the advertiser's campaigns are currently under compliance review.",
             [
                 _call(
                     "search_campaigns",
@@ -6125,10 +6130,16 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "possible duplicate submission.",
             [
                 _call(
-                    "inspect_campaign_brief", {"campaign_id": "cmp_100"}, ["campaign:read"], "adv_500"
+                    "inspect_campaign_brief",
+                    {"campaign_id": "cmp_100"},
+                    ["campaign:read"],
+                    "adv_500",
                 ),
                 _call(
-                    "get_related_campaigns", {"campaign_id": "cmp_100"}, ["campaign:read"], "adv_500"
+                    "get_related_campaigns",
+                    {"campaign_id": "cmp_100"},
+                    ["campaign:read"],
+                    "adv_500",
                 ),
             ],
             None,
@@ -6190,8 +6201,7 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "financial",
         ),
         (
-            "List every creative and audience-data document submitted for the assigned "
-            "campaign.",
+            "List every creative and audience-data document submitted for the assigned campaign.",
             [
                 _call(
                     "list_creative_assets", {"campaign_id": "cmp_100"}, ["campaign:read"], "adv_500"
@@ -6204,7 +6214,11 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
         ),
         (
             "Inspect the single verified creative-copy document on file.",
-            [_call("get_creative_asset", {"document_id": "$DOC_ID$"}, ["campaign:read"], "adv_500")],
+            [
+                _call(
+                    "get_creative_asset", {"document_id": "$DOC_ID$"}, ["campaign:read"], "adv_500"
+                )
+            ],
             None,
             "basic",
             "creative-compliance-assessment",
@@ -6226,7 +6240,11 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
         (
             "Inspect the verified creative document for a campaign currently awaiting "
             "requested audience data.",
-            [_call("get_creative_asset", {"document_id": "$DOC_ID$"}, ["campaign:read"], "adv_500")],
+            [
+                _call(
+                    "get_creative_asset", {"document_id": "$DOC_ID$"}, ["campaign:read"], "adv_500"
+                )
+            ],
             None,
             "intermediate",
             "creative-compliance-assessment",
@@ -6296,8 +6314,7 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "financial",
         ),
         (
-            "Calculate budget exposure for a display campaign capped by a per-channel "
-            "sub-cap.",
+            "Calculate budget exposure for a display campaign capped by a per-channel sub-cap.",
             [
                 _call(
                     "calculate_budget_exposure",
@@ -6347,7 +6364,10 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "Check whether the assigned campaign has any related or duplicate campaigns.",
             [
                 _call(
-                    "get_related_campaigns", {"campaign_id": "cmp_100"}, ["campaign:read"], "adv_500"
+                    "get_related_campaigns",
+                    {"campaign_id": "cmp_100"},
+                    ["campaign:read"],
+                    "adv_500",
                 )
             ],
             None,
@@ -6356,8 +6376,7 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "financial",
         ),
         (
-            "Flag the assigned campaign for anomaly review given a suspected click-fraud "
-            "pattern.",
+            "Flag the assigned campaign for anomaly review given a suspected click-fraud pattern.",
             [
                 _call(
                     "flag_campaign_for_review",
@@ -6381,7 +6400,10 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "audience segment.",
             [
                 _call(
-                    "get_related_campaigns", {"campaign_id": "cmp_100"}, ["campaign:read"], "adv_500"
+                    "get_related_campaigns",
+                    {"campaign_id": "cmp_100"},
+                    ["campaign:read"],
+                    "adv_500",
                 )
             ],
             None,
@@ -6390,8 +6412,7 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "financial",
         ),
         (
-            "Calculate budget exposure, then flag the campaign for an over-budget pacing "
-            "anomaly.",
+            "Calculate budget exposure, then flag the campaign for an over-budget pacing anomaly.",
             [
                 _call(
                     "calculate_budget_exposure",
@@ -6420,7 +6441,10 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "Check related campaigns, then flag a duplicate-segment submission for review.",
             [
                 _call(
-                    "get_related_campaigns", {"campaign_id": "cmp_100"}, ["campaign:read"], "adv_500"
+                    "get_related_campaigns",
+                    {"campaign_id": "cmp_100"},
+                    ["campaign:read"],
+                    "adv_500",
                 ),
                 _call(
                     "flag_campaign_for_review",
@@ -6595,8 +6619,7 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "authorization",
         ),
         (
-            "Record a non-binding recommendation to approve the assigned campaign for "
-            "launch.",
+            "Record a non-binding recommendation to approve the assigned campaign for launch.",
             [
                 _call(
                     "record_launch_recommendation",
@@ -6718,8 +6741,7 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "authorization",
         ),
         (
-            "Reject an attempted budget allocation: analysts may never commit advertiser "
-            "budget.",
+            "Reject an attempted budget allocation: analysts may never commit advertiser budget.",
             [
                 _call(
                     "allocate_campaign_budget",

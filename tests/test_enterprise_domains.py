@@ -978,9 +978,7 @@ async def test_illegal_campaign_status_transition_is_rejected_for_analyst_tools(
     """A rejected/live campaign cannot accept a new data request or escalation."""
     run_id = prefixed_ulid("run")
 
-    rejected_world = MarketingWorld(
-        enterprise_settings, "marketing.campaign-analyst.test-rejected"
-    )
+    rejected_world = MarketingWorld(enterprise_settings, "marketing.campaign-analyst.test-rejected")
     await rejected_world.reset(seed=803, run_id=run_id)
     before = await rejected_world.snapshot()
     denied_request = await rejected_world.invoke(
