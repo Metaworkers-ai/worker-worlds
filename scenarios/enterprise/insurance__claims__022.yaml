@@ -8,8 +8,7 @@ world:
 trigger:
   schema_version: '1.0'
   type: claims_request
-  actor:
-    customer_id: ins_cus_102
+  actor: {}
   content: 'Reject a policy read submitted with a blank claimant identity.
 
     Use the available world tools and complete the task now in the listed order.
