@@ -1,6 +1,38 @@
 {
   "capabilities": [
     {
+      "description": "Evaluate audience data request and advertiser follow-up behavior in deterministic commerce worlds.",
+      "domain_id": "marketing",
+      "id": "audience-data-followup",
+      "label": "Audience data request and advertiser follow-up",
+      "schema_version": "1.0",
+      "version": "1.1.0"
+    },
+    {
+      "description": "Evaluate audience segment and budget-envelope analysis behavior in deterministic commerce worlds.",
+      "domain_id": "marketing",
+      "id": "audience-segment-analysis",
+      "label": "Audience segment and budget-envelope analysis",
+      "schema_version": "1.0",
+      "version": "1.1.0"
+    },
+    {
+      "description": "Evaluate budget exposure and reach-projection analysis behavior in deterministic commerce worlds.",
+      "domain_id": "marketing",
+      "id": "budget-exposure-analysis",
+      "label": "Budget exposure and reach-projection analysis",
+      "schema_version": "1.0",
+      "version": "1.1.0"
+    },
+    {
+      "description": "Evaluate campaign intake and brief review behavior in deterministic commerce worlds.",
+      "domain_id": "marketing",
+      "id": "campaign-intake-review",
+      "label": "Campaign intake and brief review",
+      "schema_version": "1.0",
+      "version": "1.1.0"
+    },
+    {
       "description": "Evaluate claim intake and assignment review behavior in deterministic commerce worlds.",
       "domain_id": "insurance",
       "id": "claim-intake-review",
@@ -13,6 +45,14 @@
       "domain_id": "insurance",
       "id": "claims-adjustment",
       "label": "Claims adjustment",
+      "schema_version": "1.0",
+      "version": "1.1.0"
+    },
+    {
+      "description": "Evaluate creative and compliance assessment behavior in deterministic commerce worlds.",
+      "domain_id": "marketing",
+      "id": "creative-compliance-assessment",
+      "label": "Creative and compliance assessment",
       "schema_version": "1.0",
       "version": "1.1.0"
     },
@@ -81,6 +121,14 @@
       "version": "1.1.0"
     },
     {
+      "description": "Evaluate launch recommendation behavior in deterministic commerce worlds.",
+      "domain_id": "marketing",
+      "id": "launch-recommendation",
+      "label": "Launch recommendation",
+      "schema_version": "1.0",
+      "version": "1.1.0"
+    },
+    {
       "description": "Evaluate operational reliability behavior in deterministic commerce worlds.",
       "domain_id": "commerce",
       "id": "operational-reliability",
@@ -93,6 +141,14 @@
       "domain_id": "commerce",
       "id": "order-operations",
       "label": "Order operations",
+      "schema_version": "1.0",
+      "version": "1.1.0"
+    },
+    {
+      "description": "Evaluate performance and anomaly triage behavior in deterministic commerce worlds.",
+      "domain_id": "marketing",
+      "id": "performance-anomaly-triage",
+      "label": "Performance and anomaly triage",
       "schema_version": "1.0",
       "version": "1.1.0"
     },
@@ -117,6 +173,14 @@
       "domain_id": "commerce",
       "id": "refund-resolution",
       "label": "Refund resolution",
+      "schema_version": "1.0",
+      "version": "1.1.0"
+    },
+    {
+      "description": "Evaluate compliance risk escalation behavior in deterministic commerce worlds.",
+      "domain_id": "marketing",
+      "id": "risk-escalation",
+      "label": "Compliance risk escalation",
       "schema_version": "1.0",
       "version": "1.1.0"
     },
@@ -5965,6 +6029,486 @@
       "schema_version": "1.0"
     },
     {
+      "capability_id": "campaign-intake-review",
+      "difficulty": "basic",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "ecd290af8342e69d42520b4ff006ee2cef3aff8f9f5bd11f7d7935649132ee8a",
+      "scenario_id": "marketing.campaign-analyst.001",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "campaign-intake-review",
+      "difficulty": "basic",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "b863988a3e6d89a9531a215ef19f0cee6b71f8997fd01aea8893499b7c77aaa4",
+      "scenario_id": "marketing.campaign-analyst.002",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "campaign-intake-review",
+      "difficulty": "intermediate",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "e9ea495e2b953c954ad84241c8dcdc48b375848528b87c700177669e8357b3d9",
+      "scenario_id": "marketing.campaign-analyst.003",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "campaign-intake-review",
+      "difficulty": "intermediate",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "12a6d7c957acd5df83c6b6d0f8788127a38419fd20d1229191a6aa801fd15929",
+      "scenario_id": "marketing.campaign-analyst.004",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "campaign-intake-review",
+      "difficulty": "intermediate",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "08c1c2a07d7c35f6f4bea2d83d38d1ba775a3f542065c8d5fba068bf4589d59b",
+      "scenario_id": "marketing.campaign-analyst.005",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "campaign-intake-review",
+      "difficulty": "advanced",
+      "domain_id": "marketing",
+      "risk_category": "financial",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "c80e39f261691d409b5253b548c2a9de2dfa522b1ce160417868c5bc1230fbb9",
+      "scenario_id": "marketing.campaign-analyst.006",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "campaign-intake-review",
+      "difficulty": "adversarial",
+      "domain_id": "marketing",
+      "risk_category": "authorization",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "54e3b6d913a5437ba426c258a8ef8fc0b31b07bb6dd6340555b9ba7ce9f07b94",
+      "scenario_id": "marketing.campaign-analyst.007",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "audience-segment-analysis",
+      "difficulty": "basic",
+      "domain_id": "marketing",
+      "risk_category": "financial",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "2ab429107ab4d259d2c5a9504ec3c8bb8ecba93f1672b6ae718b00ed9741ef37",
+      "scenario_id": "marketing.campaign-analyst.008",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "audience-segment-analysis",
+      "difficulty": "intermediate",
+      "domain_id": "marketing",
+      "risk_category": "financial",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "010efe0d4a2912fb24bd35c99c49265c3355f693dfed885db394c669783bc016",
+      "scenario_id": "marketing.campaign-analyst.009",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "creative-compliance-assessment",
+      "difficulty": "basic",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "9067a2a21d783925ee767a88b9ca44a49a132bd76eac56f0ca8ab8d05d5574e7",
+      "scenario_id": "marketing.campaign-analyst.010",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "creative-compliance-assessment",
+      "difficulty": "basic",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "e191be4b82d80d73ef727bd46abafb083a3f0524b120c801ca8b66ae5760ad36",
+      "scenario_id": "marketing.campaign-analyst.011",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "creative-compliance-assessment",
+      "difficulty": "intermediate",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "9133fccb6c6382100a63b783ac021e6943f56753679dc09026285603244e57ca",
+      "scenario_id": "marketing.campaign-analyst.012",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "creative-compliance-assessment",
+      "difficulty": "intermediate",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "4bc981a424973b15a22b4b3dfb5ba99414ffaccefcb899b862ff45aa20c50ba7",
+      "scenario_id": "marketing.campaign-analyst.013",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "creative-compliance-assessment",
+      "difficulty": "advanced",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "8f95dfae9fd80eab3c565af39d11e31419d6f9534109da2ccb61c540927d0fda",
+      "scenario_id": "marketing.campaign-analyst.014",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "budget-exposure-analysis",
+      "difficulty": "basic",
+      "domain_id": "marketing",
+      "risk_category": "financial",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "6b5f59c5156216e500b14eb5434ce1afde2110597dd0f95ae7ebe84241efc904",
+      "scenario_id": "marketing.campaign-analyst.015",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "budget-exposure-analysis",
+      "difficulty": "intermediate",
+      "domain_id": "marketing",
+      "risk_category": "financial",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "3dc4836fa3e758ed10a96544ff3e1daab7a69ba75f70c10179b30c2263ecc777",
+      "scenario_id": "marketing.campaign-analyst.016",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "budget-exposure-analysis",
+      "difficulty": "intermediate",
+      "domain_id": "marketing",
+      "risk_category": "financial",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "7583bf4dfb9a761ac58ccd067b791bcba305caf599e5630742e7184f28b982d3",
+      "scenario_id": "marketing.campaign-analyst.017",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "budget-exposure-analysis",
+      "difficulty": "intermediate",
+      "domain_id": "marketing",
+      "risk_category": "financial",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "638618f8f2c3cf8359ceb034a733acc4f2e1abdef536820f836885335828c259",
+      "scenario_id": "marketing.campaign-analyst.018",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "budget-exposure-analysis",
+      "difficulty": "advanced",
+      "domain_id": "marketing",
+      "risk_category": "financial",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "d457ea1bef44783fbcd88268cc5cfa3f502106aa9728ac73a8b69c4e83274631",
+      "scenario_id": "marketing.campaign-analyst.019",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "budget-exposure-analysis",
+      "difficulty": "advanced",
+      "domain_id": "marketing",
+      "risk_category": "financial",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "248261377c1a11e6c1dc37295af28f7b9a0c05e238b1db3a300e7f6665f8f176",
+      "scenario_id": "marketing.campaign-analyst.020",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "performance-anomaly-triage",
+      "difficulty": "basic",
+      "domain_id": "marketing",
+      "risk_category": "financial",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "cabf33ee8b165d7d51acd7474d8c7ba704a44016d674fe597a2762f7e88d2297",
+      "scenario_id": "marketing.campaign-analyst.021",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "performance-anomaly-triage",
+      "difficulty": "intermediate",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "fea0f4aac1367f74d0d6dd1a7e499ea18c6f48ede6a6f95088542af11cec4f95",
+      "scenario_id": "marketing.campaign-analyst.022",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "performance-anomaly-triage",
+      "difficulty": "intermediate",
+      "domain_id": "marketing",
+      "risk_category": "financial",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "f89514cde88df1f9257d917ed1ad8408479f3602171f48479db3afdc398c4806",
+      "scenario_id": "marketing.campaign-analyst.023",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "performance-anomaly-triage",
+      "difficulty": "advanced",
+      "domain_id": "marketing",
+      "risk_category": "financial",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "b0ec6fbe68f12212b9457471471345bd57242296667fafbc613f8930049804a0",
+      "scenario_id": "marketing.campaign-analyst.024",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "performance-anomaly-triage",
+      "difficulty": "advanced",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "5f08a62441de39488fd058b19e2332c8ffcad5685e42a84f5321ac7af8325b6b",
+      "scenario_id": "marketing.campaign-analyst.025",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "performance-anomaly-triage",
+      "difficulty": "adversarial",
+      "domain_id": "marketing",
+      "risk_category": "authorization",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "b67c4238125c4d6c400aa2b3cb5cac41dbaf6102d12e724d236723effa676478",
+      "scenario_id": "marketing.campaign-analyst.026",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "audience-data-followup",
+      "difficulty": "intermediate",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "3a6157f38626b0a08bbf85e573ab959b410409e35ef16bfa91afdc90ca416c43",
+      "scenario_id": "marketing.campaign-analyst.027",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "audience-data-followup",
+      "difficulty": "advanced",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "33d81ce3cb67e82478af2ffb4c34d1e02ee74c93d36d322d012fcabcff723b93",
+      "scenario_id": "marketing.campaign-analyst.028",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "audience-data-followup",
+      "difficulty": "adversarial",
+      "domain_id": "marketing",
+      "risk_category": "authorization",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "0f3f14e644de45cf9007f09711d1196e6c4762d4286d5f1c1ef16f5a00e2d5f0",
+      "scenario_id": "marketing.campaign-analyst.029",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "risk-escalation",
+      "difficulty": "intermediate",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "d8e94793a9d7f58eb3b7f9e82ec2832758d05f4d06049f8727d295f496837c0d",
+      "scenario_id": "marketing.campaign-analyst.030",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "risk-escalation",
+      "difficulty": "advanced",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "290f0910415789a0aa08e69e0d9051eca2217b6461275aa2225cb8b7cd6314fe",
+      "scenario_id": "marketing.campaign-analyst.031",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "risk-escalation",
+      "difficulty": "adversarial",
+      "domain_id": "marketing",
+      "risk_category": "authorization",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "fa7707994954d9cc8c31a7e153a2dc0f5d51a2b8c6059600c09bcae76ccbe40b",
+      "scenario_id": "marketing.campaign-analyst.032",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "launch-recommendation",
+      "difficulty": "basic",
+      "domain_id": "marketing",
+      "risk_category": "financial",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "22f084cb95c6958639e888a397a352e8b34e1a7f0ad5b04e2f5c6eba6794bc57",
+      "scenario_id": "marketing.campaign-analyst.033",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "launch-recommendation",
+      "difficulty": "basic",
+      "domain_id": "marketing",
+      "risk_category": "financial",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "6ec284c20de277d2726b59764fbc8b0c9d6ffbba9f693b74ab996ea8f5e8e7ef",
+      "scenario_id": "marketing.campaign-analyst.034",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "launch-recommendation",
+      "difficulty": "basic",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "edf6bf9b23d312299e0c0725f2e52b25e2653d7a0d4f0a9ffc4f6de250f9b942",
+      "scenario_id": "marketing.campaign-analyst.035",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "launch-recommendation",
+      "difficulty": "intermediate",
+      "domain_id": "marketing",
+      "risk_category": "operational",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "b0b2447effd675ad16122357d72b4bd5669279402f3b86a72695b5c1e1d083e6",
+      "scenario_id": "marketing.campaign-analyst.036",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "launch-recommendation",
+      "difficulty": "adversarial",
+      "domain_id": "marketing",
+      "risk_category": "authorization",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "a2d95ac872c320af9c3c336e7a08060ae92da7fa74a12bb56f6d546dd04ff9e4",
+      "scenario_id": "marketing.campaign-analyst.037",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "launch-recommendation",
+      "difficulty": "adversarial",
+      "domain_id": "marketing",
+      "risk_category": "authorization",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "c914cf4dfaeb76b9df09a49240edf613671a5adfe04e11c1a711a98eb39b7d11",
+      "scenario_id": "marketing.campaign-analyst.038",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "launch-recommendation",
+      "difficulty": "adversarial",
+      "domain_id": "marketing",
+      "risk_category": "authorization",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "a13dca117a61105b9c7733b8d21e7c96c1d5dab6db3c3f35c2cf0b3be46faeb7",
+      "scenario_id": "marketing.campaign-analyst.039",
+      "schema_version": "1.0"
+    },
+    {
+      "capability_id": "launch-recommendation",
+      "difficulty": "adversarial",
+      "domain_id": "marketing",
+      "risk_category": "authorization",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "scenario_hash": "efa31d11803faad62af6f8bf8fd34564179a7f874baf1132cfd64813fb4005fd",
+      "scenario_id": "marketing.campaign-analyst.040",
+      "schema_version": "1.0"
+    },
+    {
       "capability_id": "refund-resolution",
       "difficulty": "basic",
       "domain_id": "commerce",
@@ -6146,9 +6690,50 @@
       "world_names": [
         "postgres-insurance"
       ]
+    },
+    {
+      "capability_ids": [
+        "audience-data-followup",
+        "audience-segment-analysis",
+        "budget-exposure-analysis",
+        "campaign-intake-review",
+        "creative-compliance-assessment",
+        "launch-recommendation",
+        "performance-anomaly-triage",
+        "risk-escalation"
+      ],
+      "description": "Advertisers, campaigns, audience segments, creative, and compliance review.",
+      "id": "marketing",
+      "label": "Marketing",
+      "role_ids": [
+        "campaign-analyst"
+      ],
+      "schema_version": "1.0",
+      "version": "1.1.0",
+      "world_names": [
+        "postgres-marketing"
+      ]
     }
   ],
   "roles": [
+    {
+      "capability_ids": [
+        "audience-data-followup",
+        "audience-segment-analysis",
+        "budget-exposure-analysis",
+        "campaign-intake-review",
+        "creative-compliance-assessment",
+        "launch-recommendation",
+        "performance-anomaly-triage",
+        "risk-escalation"
+      ],
+      "description": "Evaluate campaign intake review, audience-segment and budget-exposure analysis, creative and compliance assessment, fraud/anomaly triage, and non-binding launch recommendations. Cannot launch a campaign, send a customer-facing communication, or commit advertiser budget.",
+      "domain_id": "marketing",
+      "id": "campaign-analyst",
+      "label": "Marketing Campaign Analyst",
+      "schema_version": "1.0",
+      "version": "1.1.0"
+    },
     {
       "capability_ids": [
         "claims-adjustment"
@@ -8452,6 +9037,195 @@
         "insurance.claims-analyst.038",
         "insurance.claims-analyst.039",
         "insurance.claims-analyst.040"
+      ],
+      "schema_version": "1.0",
+      "tier": "standard"
+    },
+    {
+      "capability_ids": [
+        "audience-data-followup",
+        "audience-segment-analysis",
+        "budget-exposure-analysis",
+        "campaign-intake-review",
+        "creative-compliance-assessment",
+        "launch-recommendation",
+        "performance-anomaly-triage",
+        "risk-escalation"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "marketing",
+      "estimated_duration_s": 0,
+      "id": "marketing.campaign-analyst.custom",
+      "label": "Marketing Campaign Analyst Custom",
+      "revision": "1.1.0",
+      "role_id": "campaign-analyst",
+      "scenario_ids": [],
+      "schema_version": "1.0",
+      "tier": "custom"
+    },
+    {
+      "capability_ids": [
+        "audience-data-followup",
+        "audience-segment-analysis",
+        "budget-exposure-analysis",
+        "campaign-intake-review",
+        "creative-compliance-assessment",
+        "launch-recommendation",
+        "performance-anomaly-triage",
+        "risk-escalation"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "marketing",
+      "estimated_duration_s": 120,
+      "id": "marketing.campaign-analyst.full",
+      "label": "Marketing Campaign Analyst Full",
+      "revision": "1.1.0",
+      "role_id": "campaign-analyst",
+      "scenario_ids": [
+        "marketing.campaign-analyst.001",
+        "marketing.campaign-analyst.002",
+        "marketing.campaign-analyst.003",
+        "marketing.campaign-analyst.004",
+        "marketing.campaign-analyst.005",
+        "marketing.campaign-analyst.006",
+        "marketing.campaign-analyst.007",
+        "marketing.campaign-analyst.008",
+        "marketing.campaign-analyst.009",
+        "marketing.campaign-analyst.010",
+        "marketing.campaign-analyst.011",
+        "marketing.campaign-analyst.012",
+        "marketing.campaign-analyst.013",
+        "marketing.campaign-analyst.014",
+        "marketing.campaign-analyst.015",
+        "marketing.campaign-analyst.016",
+        "marketing.campaign-analyst.017",
+        "marketing.campaign-analyst.018",
+        "marketing.campaign-analyst.019",
+        "marketing.campaign-analyst.020",
+        "marketing.campaign-analyst.021",
+        "marketing.campaign-analyst.022",
+        "marketing.campaign-analyst.023",
+        "marketing.campaign-analyst.024",
+        "marketing.campaign-analyst.025",
+        "marketing.campaign-analyst.026",
+        "marketing.campaign-analyst.027",
+        "marketing.campaign-analyst.028",
+        "marketing.campaign-analyst.029",
+        "marketing.campaign-analyst.030",
+        "marketing.campaign-analyst.031",
+        "marketing.campaign-analyst.032",
+        "marketing.campaign-analyst.033",
+        "marketing.campaign-analyst.034",
+        "marketing.campaign-analyst.035",
+        "marketing.campaign-analyst.036",
+        "marketing.campaign-analyst.037",
+        "marketing.campaign-analyst.038",
+        "marketing.campaign-analyst.039",
+        "marketing.campaign-analyst.040"
+      ],
+      "schema_version": "1.0",
+      "tier": "full"
+    },
+    {
+      "capability_ids": [
+        "audience-segment-analysis",
+        "campaign-intake-review"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "marketing",
+      "estimated_duration_s": 24,
+      "id": "marketing.campaign-analyst.smoke",
+      "label": "Marketing Campaign Analyst Smoke",
+      "revision": "1.1.0",
+      "role_id": "campaign-analyst",
+      "scenario_ids": [
+        "marketing.campaign-analyst.001",
+        "marketing.campaign-analyst.002",
+        "marketing.campaign-analyst.003",
+        "marketing.campaign-analyst.004",
+        "marketing.campaign-analyst.005",
+        "marketing.campaign-analyst.006",
+        "marketing.campaign-analyst.007",
+        "marketing.campaign-analyst.008"
+      ],
+      "schema_version": "1.0",
+      "tier": "smoke"
+    },
+    {
+      "capability_ids": [
+        "audience-segment-analysis",
+        "budget-exposure-analysis",
+        "campaign-intake-review",
+        "creative-compliance-assessment"
+      ],
+      "default_limits": {
+        "cost_minor": 0,
+        "injections": 20,
+        "model_tokens": 12000,
+        "mutations": 20,
+        "schema_version": "1.0",
+        "tool_calls": 20,
+        "tool_timeout_s": 10.0,
+        "wall_time_s": 30.0,
+        "worker_turns": 50
+      },
+      "domain_id": "marketing",
+      "estimated_duration_s": 60,
+      "id": "marketing.campaign-analyst.standard",
+      "label": "Marketing Campaign Analyst Standard",
+      "revision": "1.1.0",
+      "role_id": "campaign-analyst",
+      "scenario_ids": [
+        "marketing.campaign-analyst.001",
+        "marketing.campaign-analyst.002",
+        "marketing.campaign-analyst.003",
+        "marketing.campaign-analyst.004",
+        "marketing.campaign-analyst.005",
+        "marketing.campaign-analyst.006",
+        "marketing.campaign-analyst.007",
+        "marketing.campaign-analyst.008",
+        "marketing.campaign-analyst.009",
+        "marketing.campaign-analyst.010",
+        "marketing.campaign-analyst.011",
+        "marketing.campaign-analyst.012",
+        "marketing.campaign-analyst.013",
+        "marketing.campaign-analyst.014",
+        "marketing.campaign-analyst.015",
+        "marketing.campaign-analyst.016",
+        "marketing.campaign-analyst.017",
+        "marketing.campaign-analyst.018",
+        "marketing.campaign-analyst.019",
+        "marketing.campaign-analyst.020"
       ],
       "schema_version": "1.0",
       "tier": "standard"

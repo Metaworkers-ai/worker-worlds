@@ -3,12 +3,13 @@
 from worker_worlds.contracts import Scenario
 from worker_worlds.database import DatabaseSettings
 from worker_worlds.insurance import InsuranceWorld
+from worker_worlds.marketing import MarketingWorld
 from worker_worlds.postgres_world import PostgresWorld
 from worker_worlds.protocols import World
 from worker_worlds.stubs import StubWorld
 from worker_worlds.supply_chain import SupplyChainWorld
 
-WORLD_NAMES = ("stub", "postgres", "supply-chain", "insurance")
+WORLD_NAMES = ("stub", "postgres", "supply-chain", "insurance", "marketing")
 
 
 def world_version(name: str) -> str:
@@ -18,6 +19,7 @@ def world_version(name: str) -> str:
         "postgres": PostgresWorld.version,
         "supply-chain": SupplyChainWorld.version,
         "insurance": InsuranceWorld.version,
+        "marketing": MarketingWorld.version,
     }
     try:
         return versions[name]
@@ -36,4 +38,6 @@ def create_world(name: str, scenario: Scenario, settings: DatabaseSettings | Non
         return SupplyChainWorld(selected, str(scenario.id))
     if name == "insurance":
         return InsuranceWorld(selected, str(scenario.id))
+    if name == "marketing":
+        return MarketingWorld(selected, str(scenario.id))
     raise ValueError(f"unknown world: {name}")

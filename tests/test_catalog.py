@@ -13,8 +13,8 @@ def test_builtin_catalog_is_complete_and_canonical() -> None:
     catalog = builtin_catalog()
     scenario_ids = {str(item.id) for item in reviewed_scenarios()}
     assert catalog.domains[0].id == "commerce"
-    assert len(catalog.roles) == 9
-    assert len(catalog.classifications) == 457
+    assert len(catalog.roles) == 10
+    assert len(catalog.classifications) == 497
     assert scenario_ids < {str(item.scenario_id) for item in catalog.classifications}
     assert catalog.canonical_json() == load_catalog().canonical_json()
     assert catalog_text() == Path("catalog/v1/catalog.json").read_text(encoding="utf-8")
@@ -62,7 +62,9 @@ def test_role_suite_tiers_are_nested_and_deterministic() -> None:
         standard = set(tiers[SuiteTier.STANDARD].scenario_ids)
         full = set(tiers[SuiteTier.FULL].scenario_ids)
         assert smoke <= standard <= full
-        expected_smoke = 10 if role.id == "claims-analyst" else 6
+        expected_smoke = (
+            10 if role.id == "claims-analyst" else 8 if role.id == "campaign-analyst" else 6
+        )
         assert len(smoke) == expected_smoke
         assert tiers[SuiteTier.CUSTOM].scenario_ids == ()
 

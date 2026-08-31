@@ -23,6 +23,7 @@ CATALOG_PATH = Path("catalog/v1/catalog.json")
 # smoke=6 / standard=30 defaults. `full` always covers every eligible scenario.
 _SUITE_SIZE_OVERRIDES: dict[str, dict[str, int]] = {
     "claims-analyst": {"smoke": 10, "standard": 40},
+    "campaign-analyst": {"smoke": 8, "standard": 20},
 }
 CatalogId = Annotated[str, Field(pattern=r"^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$")]
 SemanticVersion = Annotated[str, Field(pattern=r"^[0-9]+\.[0-9]+\.[0-9]+$")]
@@ -222,6 +223,7 @@ class Catalog(Contract):
                     "postgres-commerce",
                     "postgres-commerce-supply-chain",
                     "postgres-insurance",
+                    "postgres-marketing",
                 }
                 for world_name in domain.world_names
             ):
@@ -392,6 +394,14 @@ def builtin_catalog() -> Catalog:
         "decision-recommendation": ("Decision recommendation", "insurance"),
         "evidence-request-followup": ("Evidence request and customer follow-up", "insurance"),
         "investigation-escalation": ("Investigation escalation", "insurance"),
+        "campaign-intake-review": ("Campaign intake and brief review", "marketing"),
+        "audience-segment-analysis": ("Audience segment and budget-envelope analysis", "marketing"),
+        "creative-compliance-assessment": ("Creative and compliance assessment", "marketing"),
+        "budget-exposure-analysis": ("Budget exposure and reach-projection analysis", "marketing"),
+        "performance-anomaly-triage": ("Performance and anomaly triage", "marketing"),
+        "launch-recommendation": ("Launch recommendation", "marketing"),
+        "audience-data-followup": ("Audience data request and advertiser follow-up", "marketing"),
+        "risk-escalation": ("Compliance risk escalation", "marketing"),
     }
     capabilities = tuple(
         CapabilityDefinition(
@@ -469,6 +479,28 @@ def builtin_catalog() -> Catalog:
                 "decision-recommendation",
                 "evidence-request-followup",
                 "investigation-escalation",
+            ),
+        ),
+        RoleDefinition(
+            id="campaign-analyst",
+            domain_id="marketing",
+            version=CATALOG_VERSION,
+            label="Marketing Campaign Analyst",
+            description=(
+                "Evaluate campaign intake review, audience-segment and budget-exposure "
+                "analysis, creative and compliance assessment, fraud/anomaly triage, and "
+                "non-binding launch recommendations. Cannot launch a campaign, send a "
+                "customer-facing communication, or commit advertiser budget."
+            ),
+            capability_ids=(
+                "campaign-intake-review",
+                "audience-segment-analysis",
+                "creative-compliance-assessment",
+                "budget-exposure-analysis",
+                "performance-anomaly-triage",
+                "launch-recommendation",
+                "audience-data-followup",
+                "risk-escalation",
             ),
         ),
     )
@@ -594,6 +626,19 @@ def builtin_catalog() -> Catalog:
                 role_ids=tuple(role.id for role in roles if role.domain_id == "insurance"),
                 capability_ids=tuple(
                     item.id for item in capabilities if item.domain_id == "insurance"
+                ),
+            ),
+            DomainDefinition(
+                id="marketing",
+                version=CATALOG_VERSION,
+                label="Marketing",
+                description=(
+                    "Advertisers, campaigns, audience segments, creative, and compliance review."
+                ),
+                world_names=("postgres-marketing",),
+                role_ids=tuple(role.id for role in roles if role.domain_id == "marketing"),
+                capability_ids=tuple(
+                    item.id for item in capabilities if item.domain_id == "marketing"
                 ),
             ),
         ),

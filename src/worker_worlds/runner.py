@@ -63,11 +63,32 @@ _TOOL_SCOPE_POLICY = {
     "add_analyst_note": "claim:analyst-note",
     "record_claim_recommendation": "claim:recommend",
     "flag_claim_for_review": "claim:flag",
+    "search_campaigns": "campaign:read",
+    "get_audience_segment": "campaign:read",
+    "inspect_campaign_brief": "campaign:read",
+    "list_creative_assets": "campaign:read",
+    "get_creative_asset": "campaign:read",
+    "get_related_campaigns": "campaign:read",
+    "calculate_budget_exposure": "campaign:read",
+    "add_campaign_note": "campaign:analyst-note",
+    "record_launch_recommendation": "campaign:recommend",
+    "flag_campaign_for_review": "campaign:flag",
+    "request_suppression_update": "campaign:request",
+    "escalate_compliance_review": "campaign:escalate",
+    "launch_campaign": "campaign:launch",
+    "send_campaign_communication": "campaign:send",
+    "allocate_campaign_budget": "campaign:budget-commit",
 }
 
 # Tool names an Insurance Claims Analyst run must never be able to authorize,
 # regardless of what any scenario or worker requests (FR-007).
 INSURANCE_ANALYST_PROHIBITED_TOOLS = frozenset({"decide_claim", "issue_claim_payment"})
+
+# Tool names a Marketing Campaign Analyst run must never be able to authorize,
+# regardless of what any scenario or worker requests (ADR 008).
+MARKETING_ANALYST_PROHIBITED_TOOLS = frozenset(
+    {"launch_campaign", "send_campaign_communication", "allocate_campaign_budget"}
+)
 
 
 class Runner:

@@ -11,7 +11,7 @@ def test_enterprise_scenarios_are_checked_and_catalogued() -> None:
     scenarios = enterprise_scenarios()
     catalog = builtin_catalog()
     classified = {str(item.scenario_id) for item in catalog.classifications}
-    assert len(scenarios) == 247
+    assert len(scenarios) == 287
     for scenario in scenarios:
         path = Path("scenarios/enterprise") / scenario_filename(scenario)
         loaded = load_scenario(path)
@@ -35,6 +35,9 @@ def test_new_roles_have_smoke_standard_and_full_suites() -> None:
         "claims-adjuster": {"full": 132, "smoke": 6, "standard": 10},
         # Full REQUIREMENT.md FR-012 target reached: smoke=10, standard=40, full=102.
         "claims-analyst": {"full": 102, "smoke": 10, "standard": 40},
+        # Phase 1 target (ADR 008 / docs/marketing-analyst-scenario-matrix.md):
+        # smoke=8, standard=20, full=40. Scaling further is explicit Phase 2 work.
+        "campaign-analyst": {"full": 40, "smoke": 8, "standard": 20},
     }
     for role_id, expected_counts in expected.items():
         suites = [item for item in catalog.suites if item.role_id == role_id]
