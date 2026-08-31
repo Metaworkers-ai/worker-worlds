@@ -22,19 +22,27 @@ shipment/fulfillment cases to fulfillment, ticket cases to support/escalation, a
 to every role whose authority boundary they exercise. Supply-chain and insurance scenarios use
 their dedicated deterministic domain models and tools; they are not relabelled refund scenarios.
 
-The two Insurance roles share the `postgres-insurance` world but never share authority. Claims
-Adjuster may decide a claim and issue payment. Claims Analyst investigates, calculates coverage
-exposure, requests evidence, and records a non-binding recommendation, but can never call
-`decide_claim` or `issue_claim_payment` -- enforced by trusted per-scenario scope grants, not by
-worker behavior. See `docs/adr/007-claims-analyst-role.md`.
-
-The live suite surface contains 327 scenarios: 200 generated commerce scenarios, 13 supply-chain
-scenarios, 12 Claims Adjuster scenarios, and 102 Claims Analyst scenarios. Ten additional
-`examples/scenarios` fixtures remain classified for compatibility and UI discovery but are excluded
-from live suites and are permitted only with the deterministic local stub.
+Scenario classification covers 235 scenarios in total: 200 reviewed commerce scenarios under
+`scenarios/release`, 25 enterprise scenarios under `scenarios/enterprise` (13 supply-chain and 12
+insurance), and 10 `examples/scenarios` demonstration fixtures. Of these, 225 are live-ready (the
+200 commerce plus 25 enterprise scenarios); the 10 demonstration fixtures remain classified for
+compatibility and UI discovery but are excluded from live suites and are permitted only with the
+deterministic local stub. The full-tier suites reflect this exactly: Supply Chain Analyst Full
+contains all 13 supply-chain scenarios, and Claims Adjuster Full contains all 12 insurance
+scenarios.
 
 Run `make catalog-check`, `make schemas-check`, and `make openapi-check` before committing a catalog
 change. Additive labels, descriptions, classifications, and new versioned IDs preserve schema major
 version 1. Reinterpreting an existing ID or changing suite membership requires a suite revision;
 breaking a catalog meaning requires a new catalog major version.
+
+## Test-only fault injection
+
+`GetStockoutRiskInput.inject_delay_ms` (supply-chain `get_stockout_risk` tool) is intentional
+test-only fault injection, not a production feature: a stub-driven scenario can set it to force
+that tool call to stall so the runner&#x27;s tool-timeout and cancellation path can be exercised
+deterministically. It is hard-capped at 60 seconds and defaults to `0`. The one scenario that uses
+it, `commerce.supply-chain.timeout-check`, is explicitly `live_ready: false` and only ever runs
+against the deterministic local stub. No scenario approved for live adapters asks a worker to set
+this field, and the 60-second cap bounds the worst case even if a live worker did.
 </pre></main></body></html>

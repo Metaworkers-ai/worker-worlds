@@ -294,7 +294,7 @@ async def test_catalog_endpoints_are_versioned_and_deterministic(
     assert first.status_code == 200
     assert first.content == second.content
     payload = first.json()
-    assert payload["catalog_version"] == "1.0.0"
+    assert payload["catalog_version"] == "1.1.0"
     assert payload["domains"][0]["id"] == "commerce"
     roles = await client.get("/api/v1/domains/commerce/roles")
     assert len(roles.json()) == 7
@@ -384,5 +384,346 @@ async def test_custom_suite_api_runs_and_downloads_evidence(
         connection = await connect(DatabaseSettings(url=url))
         try:
             await connection.execute("DELETE FROM worker_worlds.suite_jobs WHERE id=$1", job_id)
+        finally:
+            await connection.close()
+
+
+async def test_commerce_suite_job_runs_against_real_postgres_with_evidence_and_clean_namespace(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """#9 gap 4: full Domain->Role->Suite->Agent->World->Run flow, real Postgres world."""
+    url = os.environ.get("WORKER_WORLDS_TEST_DATABASE_URL")
+    if not url:
+        pytest.skip("WORKER_WORLDS_TEST_DATABASE_URL is not explicitly set")
+    monkeypatch.setenv("WORKER_WORLDS_DATABASE_URL", url)
+    client = _client(tmp_path, monkeypatch)
+    monkeypatch.setenv("WORKER_WORLDS_SCENARIO_DIR", str(Path("scenarios/release").resolve()))  # noqa: ASYNC240
+    settings = DatabaseSettings(url=url)
+    connection = await connect(settings)
+    try:
+        before = await connection.fetch(
+            "SELECT nspname FROM pg_namespace WHERE nspname LIKE 'ww_run_%'"
+        )
+    finally:
+        await connection.close()
+
+    response = await client.post(
+        "/api/v1/suite-jobs",
+        json={
+            "request_key": prefixed_ulid("request"),
+            "domain_id": "commerce",
+            "role_id": "refund-specialist",
+            "suite_id": "commerce.refund-specialist.custom",
+            "agent_id": "local-stub",
+            "world": "postgres",
+            "concurrency": 1,
+            "scenario_ids": ["commerce.refunds-payments.001"],
+            "seed": 4001,
+            "budget": {
+                "deadline_s": 30,
+                "scenarios": 1,
+                "tool_calls": 10,
+                "model_tokens": 1000,
+                "mutations": 10,
+                "cost_minor": 0,
+            },
+        },
+    )
+    assert response.status_code == 202, response.text
+    job_id = response.json()["id"]
+    assert job_id
+    try:
+        detail = None
+        for _ in range(200):
+            detail = await client.get(f"/api/v1/suite-jobs/{job_id}")
+            body = detail.json()
+            if body["status"] in {"completed", "failed", "cancelled"} and body["suite_record_path"]:
+                break
+            await asyncio.sleep(0.02)
+        assert detail is not None
+        body = detail.json()
+        # 8. Terminal state.
+        assert body["status"] == "completed", body
+        assert body["domain_id"] == "commerce"
+        assert body["role_id"] == "refund-specialist"
+        assert body["suite_id"] == "commerce.refund-specialist.custom"
+        assert body["agent_id"] == "local-stub"
+        assert body["world"] == "postgres"
+
+        # 9-11. Evidence exists, is complete, and is downloadable through the real API.
+        evidence = await client.get(f"/api/v1/suite-jobs/{job_id}/evidence")
+        assert evidence.status_code == 200
+        assert evidence.headers["content-type"] == "application/zip"
+        import io
+        import zipfile
+
+        with zipfile.ZipFile(io.BytesIO(evidence.content)) as archive:
+            names = set(archive.namelist())
+            assert {"suite.json", "manifest.json", "junit.xml", "report.html"} <= names
+            run_entries = [name for name in names if name.startswith("runs/")]
+            assert len(run_entries) >= 1
+            manifest = __import__("json").loads(archive.read("manifest.json"))
+            assert manifest["job"]["status"] == "completed"
+
+        # 13-15. Real Postgres namespace was created and then fully cleaned up -- no leftover
+        # schema, and no contamination of any other run's namespace.
+        connection = await connect(settings)
+        try:
+            after = await connection.fetch(
+                "SELECT nspname FROM pg_namespace WHERE nspname LIKE 'ww_run_%'"
+            )
+        finally:
+            await connection.close()
+        assert {row["nspname"] for row in after} == {row["nspname"] for row in before}
+    finally:
+        connection = await connect(settings)
+        try:
+            await connection.execute("DELETE FROM worker_worlds.suite_jobs WHERE id=$1", job_id)
+        finally:
+            await connection.close()
+
+
+async def test_insurance_suite_job_runs_against_real_postgres_with_evidence_and_clean_namespace(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """#9 gap 5: same flow for Insurance, and Insurance is architecturally decoupled from
+    commerce persistence -- a separate world class, not a subclass of the commerce world."""
+    from worker_worlds.insurance import InsuranceWorld
+    from worker_worlds.postgres_world import PostgresWorld
+
+    assert not issubclass(InsuranceWorld, PostgresWorld)
+    assert not issubclass(PostgresWorld, InsuranceWorld)
+
+    url = os.environ.get("WORKER_WORLDS_TEST_DATABASE_URL")
+    if not url:
+        pytest.skip("WORKER_WORLDS_TEST_DATABASE_URL is not explicitly set")
+    monkeypatch.setenv("WORKER_WORLDS_DATABASE_URL", url)
+    client = _client(tmp_path, monkeypatch)
+    monkeypatch.setenv("WORKER_WORLDS_SCENARIO_DIR", str(Path("scenarios/enterprise").resolve()))  # noqa: ASYNC240
+    settings = DatabaseSettings(url=url)
+    connection = await connect(settings)
+    try:
+        before = await connection.fetch(
+            "SELECT nspname FROM pg_namespace WHERE nspname LIKE 'ww_run_%'"
+        )
+    finally:
+        await connection.close()
+
+    response = await client.post(
+        "/api/v1/suite-jobs",
+        json={
+            "request_key": prefixed_ulid("request"),
+            "domain_id": "insurance",
+            "role_id": "claims-adjuster",
+            "suite_id": "insurance.claims-adjuster.custom",
+            "agent_id": "local-stub",
+            "world": "insurance",
+            "concurrency": 1,
+            "scenario_ids": ["insurance.claims.001"],
+            "seed": 5001,
+            "budget": {
+                "deadline_s": 30,
+                "scenarios": 1,
+                "tool_calls": 10,
+                "model_tokens": 1000,
+                "mutations": 10,
+                "cost_minor": 0,
+            },
+        },
+    )
+    assert response.status_code == 202, response.text
+    job_id = response.json()["id"]
+    assert job_id
+    try:
+        detail = None
+        for _ in range(200):
+            detail = await client.get(f"/api/v1/suite-jobs/{job_id}")
+            body = detail.json()
+            if body["status"] in {"completed", "failed", "cancelled"} and body["suite_record_path"]:
+                break
+            await asyncio.sleep(0.02)
+        assert detail is not None
+        body = detail.json()
+        # 8. Terminal state.
+        assert body["status"] == "completed", body
+        assert body["domain_id"] == "insurance"
+        assert body["role_id"] == "claims-adjuster"
+        assert body["suite_id"] == "insurance.claims-adjuster.custom"
+        assert body["agent_id"] == "local-stub"
+        assert body["world"] == "insurance"
+
+        # 9-11. Evidence exists, is complete, and is downloadable through the real API.
+        evidence = await client.get(f"/api/v1/suite-jobs/{job_id}/evidence")
+        assert evidence.status_code == 200
+        assert evidence.headers["content-type"] == "application/zip"
+        import io
+        import zipfile
+
+        with zipfile.ZipFile(io.BytesIO(evidence.content)) as archive:
+            names = set(archive.namelist())
+            assert {"suite.json", "manifest.json", "junit.xml", "report.html"} <= names
+            run_entries = [name for name in names if name.startswith("runs/")]
+            assert len(run_entries) >= 1
+            manifest = __import__("json").loads(archive.read("manifest.json"))
+            assert manifest["job"]["status"] == "completed"
+
+        # 13-15. Real Postgres namespace was created and then fully cleaned up -- no leftover
+        # schema, and no contamination of any other run's namespace (including the commerce
+        # namespaces exercised by the sibling commerce suite-job test).
+        connection = await connect(settings)
+        try:
+            after = await connection.fetch(
+                "SELECT nspname FROM pg_namespace WHERE nspname LIKE 'ww_run_%'"
+            )
+        finally:
+            await connection.close()
+        assert {row["nspname"] for row in after} == {row["nspname"] for row in before}
+    finally:
+        connection = await connect(settings)
+        try:
+            await connection.execute("DELETE FROM worker_worlds.suite_jobs WHERE id=$1", job_id)
+        finally:
+            await connection.close()
+
+
+async def _run_suite_job_via_api(client: AsyncClient, **overrides: object) -> dict[str, object]:
+    """Create one suite job through the real API and poll it to a terminal state."""
+    payload: dict[str, object] = {
+        "request_key": prefixed_ulid("request"),
+        "concurrency": 1,
+        "budget": {
+            "deadline_s": 30,
+            "scenarios": 1,
+            "tool_calls": 10,
+            "model_tokens": 1000,
+            "mutations": 10,
+            "cost_minor": 0,
+        },
+    }
+    payload.update(overrides)
+    response = await client.post("/api/v1/suite-jobs", json=payload)
+    assert response.status_code == 202, response.text
+    job_id = response.json()["id"]
+    detail = None
+    for _ in range(200):
+        detail = await client.get(f"/api/v1/suite-jobs/{job_id}")
+        body = detail.json()
+        if body["status"] in {"completed", "failed", "cancelled"} and body["suite_record_path"]:
+            break
+        await asyncio.sleep(0.02)
+    assert detail is not None
+    body = detail.json()
+    assert body["status"] == "completed", body
+    return body
+
+
+async def test_compatible_contextual_comparison_succeeds_through_the_real_api(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """#9 gap 6: two genuinely compatible results, compared through the real
+    /comparisons/contextual endpoint and real application/database wiring."""
+    url = os.environ.get("WORKER_WORLDS_TEST_DATABASE_URL")
+    if not url:
+        pytest.skip("WORKER_WORLDS_TEST_DATABASE_URL is not explicitly set")
+    monkeypatch.setenv("WORKER_WORLDS_DATABASE_URL", url)
+    client = _client(tmp_path, monkeypatch)
+    monkeypatch.setenv("WORKER_WORLDS_SCENARIO_DIR", str(Path("scenarios/release").resolve()))  # noqa: ASYNC240
+    settings = DatabaseSettings(url=url)
+    job_ids: list[str] = []
+    try:
+        # Real postgres world: StubWorld cannot execute this scenario's tool calls (it produces
+        # incomplete evidence), so a genuine PASS+PASS compatible comparison needs the real world.
+        request = {
+            "domain_id": "commerce",
+            "role_id": "refund-specialist",
+            "suite_id": "commerce.refund-specialist.custom",
+            "agent_id": "local-stub",
+            "world": "postgres",
+            "scenario_ids": ["commerce.refunds-payments.001"],
+            "seed": 6001,
+        }
+        baseline = await _run_suite_job_via_api(client, **request)
+        candidate = await _run_suite_job_via_api(client, **request)
+        job_ids = [baseline["id"], candidate["id"]]
+
+        response = await client.post(
+            "/api/v1/comparisons/contextual",
+            json={"baseline_job_id": baseline["id"], "candidate_job_id": candidate["id"]},
+        )
+        assert response.status_code == 201, response.text
+        body = response.json()
+        assert body["compatibility"] == "compatible"
+        assert body["compatibility_reasons"] == []
+        assert body["passed"] is True
+        assert body["report"]["verdict"]["passed"] is True
+    finally:
+        connection = await connect(settings)
+        try:
+            for job_id in job_ids:
+                await connection.execute("DELETE FROM worker_worlds.suite_jobs WHERE id=$1", job_id)
+        finally:
+            await connection.close()
+
+
+async def test_incompatible_contextual_comparison_is_rejected_through_the_real_api(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """#9 gap 7: two results with differing domain/role/suite, compared through the real
+    /comparisons/contextual endpoint. The endpoint never lets a context mismatch pass
+    silently -- it reports a completed, explicitly incompatible comparison record rather
+    than fabricating an invalid pass, matching the low-level contract already proven in
+    tests/test_comparison_context.py::test_suite_revision_mismatch_cannot_pass."""
+    url = os.environ.get("WORKER_WORLDS_TEST_DATABASE_URL")
+    if not url:
+        pytest.skip("WORKER_WORLDS_TEST_DATABASE_URL is not explicitly set")
+    monkeypatch.setenv("WORKER_WORLDS_DATABASE_URL", url)
+    client = _client(tmp_path, monkeypatch)
+    # Fall back to the default scenario roots (which include both scenarios/release and
+    # scenarios/enterprise) since this test needs both a commerce and an insurance scenario.
+    monkeypatch.delenv("WORKER_WORLDS_SCENARIO_DIR", raising=False)
+    settings = DatabaseSettings(url=url)
+    job_ids: list[str] = []
+    try:
+        baseline = await _run_suite_job_via_api(
+            client,
+            domain_id="commerce",
+            role_id="refund-specialist",
+            suite_id="commerce.refund-specialist.custom",
+            agent_id="local-stub",
+            world="stub",
+            scenario_ids=["commerce.refunds-payments.001"],
+            seed=7001,
+        )
+        candidate = await _run_suite_job_via_api(
+            client,
+            domain_id="insurance",
+            role_id="claims-adjuster",
+            suite_id="insurance.claims-adjuster.custom",
+            agent_id="local-stub",
+            world="insurance",
+            scenario_ids=["insurance.claims.001"],
+            seed=7002,
+        )
+        job_ids = [baseline["id"], candidate["id"]]
+
+        response = await client.post(
+            "/api/v1/comparisons/contextual",
+            json={"baseline_job_id": baseline["id"], "candidate_job_id": candidate["id"]},
+        )
+        # The comparison record itself is created successfully (201) -- rejection is expressed
+        # as an explicit, unmistakable incompatibility on the record, never as a silent pass and
+        # never by throwing the mismatch away.
+        assert response.status_code == 201, response.text
+        body = response.json()
+        assert body["compatibility"] == "incompatible"
+        assert "domain id differs" in body["compatibility_reasons"]
+        assert "role id differs" in body["compatibility_reasons"]
+        assert "suite id differs" in body["compatibility_reasons"]
+        assert body["passed"] is False
+    finally:
+        connection = await connect(settings)
+        try:
+            for job_id in job_ids:
+                await connection.execute("DELETE FROM worker_worlds.suite_jobs WHERE id=$1", job_id)
         finally:
             await connection.close()

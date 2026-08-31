@@ -17,7 +17,7 @@ from worker_worlds.scenario_identity import scenario_content_hash
 from worker_worlds.scenario_library import reviewed_scenarios
 from worker_worlds.scenarios import load_scenario
 
-CATALOG_VERSION = "1.0.0"
+CATALOG_VERSION = "1.1.0"
 CATALOG_PATH = Path("catalog/v1/catalog.json")
 # Per-role smoke/standard suite-size overrides. Roles absent here keep the
 # smoke=6 / standard=30 defaults. `full` always covers every eligible scenario.

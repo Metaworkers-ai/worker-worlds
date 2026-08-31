@@ -34,8 +34,10 @@ from worker_worlds.ids import prefixed_ulid
 from worker_worlds.insurance import InsuranceWorld, IssueClaimPaymentInput, build_insurance_state
 from worker_worlds.protocols import World
 from worker_worlds.runner import Runner
+from worker_worlds.scenario_library import reviewed_scenarios
 from worker_worlds.stubs import StubWorkerAdapter
 from worker_worlds.supply_chain import (
+    GetStockoutRiskInput,
     StockPosition,
     SupplyChainWorld,
     build_supply_chain_state,
@@ -203,6 +205,33 @@ async def test_supply_chain_tool_timeout_produces_no_mutation(
     assert record.terminal_reason is TerminalReason.TOOL_TIMEOUT
     assert record.events == ()
     assert record.cleanup_succeeded
+
+
+def test_inject_delay_ms_is_bounded_and_never_activated_by_an_approved_scenario() -> None:
+    """#20: inject_delay_ms is intentional test-only fault injection (see supply_chain.py),
+    not a harness-owned channel. This proves a real/live worker cannot meaningfully abuse it:
+    the field stays hard-capped at 60 seconds, and no scenario approved for live adapters
+    ever asks a worker to set it."""
+    field = GetStockoutRiskInput.model_fields["inject_delay_ms"]
+    bounds = {constraint.__class__.__name__: constraint for constraint in field.metadata}
+    assert bounds["Ge"].ge == 0
+    assert bounds["Le"].le == 60_000
+
+    live_ready_scenarios = [
+        scenario
+        for scenario in (*reviewed_scenarios(), *enterprise_scenarios())
+        if scenario.metadata.get("live_ready") is True
+    ]
+    assert live_ready_scenarios, "expected at least one live-ready scenario to check"
+    for scenario in live_ready_scenarios:
+        assert "inject_delay_ms" not in scenario.trigger.content
+        stub_tool_calls = scenario.metadata.get("stub_tool_calls", [])
+        if isinstance(stub_tool_calls, list):
+            for call in stub_tool_calls:
+                if isinstance(call, dict):
+                    arguments = call.get("arguments", {})
+                    if isinstance(arguments, dict):
+                        assert not arguments.get("inject_delay_ms")
 
 
 async def test_insurance_payment_enforces_authorization_and_approved_balance(

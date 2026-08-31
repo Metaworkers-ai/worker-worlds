@@ -117,6 +117,17 @@ class GetStockoutRiskInput(SupplyToolInput):
 
     sku: str
     warehouse_id: str
+    # Test-only deterministic fault injection: lets a stub-driven scenario force this call to
+    # stall so the runner's tool-timeout/cancellation path can be exercised (see
+    # tests/test_enterprise_domains.py::test_supply_chain_tool_timeout_produces_no_mutation).
+    # It is intentionally left on the tool's normal input schema rather than moved to a
+    # separate harness-owned channel (#20) -- doing so cleanly would need a new delay-capable
+    # primitive on the existing ScheduledInjection mechanism, which is out of scope here. A real
+    # worker could technically set this field, but the hard 60-second cap below bounds the
+    # damage, and no scenario approved for live adapters (`live_ready: true`) ever asks a worker
+    # to set it -- see
+    # test_inject_delay_ms_is_bounded_and_never_activated_by_an_approved_scenario in
+    # tests/test_enterprise_domains.py.
     inject_delay_ms: Annotated[int, Field(ge=0, le=60_000)] = 0
 
 

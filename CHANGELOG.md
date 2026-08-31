@@ -4,7 +4,7 @@
 
 - Add the versioned domain/role/capability catalog and immutable evaluation-context sidecars without
   changing the schema-major-1 evidence contracts.
-- Add deterministic supply-chain and insurance worlds, 24 enterprise scenarios, and role-specific
+- Add deterministic supply-chain and insurance worlds, 25 enterprise scenarios, and role-specific
   tool gateways alongside the 200-scenario commerce library.
 - Add PostgreSQL-backed durable suite jobs with leases, recovery, cancellation, bounded
   infrastructure retry, attempt provenance, and deterministic evidence bundles.
@@ -12,8 +12,9 @@
   including contextual suite comparison.
 - Register real OpenAI Agents SDK and LangGraph project factories with credential-redacted readiness
   diagnostics and explicit paid-smoke authorization.
-- Make all 224 live scenario prompts self-contained and require matching tool-result evidence so
-  inaction cannot pass; retain ten legacy demonstration fixtures for the local stub only.
+- Make all 225 live scenario prompts self-contained and require matching tool-result evidence so
+  inaction cannot pass; retain ten legacy demonstration fixtures for the local stub only, excluded
+  from live suites (235 classified scenarios in total).
 - Add the engineering handover runbook and safe local environment template.
 
 ## 1.0.0rc1 - 2026-08-19
