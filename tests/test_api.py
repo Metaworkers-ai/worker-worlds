@@ -607,7 +607,7 @@ async def _run_suite_job_via_api(client: AsyncClient, **overrides: object) -> di
     detail = None
     for _ in range(200):
         detail = await client.get(f"/api/v1/suite-jobs/{job_id}")
-        body = detail.json()
+        body: dict[str, object] = detail.json()
         if body["status"] in {"completed", "failed", "cancelled"} and body["suite_record_path"]:
             break
         await asyncio.sleep(0.02)
@@ -644,7 +644,7 @@ async def test_compatible_contextual_comparison_succeeds_through_the_real_api(
         }
         baseline = await _run_suite_job_via_api(client, **request)
         candidate = await _run_suite_job_via_api(client, **request)
-        job_ids = [baseline["id"], candidate["id"]]
+        job_ids = [str(baseline["id"]), str(candidate["id"])]
 
         response = await client.post(
             "/api/v1/comparisons/contextual",
@@ -704,7 +704,7 @@ async def test_incompatible_contextual_comparison_is_rejected_through_the_real_a
             scenario_ids=["insurance.claims.001"],
             seed=7002,
         )
-        job_ids = [baseline["id"], candidate["id"]]
+        job_ids = [str(baseline["id"]), str(candidate["id"])]
 
         response = await client.post(
             "/api/v1/comparisons/contextual",
