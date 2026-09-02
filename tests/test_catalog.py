@@ -14,7 +14,7 @@ def test_builtin_catalog_is_complete_and_canonical() -> None:
     scenario_ids = {str(item.id) for item in reviewed_scenarios()}
     assert catalog.domains[0].id == "commerce"
     assert len(catalog.roles) == 10
-    assert len(catalog.classifications) == 497
+    assert len(catalog.classifications) == 607
     assert scenario_ids < {str(item.scenario_id) for item in catalog.classifications}
     assert catalog.canonical_json() == load_catalog().canonical_json()
     assert catalog_text() == Path("catalog/v1/catalog.json").read_text(encoding="utf-8")

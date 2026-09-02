@@ -402,6 +402,7 @@ def builtin_catalog() -> Catalog:
         "launch-recommendation": ("Launch recommendation", "marketing"),
         "audience-data-followup": ("Audience data request and advertiser follow-up", "marketing"),
         "risk-escalation": ("Compliance risk escalation", "marketing"),
+        "analyst-note-taking": ("Campaign analyst note-taking", "marketing"),
     }
     capabilities = tuple(
         CapabilityDefinition(
@@ -501,6 +502,7 @@ def builtin_catalog() -> Catalog:
                 "launch-recommendation",
                 "audience-data-followup",
                 "risk-escalation",
+                "analyst-note-taking",
             ),
         ),
     )

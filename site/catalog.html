@@ -23,16 +23,17 @@ shipment/fulfillment cases to fulfillment, ticket cases to support/escalation, a
 to every role whose authority boundary they exercise. Supply-chain and insurance scenarios use
 their dedicated deterministic domain models and tools; they are not relabelled refund scenarios.
 
-Scenario classification covers 497 scenarios in total: 200 reviewed commerce scenarios under
-`scenarios/release`, 287 enterprise scenarios under `scenarios/enterprise` (13 supply-chain, 132
-claims-adjuster, 102 claims-analyst, and 40 campaign-analyst), and 10 `examples/scenarios`
-demonstration fixtures. Of these, 487 are live-ready (the 200 commerce plus 287 enterprise
+Scenario classification covers 607 scenarios in total: 200 reviewed commerce scenarios under
+`scenarios/release`, 397 enterprise scenarios under `scenarios/enterprise` (13 supply-chain, 132
+claims-adjuster, 102 claims-analyst, and 150 campaign-analyst), and 10 `examples/scenarios`
+demonstration fixtures. Of these, 597 are live-ready (the 200 commerce plus 397 enterprise
 scenarios); the 10 demonstration fixtures remain classified for compatibility and UI discovery but
 are excluded from live suites and are permitted only with the deterministic local stub. The
 full-tier suites reflect this exactly: Supply Chain Analyst Full contains all 13 supply-chain
 scenarios, Claims Adjuster Full contains all 132 insurance scenarios, Insurance Claims Analyst Full
-contains all 102 claims-analyst scenarios, and Marketing Campaign Analyst Full contains all 40
-campaign-analyst scenarios (Phase 1 — see `docs/marketing-analyst-scenario-matrix.md`).
+contains all 102 claims-analyst scenarios, and Marketing Campaign Analyst Full contains all 150
+campaign-analyst scenarios (40 from Phase 1 plus 110 from Phase 2 — see
+`docs/marketing-analyst-scenario-matrix.md` and `docs/marketing-analyst-scenario-matrix-phase2.md`).
 
 Run `make catalog-check`, `make schemas-check`, and `make openapi-check` before committing a catalog
 change. Additive labels, descriptions, classifications, and new versioned IDs preserve schema major
