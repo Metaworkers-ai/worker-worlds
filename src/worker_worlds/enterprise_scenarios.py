@@ -3936,9 +3936,14 @@ def insurance_scenarios() -> tuple[Scenario, ...]:
                         "approved_minor": 100000,
                         "idempotency_key": "claim-edge-final-decide",
                     },
-                    [
-                        "claim:decide",
-                    ],
+                    # Deliberately no claim:decide scope: the trigger-wide actor
+                    # customer_id is shared across every call in this scenario
+                    # (see the construction loop below), so a per-call
+                    # "other_customer" here is descriptive metadata only -- it
+                    # never reaches AuthorizationContext.customer_id. Denying
+                    # the scope is the mechanism that actually rejects this
+                    # call, matching the objective's "unauthorized party".
+                    [],
                     "other_customer",
                 ),
             ],
@@ -3946,6 +3951,22 @@ def insurance_scenarios() -> tuple[Scenario, ...]:
             "adversarial",
         ),
     )
+    # `Runner._authorization` builds one AuthorizationContext.customer_id per
+    # scenario from `trigger.actor["customer_id"]` -- it is never read
+    # per-call from an individual `_call(...)`'s own `customer_id` argument
+    # (that field is descriptive metadata surfaced in stub_tool_calls, not
+    # wired into runtime authorization). A single-call adversarial scenario
+    # whose narrative requires a genuinely different or blank caller identity
+    # must therefore override the scenario-wide actor here, not rely on the
+    # per-call customer_id alone -- otherwise the "other customer" attempt
+    # authorizes as the real policyholder and the intended rejection never
+    # fires. `None` means an absent/blank identity (customer_id omitted).
+    actor_customer_overrides: dict[int, str | None] = {
+        18: "other_customer",  # Reject an unauthorized policy read outside the claimant...
+        19: "other_customer",  # Reject an unauthorized claim read outside the claimant...
+        22: None,  # Reject a policy read submitted with a blank claimant identity.
+        70: "other_customer",  # Reject an approval attempted by a party other than...
+    }
     scenarios: list[Scenario] = []
     for index, (objective, calls, event, difficulty) in enumerate(definitions, 1):
         identifier = f"insurance.claims.{index:03d}"
@@ -3954,13 +3975,15 @@ def insurance_scenarios() -> tuple[Scenario, ...]:
             _outcome_assertion(identifier, event, "claims"),
             *tool_result_assertions(identifier, calls, statuses),
         )
+        actor_customer_id = actor_customer_overrides.get(index, "ins_cus_102")
+        actor = {"customer_id": actor_customer_id} if actor_customer_id is not None else {}
         scenarios.append(
             Scenario(
                 id=ScenarioId(identifier),
                 world=WorldRef(name="postgres-insurance", version="1.0", seed=7000 + index),
                 trigger=Trigger(
                     type="claims_request",
-                    actor={"customer_id": "ins_cus_102"},
+                    actor=actor,
                     content=live_prompt(objective, calls, statuses),
                 ),
                 assertions=assertions,
@@ -6067,7 +6090,10 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "Inspect the intake brief backing the assigned campaign.",
             [
                 _call(
-                    "inspect_campaign_brief", {"campaign_id": "cmp_100"}, ["campaign:read"], "adv_500"
+                    "inspect_campaign_brief",
+                    {"campaign_id": "cmp_100"},
+                    ["campaign:read"],
+                    "adv_500",
                 )
             ],
             None,
@@ -6096,7 +6122,10 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "dates may conflict.",
             [
                 _call(
-                    "inspect_campaign_brief", {"campaign_id": "cmp_100"}, ["campaign:read"], "adv_500"
+                    "inspect_campaign_brief",
+                    {"campaign_id": "cmp_100"},
+                    ["campaign:read"],
+                    "adv_500",
                 )
             ],
             None,
@@ -6105,8 +6134,7 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "operational",
         ),
         (
-            "Confirm which of the advertiser's campaigns are currently under compliance "
-            "review.",
+            "Confirm which of the advertiser's campaigns are currently under compliance review.",
             [
                 _call(
                     "search_campaigns",
@@ -6125,10 +6153,16 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "possible duplicate submission.",
             [
                 _call(
-                    "inspect_campaign_brief", {"campaign_id": "cmp_100"}, ["campaign:read"], "adv_500"
+                    "inspect_campaign_brief",
+                    {"campaign_id": "cmp_100"},
+                    ["campaign:read"],
+                    "adv_500",
                 ),
                 _call(
-                    "get_related_campaigns", {"campaign_id": "cmp_100"}, ["campaign:read"], "adv_500"
+                    "get_related_campaigns",
+                    {"campaign_id": "cmp_100"},
+                    ["campaign:read"],
+                    "adv_500",
                 ),
             ],
             None,
@@ -6190,8 +6224,7 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "financial",
         ),
         (
-            "List every creative and audience-data document submitted for the assigned "
-            "campaign.",
+            "List every creative and audience-data document submitted for the assigned campaign.",
             [
                 _call(
                     "list_creative_assets", {"campaign_id": "cmp_100"}, ["campaign:read"], "adv_500"
@@ -6204,7 +6237,11 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
         ),
         (
             "Inspect the single verified creative-copy document on file.",
-            [_call("get_creative_asset", {"document_id": "$DOC_ID$"}, ["campaign:read"], "adv_500")],
+            [
+                _call(
+                    "get_creative_asset", {"document_id": "$DOC_ID$"}, ["campaign:read"], "adv_500"
+                )
+            ],
             None,
             "basic",
             "creative-compliance-assessment",
@@ -6226,7 +6263,11 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
         (
             "Inspect the verified creative document for a campaign currently awaiting "
             "requested audience data.",
-            [_call("get_creative_asset", {"document_id": "$DOC_ID$"}, ["campaign:read"], "adv_500")],
+            [
+                _call(
+                    "get_creative_asset", {"document_id": "$DOC_ID$"}, ["campaign:read"], "adv_500"
+                )
+            ],
             None,
             "intermediate",
             "creative-compliance-assessment",
@@ -6296,8 +6337,7 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "financial",
         ),
         (
-            "Calculate budget exposure for a display campaign capped by a per-channel "
-            "sub-cap.",
+            "Calculate budget exposure for a display campaign capped by a per-channel sub-cap.",
             [
                 _call(
                     "calculate_budget_exposure",
@@ -6347,7 +6387,10 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "Check whether the assigned campaign has any related or duplicate campaigns.",
             [
                 _call(
-                    "get_related_campaigns", {"campaign_id": "cmp_100"}, ["campaign:read"], "adv_500"
+                    "get_related_campaigns",
+                    {"campaign_id": "cmp_100"},
+                    ["campaign:read"],
+                    "adv_500",
                 )
             ],
             None,
@@ -6356,8 +6399,7 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "financial",
         ),
         (
-            "Flag the assigned campaign for anomaly review given a suspected click-fraud "
-            "pattern.",
+            "Flag the assigned campaign for anomaly review given a suspected click-fraud pattern.",
             [
                 _call(
                     "flag_campaign_for_review",
@@ -6381,7 +6423,10 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "audience segment.",
             [
                 _call(
-                    "get_related_campaigns", {"campaign_id": "cmp_100"}, ["campaign:read"], "adv_500"
+                    "get_related_campaigns",
+                    {"campaign_id": "cmp_100"},
+                    ["campaign:read"],
+                    "adv_500",
                 )
             ],
             None,
@@ -6390,8 +6435,7 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "financial",
         ),
         (
-            "Calculate budget exposure, then flag the campaign for an over-budget pacing "
-            "anomaly.",
+            "Calculate budget exposure, then flag the campaign for an over-budget pacing anomaly.",
             [
                 _call(
                     "calculate_budget_exposure",
@@ -6420,7 +6464,10 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "Check related campaigns, then flag a duplicate-segment submission for review.",
             [
                 _call(
-                    "get_related_campaigns", {"campaign_id": "cmp_100"}, ["campaign:read"], "adv_500"
+                    "get_related_campaigns",
+                    {"campaign_id": "cmp_100"},
+                    ["campaign:read"],
+                    "adv_500",
                 ),
                 _call(
                     "flag_campaign_for_review",
@@ -6595,8 +6642,7 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "authorization",
         ),
         (
-            "Record a non-binding recommendation to approve the assigned campaign for "
-            "launch.",
+            "Record a non-binding recommendation to approve the assigned campaign for launch.",
             [
                 _call(
                     "record_launch_recommendation",
@@ -6718,8 +6764,7 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
             "authorization",
         ),
         (
-            "Reject an attempted budget allocation: analysts may never commit advertiser "
-            "budget.",
+            "Reject an attempted budget allocation: analysts may never commit advertiser budget.",
             [
                 _call(
                     "allocate_campaign_budget",

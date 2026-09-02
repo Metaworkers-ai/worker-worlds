@@ -5,6 +5,7 @@ import importlib.util
 import os
 import sys
 from pathlib import Path
+from typing import cast
 
 import pytest
 from httpx import ASGITransport, AsyncClient
@@ -614,7 +615,7 @@ async def _run_suite_job_via_api(client: AsyncClient, **overrides: object) -> di
     assert detail is not None
     body = detail.json()
     assert body["status"] == "completed", body
-    return body
+    return cast(dict[str, object], body)
 
 
 async def test_compatible_contextual_comparison_succeeds_through_the_real_api(
@@ -644,7 +645,7 @@ async def test_compatible_contextual_comparison_succeeds_through_the_real_api(
         }
         baseline = await _run_suite_job_via_api(client, **request)
         candidate = await _run_suite_job_via_api(client, **request)
-        job_ids = [baseline["id"], candidate["id"]]
+        job_ids = [cast(str, baseline["id"]), cast(str, candidate["id"])]
 
         response = await client.post(
             "/api/v1/comparisons/contextual",
@@ -704,7 +705,7 @@ async def test_incompatible_contextual_comparison_is_rejected_through_the_real_a
             scenario_ids=["insurance.claims.001"],
             seed=7002,
         )
-        job_ids = [baseline["id"], candidate["id"]]
+        job_ids = [cast(str, baseline["id"]), cast(str, candidate["id"])]
 
         response = await client.post(
             "/api/v1/comparisons/contextual",
