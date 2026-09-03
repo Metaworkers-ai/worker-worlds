@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Agent, Catalog, SuiteJob } from "@/lib/dashboard-data";
 import type { SuiteBudget, SuiteDefinition } from "@/lib/dashboard-data";
 
-type WorldName = "stub" | "postgres" | "supply-chain" | "insurance";
+type WorldName = "stub" | "postgres" | "supply-chain" | "insurance" | "marketing";
 
 export function EvaluationWizard({
   catalog,
@@ -86,9 +86,11 @@ export function EvaluationWizard({
   const defaultWorld: WorldName =
     domain?.id === "insurance"
       ? "insurance"
-      : role?.id === "supply-chain-analyst"
-        ? "supply-chain"
-        : "postgres";
+      : domain?.id === "marketing"
+        ? "marketing"
+        : role?.id === "supply-chain-analyst"
+          ? "supply-chain"
+          : "postgres";
   const world = worldChoice || defaultWorld;
   const eligibleCustomScenarios = catalog.classifications.filter(
     (item) => item.domain_id === domain?.id && item.role_ids.includes(role?.id ?? ""),
@@ -276,6 +278,8 @@ export function EvaluationWizard({
                 >
                   {domain?.id === "insurance" ? (
                     <option value="insurance">Insurance Postgres</option>
+                  ) : domain?.id === "marketing" ? (
+                    <option value="marketing">Marketing Postgres</option>
                   ) : role?.id === "supply-chain-analyst" ? (
                     <option value="supply-chain">Supply-chain Postgres</option>
                   ) : (

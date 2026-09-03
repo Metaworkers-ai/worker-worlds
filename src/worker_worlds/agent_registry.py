@@ -77,7 +77,7 @@ class AgentDefinition(RegistryModel):
         default=(), json_schema_extra={"uniqueItems": True}
     )
     model: AgentModelMetadata | None = None
-    supported_domain_ids: tuple[str, ...] = ("commerce", "insurance")
+    supported_domain_ids: tuple[str, ...] = ("commerce", "insurance", "marketing")
 
     @field_validator("supported_domain_ids")
     @classmethod

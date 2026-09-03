@@ -495,6 +495,7 @@ class DeterministicGrader:
         if not isinstance(expected_count_value, int) or isinstance(expected_count_value, bool):
             raise ValueError("tool result count is not an integer")
         expected_count = expected_count_value
+        expected_output = cast(dict[str, JsonValue] | None, assertion.parameters.get("output"))
         results = {
             str(turn.tool_result.call_id): turn.tool_result
             for turn in record.turns
@@ -515,6 +516,15 @@ class DeterministicGrader:
                 continue
             if expected_error is not None and result.error_type != expected_error:
                 continue
+            # Keys are dotted paths into the result output (e.g. "eligible" or
+            # "campaigns.0.status"), resolved the same way state assertions resolve
+            # a snapshot path -- so a scenario can pin a specific returned business
+            # conclusion, not just that the call succeeded.
+            if expected_output and any(
+                resolve_path(result.output, path) != value
+                for path, value in expected_output.items()
+            ):
+                continue
             matches.append((call, result))
         refs = tuple(
             EvidenceReference(
@@ -525,6 +535,7 @@ class DeterministicGrader:
                     "tool_name": call.tool_name,
                     "result_status": result.status.value,
                     "error_type": result.error_type,
+                    "output": result.output,
                 },
             )
             for call, result in matches

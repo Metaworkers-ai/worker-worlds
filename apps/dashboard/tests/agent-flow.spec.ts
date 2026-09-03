@@ -83,6 +83,16 @@ const catalog = {
       role_ids: ["claims-adjuster", "claims-analyst"],
       capability_ids: ["claims-adjustment", "claim-intake-review"],
     },
+    {
+      schema_version: "1.0",
+      id: "marketing",
+      version: "1.0.0",
+      label: "Marketing",
+      description: "Campaign evaluations",
+      world_names: ["postgres-marketing"],
+      role_ids: ["campaign-analyst"],
+      capability_ids: ["campaign-intake-review"],
+    },
   ],
   roles: [
     {
@@ -112,6 +122,15 @@ const catalog = {
       description: "Claims analysis evaluations",
       capability_ids: ["claim-intake-review"],
     },
+    {
+      schema_version: "1.0",
+      id: "campaign-analyst",
+      domain_id: "marketing",
+      version: "1.0.0",
+      label: "Marketing Campaign Analyst",
+      description: "Campaign intake and launch-recommendation evaluations",
+      capability_ids: ["campaign-intake-review"],
+    },
   ],
   capabilities: [
     {
@@ -137,6 +156,14 @@ const catalog = {
       version: "1.0.0",
       label: "Claim intake and assignment review",
       description: "Review claim intake and assignment",
+    },
+    {
+      schema_version: "1.0",
+      id: "campaign-intake-review",
+      domain_id: "marketing",
+      version: "1.0.0",
+      label: "Campaign intake and brief review",
+      description: "Review campaign intake and brief",
     },
   ],
   suites: [
@@ -232,6 +259,29 @@ const catalog = {
         injections: 20,
       },
     },
+    {
+      schema_version: "1.0",
+      id: "marketing.campaign-analyst.smoke",
+      domain_id: "marketing",
+      role_id: "campaign-analyst",
+      revision: "1.0.0",
+      label: "Marketing Campaign Analyst Smoke",
+      tier: "smoke",
+      scenario_ids: ["marketing.campaign-analyst.001"],
+      capability_ids: ["campaign-intake-review"],
+      estimated_duration_s: 3,
+      default_limits: {
+        schema_version: "1.0",
+        wall_time_s: 30,
+        tool_calls: 20,
+        model_tokens: 12000,
+        worker_turns: 50,
+        mutations: 20,
+        cost_minor: 0,
+        tool_timeout_s: 10,
+        injections: 20,
+      },
+    },
   ],
   classifications: [
     {
@@ -263,6 +313,16 @@ const catalog = {
       capability_id: "claim-intake-review",
       difficulty: "basic",
       risk_category: "financial",
+    },
+    {
+      schema_version: "1.0",
+      scenario_id: "marketing.campaign-analyst.001",
+      scenario_hash: "d".repeat(64),
+      domain_id: "marketing",
+      role_ids: ["campaign-analyst"],
+      capability_id: "campaign-intake-review",
+      difficulty: "basic",
+      risk_category: "operational",
     },
   ],
 };
@@ -482,6 +542,29 @@ test("selects the claims-analyst role and submits its own smoke suite", async ({
     role_id: "claims-analyst",
     suite_id: "insurance.claims-analyst.smoke",
     world: "insurance",
+  });
+});
+
+test("selects the campaign-analyst role and submits its own smoke suite", async ({ page }) => {
+  let submitted: Record<string, unknown> | null = null;
+  await mockDashboardApi(page, () => undefined, (body) => {
+    submitted = body;
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Run evaluation" }).click();
+  await page.getByLabel("Choose domain").selectOption("marketing");
+  await expect(page.getByLabel("Choose job role")).toHaveValue("campaign-analyst");
+  await expect(page.getByLabel("Suite world")).toHaveValue("marketing");
+  await expect(page.getByLabel("Evaluation suite")).toHaveValue(
+    "marketing.campaign-analyst.smoke",
+  );
+  await page.getByRole("button", { name: "Start evaluation suite" }).click();
+  await expect.poll(() => submitted).not.toBeNull();
+  expect(submitted).toMatchObject({
+    domain_id: "marketing",
+    role_id: "campaign-analyst",
+    suite_id: "marketing.campaign-analyst.smoke",
+    world: "marketing",
   });
 });
 

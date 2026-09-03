@@ -294,7 +294,7 @@ async def test_catalog_endpoints_are_versioned_and_deterministic(
     assert first.status_code == 200
     assert first.content == second.content
     payload = first.json()
-    assert payload["catalog_version"] == "1.1.0"
+    assert payload["catalog_version"] == "1.2.0"
     assert payload["domains"][0]["id"] == "commerce"
     roles = await client.get("/api/v1/domains/commerce/roles")
     assert len(roles.json()) == 7
@@ -586,6 +586,109 @@ async def test_insurance_suite_job_runs_against_real_postgres_with_evidence_and_
             await connection.close()
 
 
+async def test_marketing_suite_job_runs_against_real_postgres_with_evidence_and_clean_namespace(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The Marketing world is wired end-to-end through the real HTTP API, not just accepted by
+    the dashboard's frontend type: `CreateSuiteJobRequest.world`, `_validate_world_selection`,
+    the registered-agent `supported_domain_ids` gate, and `create_world` must all agree that
+    `world="marketing"` is a legal, runnable selection for the `marketing`/`campaign-analyst`
+    domain and role, the same way they already agree for Insurance."""
+    from worker_worlds.marketing import MarketingWorld
+    from worker_worlds.postgres_world import PostgresWorld
+
+    assert not issubclass(MarketingWorld, PostgresWorld)
+    assert not issubclass(PostgresWorld, MarketingWorld)
+
+    url = os.environ.get("WORKER_WORLDS_TEST_DATABASE_URL")
+    if not url:
+        pytest.skip("WORKER_WORLDS_TEST_DATABASE_URL is not explicitly set")
+    monkeypatch.setenv("WORKER_WORLDS_DATABASE_URL", url)
+    client = _client(tmp_path, monkeypatch)
+    monkeypatch.setenv("WORKER_WORLDS_SCENARIO_DIR", str(Path("scenarios/enterprise").resolve()))  # noqa: ASYNC240
+    settings = DatabaseSettings(url=url)
+    connection = await connect(settings)
+    try:
+        before = await connection.fetch(
+            "SELECT nspname FROM pg_namespace WHERE nspname LIKE 'ww_run_%'"
+        )
+    finally:
+        await connection.close()
+
+    response = await client.post(
+        "/api/v1/suite-jobs",
+        json={
+            "request_key": prefixed_ulid("request"),
+            "domain_id": "marketing",
+            "role_id": "campaign-analyst",
+            "suite_id": "marketing.campaign-analyst.custom",
+            "agent_id": "local-stub",
+            "world": "marketing",
+            "concurrency": 1,
+            "scenario_ids": ["marketing.campaign-analyst.001"],
+            "seed": 5001,
+            "budget": {
+                "deadline_s": 30,
+                "scenarios": 1,
+                "tool_calls": 10,
+                "model_tokens": 1000,
+                "mutations": 10,
+                "cost_minor": 0,
+            },
+        },
+    )
+    assert response.status_code == 202, response.text
+    job_id = response.json()["id"]
+    assert job_id
+    try:
+        detail = None
+        for _ in range(200):
+            detail = await client.get(f"/api/v1/suite-jobs/{job_id}")
+            body = detail.json()
+            if body["status"] in {"completed", "failed", "cancelled"} and body["suite_record_path"]:
+                break
+            await asyncio.sleep(0.02)
+        assert detail is not None
+        body = detail.json()
+        assert body["status"] == "completed", body
+        assert body["domain_id"] == "marketing"
+        assert body["role_id"] == "campaign-analyst"
+        assert body["suite_id"] == "marketing.campaign-analyst.custom"
+        assert body["agent_id"] == "local-stub"
+        assert body["world"] == "marketing"
+
+        evidence = await client.get(f"/api/v1/suite-jobs/{job_id}/evidence")
+        assert evidence.status_code == 200
+        assert evidence.headers["content-type"] == "application/zip"
+        import io
+        import zipfile
+
+        with zipfile.ZipFile(io.BytesIO(evidence.content)) as archive:
+            names = set(archive.namelist())
+            assert {"suite.json", "manifest.json", "junit.xml", "report.html"} <= names
+            run_entries = [name for name in names if name.startswith("runs/")]
+            assert len(run_entries) >= 1
+            manifest = __import__("json").loads(archive.read("manifest.json"))
+            assert manifest["job"]["status"] == "completed"
+
+        # Real Postgres namespace was created and then fully cleaned up -- no leftover schema,
+        # and no contamination of any other world's namespace.
+        connection = await connect(settings)
+        try:
+            after = await connection.fetch(
+                "SELECT nspname FROM pg_namespace WHERE nspname LIKE 'ww_run_%'"
+            )
+        finally:
+            await connection.close()
+        assert {row["nspname"] for row in after} == {row["nspname"] for row in before}
+    finally:
+        connection = await connect(settings)
+        try:
+            await connection.execute("DELETE FROM worker_worlds.suite_jobs WHERE id=$1", job_id)
+        finally:
+            await connection.close()
+
+
 async def _run_suite_job_via_api(client: AsyncClient, **overrides: object) -> dict[str, object]:
     """Create one suite job through the real API and poll it to a terminal state."""
     payload: dict[str, object] = {
@@ -607,7 +710,7 @@ async def _run_suite_job_via_api(client: AsyncClient, **overrides: object) -> di
     detail = None
     for _ in range(200):
         detail = await client.get(f"/api/v1/suite-jobs/{job_id}")
-        body = detail.json()
+        body: dict[str, object] = detail.json()
         if body["status"] in {"completed", "failed", "cancelled"} and body["suite_record_path"]:
             break
         await asyncio.sleep(0.02)
@@ -644,7 +747,7 @@ async def test_compatible_contextual_comparison_succeeds_through_the_real_api(
         }
         baseline = await _run_suite_job_via_api(client, **request)
         candidate = await _run_suite_job_via_api(client, **request)
-        job_ids = [baseline["id"], candidate["id"]]
+        job_ids = [str(baseline["id"]), str(candidate["id"])]
 
         response = await client.post(
             "/api/v1/comparisons/contextual",
@@ -704,7 +807,7 @@ async def test_incompatible_contextual_comparison_is_rejected_through_the_real_a
             scenario_ids=["insurance.claims.001"],
             seed=7002,
         )
-        job_ids = [baseline["id"], candidate["id"]]
+        job_ids = [str(baseline["id"]), str(candidate["id"])]
 
         response = await client.post(
             "/api/v1/comparisons/contextual",

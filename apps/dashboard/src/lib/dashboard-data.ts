@@ -339,7 +339,7 @@ export function startSuiteJob(input: {
   roleId: string;
   suiteId: string;
   agentId: string;
-  world: "stub" | "postgres" | "supply-chain" | "insurance";
+  world: "stub" | "postgres" | "supply-chain" | "insurance" | "marketing";
   concurrency: number;
   scenarioIds?: string[];
   seed?: number;

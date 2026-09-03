@@ -256,8 +256,7 @@ class RecordLaunchRecommendationInput(MarketingToolInput):
 
     campaign_id: str
     recommendation: str = Field(
-        pattern="^(approve_launch|partial_budget_approve|reject|hold_for_review"
-        "|request_more_data)$"
+        pattern="^(approve_launch|partial_budget_approve|reject|hold_for_review|request_more_data)$"
     )
     reason_code: str = Field(min_length=1, max_length=100)
     recommended_budget_minor: Annotated[int, Field(ge=0)] = 0
@@ -437,9 +436,7 @@ def build_marketing_state(seed: int) -> dict[str, JsonValue]:
     campaign_brief_submitted = (
         base - timedelta(days=3) if chronology_invalid else base - timedelta(days=2)
     )
-    related_flight_start = (
-        campaign_flight_start if shared_segment else base - timedelta(days=203)
-    )
+    related_flight_start = campaign_flight_start if shared_segment else base - timedelta(days=203)
     related_market = "Austin, TX"
     campaign = Campaign(
         id="cmp_100",
@@ -491,7 +488,10 @@ def build_marketing_state(seed: int) -> dict[str, JsonValue]:
         {
             "advertisers": [advertiser.model_dump(mode="json")],
             "segments": [segment.model_dump(mode="json")],
-            "campaigns": [campaign.model_dump(mode="json"), related_campaign.model_dump(mode="json")],
+            "campaigns": [
+                campaign.model_dump(mode="json"),
+                related_campaign.model_dump(mode="json"),
+            ],
             "briefs": [
                 CampaignBrief(
                     id=identifier("brief", "cmp-100"),
@@ -702,6 +702,8 @@ class MarketingWorld(JsonPostgresWorld):
                     and within_flight_window
                     and chronology_valid
                     and proposed > platform_fee
+                    and proposed <= total_cap
+                    and not exceeds_channel_cap
                 ),
             )
             return cast(dict[str, JsonValue], analysis.model_dump(mode="json")), None
@@ -793,9 +795,7 @@ class MarketingWorld(JsonPostgresWorld):
         if name == "request_suppression_update":
             self._require_scope(call, "campaign:request")
             suppression_request = cast(RequestSuppressionUpdateInput, data)
-            self._require_status(
-                campaign, {CampaignStatus.DRAFT, CampaignStatus.UNDER_REVIEW}
-            )
+            self._require_status(campaign, {CampaignStatus.DRAFT, CampaignStatus.UNDER_REVIEW})
             data_before: dict[str, JsonValue] = {"status": cast(JsonValue, campaign["status"])}
             campaign["status"] = CampaignStatus.DATA_REQUESTED.value
             entity_id = self._entity_id("doc", len(cast(list[JsonValue], state["documents"])) + 1)
@@ -918,7 +918,10 @@ class MarketingWorld(JsonPostgresWorld):
         advertiser = self._entity(state, "advertisers", str(campaign["advertiser_id"]))
         if advertiser["status"] != AdvertiserStatus.ACTIVE.value:
             raise JsonWorldRejection("AdvertiserIneligible", "advertiser account is not active")
-        if allocation.currency != campaign["currency"] or allocation.currency != segment["currency"]:
+        if (
+            allocation.currency != campaign["currency"]
+            or allocation.currency != segment["currency"]
+        ):
             raise JsonWorldRejection(
                 "CurrencyMismatch", "allocation currency does not match segment"
             )
@@ -986,9 +989,7 @@ class MarketingWorld(JsonPostgresWorld):
             call.authorization.customer_id != advertiser_id
             and "campaign:read" not in call.authorization.scopes
         ):
-            raise JsonWorldRejection(
-                "AuthorizationDenied", "advertiser or analyst access required"
-            )
+            raise JsonWorldRejection("AuthorizationDenied", "advertiser or analyst access required")
 
     @staticmethod
     def _require_status(campaign: dict[str, Any], allowed: set[CampaignStatus]) -> None:

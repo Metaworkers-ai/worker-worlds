@@ -133,6 +133,5 @@ metadata:
       decision: approve
       approved_minor: 100000
       idempotency_key: claim-edge-final-decide
-    scopes:
-    - claim:decide
+    scopes: []
     customer_id: other_customer

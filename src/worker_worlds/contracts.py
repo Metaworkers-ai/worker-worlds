@@ -246,6 +246,9 @@ class AssertionSpec(Contract):
             count = parameters.get("count", 1)
             if not isinstance(count, int) or isinstance(count, bool) or count < 1:
                 raise ValueError("tool_result_matches count must be a positive integer")
+            output = parameters.get("output")
+            if output is not None and not isinstance(output, dict):
+                raise ValueError("tool_result_matches output must be an object")
         if assertion_type is AssertionType.POLICY and not isinstance(parameters.get("rule"), str):
             raise ValueError("policy requires a rule")
         return self

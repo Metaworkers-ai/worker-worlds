@@ -80,7 +80,9 @@ def _parser() -> argparse.ArgumentParser:
     workers = ("stub", "langgraph-fake", "openai-agents-fake")
     run.add_argument("--worker", choices=workers, default="stub")
     run.add_argument(
-        "--world", choices=("stub", "postgres", "supply-chain", "insurance"), default="stub"
+        "--world",
+        choices=("stub", "postgres", "supply-chain", "insurance", "marketing"),
+        default="stub",
     )
     run.add_argument("--database-url", help="explicit safe Worker Worlds Postgres URL")
     run.add_argument("--output", type=Path, default=Path(".worker-worlds/runs"))
@@ -92,7 +94,9 @@ def _parser() -> argparse.ArgumentParser:
     suite.add_argument("scenario_path", type=Path)
     suite.add_argument("--worker", choices=workers, default="stub")
     suite.add_argument(
-        "--world", choices=("stub", "postgres", "supply-chain", "insurance"), default="stub"
+        "--world",
+        choices=("stub", "postgres", "supply-chain", "insurance", "marketing"),
+        default="stub",
     )
     suite.add_argument("--database-url")
     suite.add_argument("--repetitions", type=int, default=5)
