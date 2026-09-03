@@ -6,7 +6,7 @@
       "id": "analyst-note-taking",
       "label": "Campaign analyst note-taking",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate audience data request and advertiser follow-up behavior in deterministic commerce worlds.",
@@ -14,7 +14,7 @@
       "id": "audience-data-followup",
       "label": "Audience data request and advertiser follow-up",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate audience segment and budget-envelope analysis behavior in deterministic commerce worlds.",
@@ -22,7 +22,7 @@
       "id": "audience-segment-analysis",
       "label": "Audience segment and budget-envelope analysis",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate budget exposure and reach-projection analysis behavior in deterministic commerce worlds.",
@@ -30,7 +30,7 @@
       "id": "budget-exposure-analysis",
       "label": "Budget exposure and reach-projection analysis",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate campaign intake and brief review behavior in deterministic commerce worlds.",
@@ -38,7 +38,7 @@
       "id": "campaign-intake-review",
       "label": "Campaign intake and brief review",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate claim intake and assignment review behavior in deterministic commerce worlds.",
@@ -46,7 +46,7 @@
       "id": "claim-intake-review",
       "label": "Claim intake and assignment review",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate claims adjustment behavior in deterministic commerce worlds.",
@@ -54,7 +54,7 @@
       "id": "claims-adjustment",
       "label": "Claims adjustment",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate creative and compliance assessment behavior in deterministic commerce worlds.",
@@ -62,7 +62,7 @@
       "id": "creative-compliance-assessment",
       "label": "Creative and compliance assessment",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate decision recommendation behavior in deterministic commerce worlds.",
@@ -70,7 +70,7 @@
       "id": "decision-recommendation",
       "label": "Decision recommendation",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate evidence assessment behavior in deterministic commerce worlds.",
@@ -78,7 +78,7 @@
       "id": "evidence-assessment",
       "label": "Evidence assessment",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate evidence request and customer follow-up behavior in deterministic commerce worlds.",
@@ -86,7 +86,7 @@
       "id": "evidence-request-followup",
       "label": "Evidence request and customer follow-up",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate financial exposure analysis behavior in deterministic commerce worlds.",
@@ -94,7 +94,7 @@
       "id": "financial-exposure-analysis",
       "label": "Financial exposure analysis",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate fraud and anomaly triage behavior in deterministic commerce worlds.",
@@ -102,7 +102,7 @@
       "id": "fraud-anomaly-triage",
       "label": "Fraud and anomaly triage",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate fulfillment coordination behavior in deterministic commerce worlds.",
@@ -110,7 +110,7 @@
       "id": "fulfillment-coordination",
       "label": "Fulfillment coordination",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate inventory control behavior in deterministic commerce worlds.",
@@ -118,7 +118,7 @@
       "id": "inventory-control",
       "label": "Inventory control",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate investigation escalation behavior in deterministic commerce worlds.",
@@ -126,7 +126,7 @@
       "id": "investigation-escalation",
       "label": "Investigation escalation",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate launch recommendation behavior in deterministic commerce worlds.",
@@ -134,7 +134,7 @@
       "id": "launch-recommendation",
       "label": "Launch recommendation",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate operational reliability behavior in deterministic commerce worlds.",
@@ -142,7 +142,7 @@
       "id": "operational-reliability",
       "label": "Operational reliability",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate order operations behavior in deterministic commerce worlds.",
@@ -150,7 +150,7 @@
       "id": "order-operations",
       "label": "Order operations",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate performance and anomaly triage behavior in deterministic commerce worlds.",
@@ -158,7 +158,7 @@
       "id": "performance-anomaly-triage",
       "label": "Performance and anomaly triage",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate policy and coverage analysis behavior in deterministic commerce worlds.",
@@ -166,7 +166,7 @@
       "id": "policy-coverage-analysis",
       "label": "Policy and coverage analysis",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate policy resilience behavior in deterministic commerce worlds.",
@@ -174,7 +174,7 @@
       "id": "policy-resilience",
       "label": "Policy resilience",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate refund resolution behavior in deterministic commerce worlds.",
@@ -182,7 +182,7 @@
       "id": "refund-resolution",
       "label": "Refund resolution",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate compliance risk escalation behavior in deterministic commerce worlds.",
@@ -190,7 +190,7 @@
       "id": "risk-escalation",
       "label": "Compliance risk escalation",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate supply-chain analysis behavior in deterministic commerce worlds.",
@@ -198,7 +198,7 @@
       "id": "supply-chain-analysis",
       "label": "Supply-chain analysis",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "description": "Evaluate support escalation behavior in deterministic commerce worlds.",
@@ -206,10 +206,10 @@
       "id": "support-escalation",
       "label": "Support escalation",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     }
   ],
-  "catalog_version": "1.1.0",
+  "catalog_version": "1.2.0",
   "classifications": [
     {
       "capability_id": "policy-resilience",
@@ -7304,7 +7304,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "9b97b74b90fddd28859091ec1565d5b779d5e52ce36b352ef26ed6a10915d1e7",
+      "scenario_hash": "eb5470aac4174af88880e6b025480c89cdbfaf6c353eb386562a666493b351fd",
       "scenario_id": "marketing.campaign-analyst.106",
       "schema_version": "1.0"
     },
@@ -7316,7 +7316,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "0fb96e1703fac077017f506d623fa30065ba82ffae24068515ca9dbcb73a944b",
+      "scenario_hash": "9b54bd71c75f99b51a056a02efa2e5e6106715d583a24e85ae3ac46322662d4d",
       "scenario_id": "marketing.campaign-analyst.107",
       "schema_version": "1.0"
     },
@@ -7352,7 +7352,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "6052bfcab420e9ee8b6e4cd7a8ba4a8f9d906e587b102a76ba1e53f50f9ec7c3",
+      "scenario_hash": "df19d8c851a2c12b3843d96c7e24aa90569edb4c30aed78fa4a5422d9a5da6e4",
       "scenario_id": "marketing.campaign-analyst.110",
       "schema_version": "1.0"
     },
@@ -7364,7 +7364,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "d6b6d0d703037b04edff4ccf68f406b6cdf9970d665bf2040db6f582824a59a4",
+      "scenario_hash": "efe583edf0346a263e76cecf9809144e62ba8117f63772f4b4f15d61f5fa0808",
       "scenario_id": "marketing.campaign-analyst.111",
       "schema_version": "1.0"
     },
@@ -7376,7 +7376,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "1d0639cd47c5018233874a3d7e55cb745ab1ae8ab2b5c571d6ab05e3a552b062",
+      "scenario_hash": "12c011b9b6a2646bd614cce83904e3b4f1190d019f1813ccc3576a5b7a4dc370",
       "scenario_id": "marketing.campaign-analyst.112",
       "schema_version": "1.0"
     },
@@ -7412,7 +7412,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "d97d66fc79cadfa8285e504390ae561df1346b16fdea5d1656006fce206aaef2",
+      "scenario_hash": "88e8f1bc587f289bb4ddb5a48c913dd549cbd9f01448aa23ac9545287dfa6bb5",
       "scenario_id": "marketing.campaign-analyst.115",
       "schema_version": "1.0"
     },
@@ -7424,7 +7424,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "1e2c6ff884ae81f81831bd0dfc858fd067afacd4db351ff451c197a218973fea",
+      "scenario_hash": "cb9dbe645f837a03cc52f890d71d99039242683b7d3b8a813c1858504752b0d6",
       "scenario_id": "marketing.campaign-analyst.116",
       "schema_version": "1.0"
     },
@@ -7436,7 +7436,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "71f4d91b6a965e15c9fb1e5296b2113e9e9c762ab3bb07b37a0afa2d93369724",
+      "scenario_hash": "714762a141467a706b15625def55567dbc87a176267c4c45eb76317a5daff216",
       "scenario_id": "marketing.campaign-analyst.117",
       "schema_version": "1.0"
     },
@@ -7448,7 +7448,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "07a5d1d4575e47ea105a6da8782db009fd3dc8d35abc27b5d97c7a28a9715e2a",
+      "scenario_hash": "12752ebbfb3879238a8063bfd2f12e88709e42d4a44500ef8ed887039795af4e",
       "scenario_id": "marketing.campaign-analyst.118",
       "schema_version": "1.0"
     },
@@ -7460,7 +7460,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "329235b2524ecae7f13013d26656966325352eeeefbccebe545bc1d6cff177ee",
+      "scenario_hash": "35992afcf68fadcdddba08771ee778a205d605cb3846fc8ddac1893bcafe3675",
       "scenario_id": "marketing.campaign-analyst.119",
       "schema_version": "1.0"
     },
@@ -7628,7 +7628,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "682738b2b19d965079983eec86b1c9abe2b91014ac713ff55222884f69e24b62",
+      "scenario_hash": "834b8ec472f71379110438599ba4bfd94df35b2b80119bef74cda0356fe17475",
       "scenario_id": "marketing.campaign-analyst.133",
       "schema_version": "1.0"
     },
@@ -7640,7 +7640,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "4662172b1a24be0049856ddd11032e4e7dde3213d8ad16ecd6d8ee431867007f",
+      "scenario_hash": "5f9327340ba04aff46718cd0b1e5ac22dfb8d7229630507a43f1bb88db83f9be",
       "scenario_id": "marketing.campaign-analyst.134",
       "schema_version": "1.0"
     },
@@ -7664,7 +7664,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "c01bbd6c08799495a892690dc6f39ade32c5cceac2e9ad54b224ae7b233871f7",
+      "scenario_hash": "ca459c178f067e4ff0a8855610e33ef6381b35423e6fde088244550a3f8ed80f",
       "scenario_id": "marketing.campaign-analyst.136",
       "schema_version": "1.0"
     },
@@ -7676,7 +7676,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "2198ea31b9ea1137ec401b5d7399c0ff5ee510b33d7c611268e6519aee6b1c7d",
+      "scenario_hash": "2b6355235b06d5c04f0eefa3e6e6c0f6dbdf31335c1becb94a3de8f9d958bd81",
       "scenario_id": "marketing.campaign-analyst.137",
       "schema_version": "1.0"
     },
@@ -7688,7 +7688,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "deeb6656f798f4354175469239fa11129b56890fb7c62a688df5a67f3a0f3ae5",
+      "scenario_hash": "2e5b656a367c10329f40a8a4fd99ac2ef34dee9db3299279af55100d4351a6e6",
       "scenario_id": "marketing.campaign-analyst.138",
       "schema_version": "1.0"
     },
@@ -7700,7 +7700,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "4689f34aa6c021e7bf1c6fb8e3e599fea0233a9666758c72a92b9c27ca8f928e",
+      "scenario_hash": "b60b2f296dc45c0f47ffa189f2a2d5a7b9c162ab313f1981fefdbb180f43dc81",
       "scenario_id": "marketing.campaign-analyst.139",
       "schema_version": "1.0"
     },
@@ -7712,7 +7712,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "6314aca50f0d0bc46faf660f296f1e8d47f594f0bf12ccfab206a8ce5d9735d6",
+      "scenario_hash": "1122cce57eef6ebc5d285ef1ca41f04acc286675ffc8466abd1ca9f8a6cc3b67",
       "scenario_id": "marketing.campaign-analyst.140",
       "schema_version": "1.0"
     },
@@ -7724,7 +7724,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "14bae065b9ff9a109bb0bb8f73f7964a58ae6bbfb1b545e902632b0e7e60cd24",
+      "scenario_hash": "b21730bfb43fe695facfad0505578af5e36eafdb00aa48a7d121f4f269170262",
       "scenario_id": "marketing.campaign-analyst.141",
       "schema_version": "1.0"
     },
@@ -7736,7 +7736,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "d72eb11acab879b14ad515ed931c7d024a3c69d9202bc23162cd045fda8c4fb5",
+      "scenario_hash": "86690a9a47f1f26765ffcf1c683a5f3d8ca6833063331f2e2f592720dfd6d744",
       "scenario_id": "marketing.campaign-analyst.142",
       "schema_version": "1.0"
     },
@@ -7748,7 +7748,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "6edee9b69b63d431c2ee4b501f3ce6da05453528606c8b5167c9946fce3adbf7",
+      "scenario_hash": "2b6e85ed6b42c68c4548a129b7fae437d866727d885c35dea7d89afe3b4ee4af",
       "scenario_id": "marketing.campaign-analyst.143",
       "schema_version": "1.0"
     },
@@ -7760,7 +7760,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "00e78be756f0a0a273835daf904e6809775a749f7614cb7e2b724cdb02b238cc",
+      "scenario_hash": "d56eb4155f2357b90d724a260193ee423beb1e6524dcebad50fdf10198429dba",
       "scenario_id": "marketing.campaign-analyst.144",
       "schema_version": "1.0"
     },
@@ -7772,7 +7772,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "eac602d61b894d815cd5c917fd12e7125e438dbf3e8f7be470c34fe7369bfa89",
+      "scenario_hash": "38842903e4c1c1d627f318d814098289832e1648a124681384a0ec0d6c0d5353",
       "scenario_id": "marketing.campaign-analyst.145",
       "schema_version": "1.0"
     },
@@ -7784,7 +7784,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "8bb6d534ae54abf565cc99e2b44770cba8e2a43954d7d59cff78acb97f868db8",
+      "scenario_hash": "41f040b3bdd286e20e0a5831b9f052b89bdd116aca4a6fb0f0c238e13a151b5d",
       "scenario_id": "marketing.campaign-analyst.146",
       "schema_version": "1.0"
     },
@@ -7820,7 +7820,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "f4207d0d610472c110a6ca4e4bcd4e50baa7de7cd6a2cc849a8a825b06d7b870",
+      "scenario_hash": "a598ac535c9b4f6a2a41d8e04731b87db4fbfb4961716308aa68d5861fa69ddc",
       "scenario_id": "marketing.campaign-analyst.149",
       "schema_version": "1.0"
     },
@@ -7832,7 +7832,7 @@
       "role_ids": [
         "campaign-analyst"
       ],
-      "scenario_hash": "9276a62e408deea7144b0d80967ca129958bcb03541dfb05c1876f42770f9abb",
+      "scenario_hash": "425465e483043637b1960fd068a0012d3d58c6787373dceed4c56bdf8f184b9c",
       "scenario_id": "marketing.campaign-analyst.150",
       "schema_version": "1.0"
     },
@@ -7987,7 +7987,7 @@
         "support-escalation-manager"
       ],
       "schema_version": "1.0",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "world_names": [
         "postgres-commerce",
         "postgres-commerce-supply-chain",
@@ -8014,7 +8014,7 @@
         "claims-analyst"
       ],
       "schema_version": "1.0",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "world_names": [
         "postgres-insurance"
       ]
@@ -8038,7 +8038,7 @@
         "campaign-analyst"
       ],
       "schema_version": "1.0",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "world_names": [
         "postgres-marketing"
       ]
@@ -8062,7 +8062,7 @@
       "id": "campaign-analyst",
       "label": "Marketing Campaign Analyst",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "capability_ids": [
@@ -8073,7 +8073,7 @@
       "id": "claims-adjuster",
       "label": "Claims Adjuster",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "capability_ids": [
@@ -8091,7 +8091,7 @@
       "id": "claims-analyst",
       "label": "Insurance Claims Analyst",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "capability_ids": [
@@ -8106,7 +8106,7 @@
       "id": "customer-support-agent",
       "label": "Customer Support Agent",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "capability_ids": [
@@ -8119,7 +8119,7 @@
       "id": "fulfillment-coordinator",
       "label": "Fulfillment Coordinator",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "capability_ids": [
@@ -8132,7 +8132,7 @@
       "id": "inventory-controller",
       "label": "Inventory Controller",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "capability_ids": [
@@ -8147,7 +8147,7 @@
       "id": "order-operations-specialist",
       "label": "Order Operations Specialist",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "capability_ids": [
@@ -8160,7 +8160,7 @@
       "id": "refund-specialist",
       "label": "Refund Specialist",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "capability_ids": [
@@ -8171,7 +8171,7 @@
       "id": "supply-chain-analyst",
       "label": "Supply Chain Analyst",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "capability_ids": [
@@ -8184,7 +8184,7 @@
       "id": "support-escalation-manager",
       "label": "Support Escalation Manager",
       "schema_version": "1.0",
-      "version": "1.1.0"
+      "version": "1.2.0"
     }
   ],
   "schema_version": "1.0",
@@ -8212,7 +8212,7 @@
       "estimated_duration_s": 0,
       "id": "commerce.customer-support-agent.custom",
       "label": "Customer Support Agent Custom",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "customer-support-agent",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -8241,7 +8241,7 @@
       "estimated_duration_s": 456,
       "id": "commerce.customer-support-agent.full",
       "label": "Customer Support Agent Full",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "customer-support-agent",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -8419,7 +8419,7 @@
       "estimated_duration_s": 18,
       "id": "commerce.customer-support-agent.smoke",
       "label": "Customer Support Agent Smoke",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "customer-support-agent",
       "scenario_ids": [
         "commerce.refunds-payments.001",
@@ -8451,7 +8451,7 @@
       "estimated_duration_s": 90,
       "id": "commerce.customer-support-agent.standard",
       "label": "Customer Support Agent Standard",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "customer-support-agent",
       "scenario_ids": [
         "commerce.refunds-payments.001",
@@ -8509,7 +8509,7 @@
       "estimated_duration_s": 0,
       "id": "commerce.fulfillment-coordinator.custom",
       "label": "Fulfillment Coordinator Custom",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "fulfillment-coordinator",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -8536,7 +8536,7 @@
       "estimated_duration_s": 258,
       "id": "commerce.fulfillment-coordinator.full",
       "label": "Fulfillment Coordinator Full",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "fulfillment-coordinator",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -8648,7 +8648,7 @@
       "estimated_duration_s": 18,
       "id": "commerce.fulfillment-coordinator.smoke",
       "label": "Fulfillment Coordinator Smoke",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "fulfillment-coordinator",
       "scenario_ids": [
         "commerce.shipping-fulfillment.001",
@@ -8681,7 +8681,7 @@
       "estimated_duration_s": 90,
       "id": "commerce.fulfillment-coordinator.standard",
       "label": "Fulfillment Coordinator Standard",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "fulfillment-coordinator",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -8739,7 +8739,7 @@
       "estimated_duration_s": 0,
       "id": "commerce.inventory-controller.custom",
       "label": "Inventory Controller Custom",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "inventory-controller",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -8766,7 +8766,7 @@
       "estimated_duration_s": 258,
       "id": "commerce.inventory-controller.full",
       "label": "Inventory Controller Full",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "inventory-controller",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -8878,7 +8878,7 @@
       "estimated_duration_s": 18,
       "id": "commerce.inventory-controller.smoke",
       "label": "Inventory Controller Smoke",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "inventory-controller",
       "scenario_ids": [
         "commerce.inventory-catalog.001",
@@ -8911,7 +8911,7 @@
       "estimated_duration_s": 90,
       "id": "commerce.inventory-controller.standard",
       "label": "Inventory Controller Standard",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "inventory-controller",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -8971,7 +8971,7 @@
       "estimated_duration_s": 0,
       "id": "commerce.order-operations-specialist.custom",
       "label": "Order Operations Specialist Custom",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "order-operations-specialist",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -9000,7 +9000,7 @@
       "estimated_duration_s": 402,
       "id": "commerce.order-operations-specialist.full",
       "label": "Order Operations Specialist Full",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "order-operations-specialist",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -9160,7 +9160,7 @@
       "estimated_duration_s": 18,
       "id": "commerce.order-operations-specialist.smoke",
       "label": "Order Operations Specialist Smoke",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "order-operations-specialist",
       "scenario_ids": [
         "commerce.orders-identity.001",
@@ -9193,7 +9193,7 @@
       "estimated_duration_s": 90,
       "id": "commerce.order-operations-specialist.standard",
       "label": "Order Operations Specialist Standard",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "order-operations-specialist",
       "scenario_ids": [
         "commerce.inventory-catalog.001",
@@ -9251,7 +9251,7 @@
       "estimated_duration_s": 0,
       "id": "commerce.refund-specialist.custom",
       "label": "Refund Specialist Custom",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "refund-specialist",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -9278,7 +9278,7 @@
       "estimated_duration_s": 312,
       "id": "commerce.refund-specialist.full",
       "label": "Refund Specialist Full",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "refund-specialist",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -9408,7 +9408,7 @@
       "estimated_duration_s": 18,
       "id": "commerce.refund-specialist.smoke",
       "label": "Refund Specialist Smoke",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "refund-specialist",
       "scenario_ids": [
         "commerce.refunds-payments.001",
@@ -9440,7 +9440,7 @@
       "estimated_duration_s": 90,
       "id": "commerce.refund-specialist.standard",
       "label": "Refund Specialist Standard",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "refund-specialist",
       "scenario_ids": [
         "commerce.refunds-payments.001",
@@ -9496,7 +9496,7 @@
       "estimated_duration_s": 0,
       "id": "commerce.supply-chain-analyst.custom",
       "label": "Supply Chain Analyst Custom",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "supply-chain-analyst",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -9521,7 +9521,7 @@
       "estimated_duration_s": 39,
       "id": "commerce.supply-chain-analyst.full",
       "label": "Supply Chain Analyst Full",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "supply-chain-analyst",
       "scenario_ids": [
         "commerce.supply-chain.001",
@@ -9560,7 +9560,7 @@
       "estimated_duration_s": 18,
       "id": "commerce.supply-chain-analyst.smoke",
       "label": "Supply Chain Analyst Smoke",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "supply-chain-analyst",
       "scenario_ids": [
         "commerce.supply-chain.001",
@@ -9592,7 +9592,7 @@
       "estimated_duration_s": 30,
       "id": "commerce.supply-chain-analyst.standard",
       "label": "Supply Chain Analyst Standard",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "supply-chain-analyst",
       "scenario_ids": [
         "commerce.supply-chain.001",
@@ -9630,7 +9630,7 @@
       "estimated_duration_s": 0,
       "id": "commerce.support-escalation-manager.custom",
       "label": "Support Escalation Manager Custom",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "support-escalation-manager",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -9657,7 +9657,7 @@
       "estimated_duration_s": 258,
       "id": "commerce.support-escalation-manager.full",
       "label": "Support Escalation Manager Full",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "support-escalation-manager",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -9769,7 +9769,7 @@
       "estimated_duration_s": 18,
       "id": "commerce.support-escalation-manager.smoke",
       "label": "Support Escalation Manager Smoke",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "support-escalation-manager",
       "scenario_ids": [
         "commerce.tickets-escalation.001",
@@ -9802,7 +9802,7 @@
       "estimated_duration_s": 90,
       "id": "commerce.support-escalation-manager.standard",
       "label": "Support Escalation Manager Standard",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "support-escalation-manager",
       "scenario_ids": [
         "commerce.adversarial-conflicts.001",
@@ -9858,7 +9858,7 @@
       "estimated_duration_s": 0,
       "id": "insurance.claims-adjuster.custom",
       "label": "Claims Adjuster Custom",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "claims-adjuster",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -9883,7 +9883,7 @@
       "estimated_duration_s": 396,
       "id": "insurance.claims-adjuster.full",
       "label": "Claims Adjuster Full",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "claims-adjuster",
       "scenario_ids": [
         "insurance.claims.001",
@@ -10041,7 +10041,7 @@
       "estimated_duration_s": 18,
       "id": "insurance.claims-adjuster.smoke",
       "label": "Claims Adjuster Smoke",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "claims-adjuster",
       "scenario_ids": [
         "insurance.claims.001",
@@ -10073,7 +10073,7 @@
       "estimated_duration_s": 30,
       "id": "insurance.claims-adjuster.standard",
       "label": "Claims Adjuster Standard",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "claims-adjuster",
       "scenario_ids": [
         "insurance.claims.001",
@@ -10116,7 +10116,7 @@
       "estimated_duration_s": 0,
       "id": "insurance.claims-analyst.custom",
       "label": "Insurance Claims Analyst Custom",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "claims-analyst",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -10148,7 +10148,7 @@
       "estimated_duration_s": 306,
       "id": "insurance.claims-analyst.full",
       "label": "Insurance Claims Analyst Full",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "claims-analyst",
       "scenario_ids": [
         "insurance.claims-analyst.001",
@@ -10281,7 +10281,7 @@
       "estimated_duration_s": 30,
       "id": "insurance.claims-analyst.smoke",
       "label": "Insurance Claims Analyst Smoke",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "claims-analyst",
       "scenario_ids": [
         "insurance.claims-analyst.001",
@@ -10324,7 +10324,7 @@
       "estimated_duration_s": 120,
       "id": "insurance.claims-analyst.standard",
       "label": "Insurance Claims Analyst Standard",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "claims-analyst",
       "scenario_ids": [
         "insurance.claims-analyst.001",
@@ -10398,7 +10398,7 @@
       "estimated_duration_s": 0,
       "id": "marketing.campaign-analyst.custom",
       "label": "Marketing Campaign Analyst Custom",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "campaign-analyst",
       "scenario_ids": [],
       "schema_version": "1.0",
@@ -10431,7 +10431,7 @@
       "estimated_duration_s": 450,
       "id": "marketing.campaign-analyst.full",
       "label": "Marketing Campaign Analyst Full",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "campaign-analyst",
       "scenario_ids": [
         "marketing.campaign-analyst.001",
@@ -10608,7 +10608,7 @@
       "estimated_duration_s": 24,
       "id": "marketing.campaign-analyst.smoke",
       "label": "Marketing Campaign Analyst Smoke",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "campaign-analyst",
       "scenario_ids": [
         "marketing.campaign-analyst.001",
@@ -10645,7 +10645,7 @@
       "estimated_duration_s": 60,
       "id": "marketing.campaign-analyst.standard",
       "label": "Marketing Campaign Analyst Standard",
-      "revision": "1.1.0",
+      "revision": "1.2.0",
       "role_id": "campaign-analyst",
       "scenario_ids": [
         "marketing.campaign-analyst.001",

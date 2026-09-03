@@ -104,7 +104,8 @@
     "supported_domain_ids": {
       "default": [
         "commerce",
-        "insurance"
+        "insurance",
+        "marketing"
       ],
       "items": {
         "type": "string"

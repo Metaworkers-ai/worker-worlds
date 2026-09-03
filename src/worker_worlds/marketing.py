@@ -702,6 +702,8 @@ class MarketingWorld(JsonPostgresWorld):
                     and within_flight_window
                     and chronology_valid
                     and proposed > platform_fee
+                    and proposed <= total_cap
+                    and not exceeds_channel_cap
                 ),
             )
             return cast(dict[str, JsonValue], analysis.model_dump(mode="json")), None

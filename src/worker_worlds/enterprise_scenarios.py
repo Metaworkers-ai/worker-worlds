@@ -20,14 +20,24 @@ from worker_worlds.scenario_prompts import (
 
 
 def _call(
-    tool: str, arguments: dict[str, object], scopes: list[str], customer: str
+    tool: str,
+    arguments: dict[str, object],
+    scopes: list[str],
+    customer: str,
+    expected_output: dict[str, object] | None = None,
 ) -> dict[str, object]:
-    return {
+    call: dict[str, object] = {
         "tool": tool,
         "arguments": arguments,
         "scopes": scopes,
         "customer_id": customer,
     }
+    if expected_output is not None:
+        # Pins a tool's returned business conclusion (e.g. `eligible`, cap
+        # flags, entity statuses), not just that the call succeeded with the
+        # right arguments -- see `tool_result_assertions`.
+        call["expected_output"] = expected_output
+    return call
 
 
 def _outcome_assertion(identifier: str, event: str | None, state_path: str) -> AssertionSpec:
@@ -8200,13 +8210,14 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
         ),
         (
             "Calculate budget exposure, then add an analyst note recording the result, for a "
-            "campaign within a display channel sub-cap.",
+            "campaign that exceeds a display channel sub-cap.",
             [
                 _call(
                     "calculate_budget_exposure",
                     {"campaign_id": "cmp_100"},
                     ["campaign:read"],
                     "adv_500",
+                    expected_output={"exceeds_channel_cap": True, "eligible": False},
                 ),
                 _call(
                     "add_campaign_note",
@@ -9079,13 +9090,15 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
         ),
         (
             "Confirm whether the advertiser has any campaigns still in draft, on an advertiser "
-            "whose only campaign is already under compliance review.",
+            "whose primary campaign is already under compliance review while a related "
+            "campaign remains in draft.",
             [
                 _call(
                     "search_campaigns",
                     {"advertiser_id": "adv_500", "status": "draft"},
                     ["campaign:read"],
                     "adv_500",
+                    expected_output={"campaigns.0.id": "cmp_101", "campaigns.0.status": "draft"},
                 )
             ],
             None,
@@ -9216,8 +9229,11 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
     }
     # Phase 2 seed overrides, indices 41-150 (see the fixture band reference
     # in docs/marketing-analyst-scenario-matrix-phase2.md). Every index below
-    # that is absent here defaults to `seed_overrides.get(index, index)` --
-    # the same convention Phase 1 uses -- and lands in the baseline band.
+    # is mapped explicitly: entries whose value equals the index (index < 100)
+    # intentionally land in the baseline band, the same convention Phase 1
+    # uses. A bare index in [100, 199] would land in the below-platform-fee
+    # band by accident, so baseline-intent entries at or above index 100
+    # instead map to 1300 + index, which always lands in the baseline band.
     seed_overrides_phase2 = {
         41: 41,
         42: 42,
@@ -9285,19 +9301,24 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
         104: 304,
         105: 205,
         106: 306,
-        107: 107,
+        # 107, 110-112, 115-119, 133-134, 136-144, 146, 149-150 are explicit
+        # *baseline* seeds. A bare index in [100, 199] would land in the
+        # below-platform-fee band by accident (see `build_marketing_state`),
+        # so baseline-intent indices in that range use 1300 + index instead,
+        # which is always >= 1300 and therefore always baseline.
+        107: 1407,  # baseline (kept out of the below-platform-fee band)
         108: 1008,
         109: 1109,
-        110: 110,
-        111: 111,
-        112: 112,
+        110: 1410,  # baseline (kept out of the below-platform-fee band)
+        111: 1411,  # baseline (kept out of the below-platform-fee band)
+        112: 1412,  # baseline (kept out of the below-platform-fee band)
         113: 213,
         114: 1014,
-        115: 115,
-        116: 116,
-        117: 117,
-        118: 118,
-        119: 119,
+        115: 1415,  # baseline (kept out of the below-platform-fee band)
+        116: 1416,  # baseline (kept out of the below-platform-fee band)
+        117: 1417,  # baseline (kept out of the below-platform-fee band)
+        118: 1418,  # baseline (kept out of the below-platform-fee band)
+        119: 1419,  # baseline (kept out of the below-platform-fee band)
         120: 720,
         121: 821,
         122: 922,
@@ -9311,24 +9332,24 @@ def campaign_analyst_scenarios() -> tuple[Scenario, ...]:
         130: 930,
         131: 1031,
         132: 732,
-        133: 133,
-        134: 134,
+        133: 1433,  # baseline (kept out of the below-platform-fee band)
+        134: 1434,  # baseline (kept out of the below-platform-fee band)
         135: 1135,
-        136: 136,
-        137: 137,
-        138: 138,
-        139: 139,
-        140: 140,
-        141: 141,
-        142: 142,
-        143: 143,
-        144: 144,
+        136: 1436,  # baseline (kept out of the below-platform-fee band)
+        137: 1437,  # baseline (kept out of the below-platform-fee band)
+        138: 1438,  # baseline (kept out of the below-platform-fee band)
+        139: 1439,  # baseline (kept out of the below-platform-fee band)
+        140: 1440,  # baseline (kept out of the below-platform-fee band)
+        141: 1441,  # baseline (kept out of the below-platform-fee band)
+        142: 1442,  # baseline (kept out of the below-platform-fee band)
+        143: 1443,  # baseline (kept out of the below-platform-fee band)
+        144: 1444,  # baseline (kept out of the below-platform-fee band)
         145: 545,
-        146: 146,
+        146: 1446,  # baseline (kept out of the below-platform-fee band)
         147: 1147,
         148: 648,
-        149: 149,
-        150: 150,
+        149: 1449,  # baseline (kept out of the below-platform-fee band)
+        150: 1450,  # baseline (kept out of the below-platform-fee band)
     }
     seed_overrides = {**seed_overrides, **seed_overrides_phase2}
     # Actor-identity overrides for the cross-advertiser boundary probes

@@ -61,12 +61,19 @@ def tool_result_assertions(
     calls: list[ToolCallSpec],
     statuses: tuple[str, ...],
 ) -> tuple[AssertionSpec, ...]:
-    """Require exact requested tool inputs and typed outcomes, including retries."""
+    """Require exact requested tool inputs and typed outcomes, including retries.
+
+    A call may carry an optional ``expected_output`` mapping of result fields
+    (e.g. ``{"eligible": False}``) that must also match, so a scenario can pin
+    the business conclusion a tool returned, not just that it was called with
+    the right arguments and succeeded.
+    """
     grouped: dict[str, tuple[ToolCallSpec, str, int]] = {}
     for call, status in zip(calls, statuses, strict=True):
         arguments = _evidence_arguments(call.get("arguments", {}))
+        output = call.get("expected_output")
         fingerprint = json.dumps(
-            {"tool": call["tool"], "arguments": arguments, "status": status},
+            {"tool": call["tool"], "arguments": arguments, "status": status, "output": output},
             sort_keys=True,
             separators=(",", ":"),
         )
@@ -75,17 +82,21 @@ def tool_result_assertions(
     assertions = []
     for index, (call, status, count) in enumerate(grouped.values(), 1):
         arguments = _evidence_arguments(call.get("arguments", {}))
+        parameters: dict[str, object] = {
+            "tool_name": call["tool"],
+            "arguments": arguments,
+            "result_status": status,
+            "count": count,
+        }
+        expected_output = call.get("expected_output")
+        if expected_output:
+            parameters["output"] = expected_output
         assertions.append(
             AssertionSpec(
                 id=f"{identifier}.tool-result.{index}",
                 type="tool_result_matches",
                 severity=AssertionSeverity.CRITICAL,
-                parameters={
-                    "tool_name": call["tool"],
-                    "arguments": arguments,
-                    "result_status": status,
-                    "count": count,
-                },
+                parameters=parameters,
             )
         )
     return tuple(assertions)

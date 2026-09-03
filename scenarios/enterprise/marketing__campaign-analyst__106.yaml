@@ -10,7 +10,7 @@ trigger:
   type: campaign_analysis_request
   actor:
     customer_id: adv_500
-  content: 'Calculate budget exposure, then add an analyst note recording the result, for a campaign within a display channel sub-cap.
+  content: 'Calculate budget exposure, then add an analyst note recording the result, for a campaign that exceeds a display channel sub-cap.
 
     Use the available world tools and complete the task now in the listed order.
 
@@ -58,6 +58,9 @@ assertions:
       campaign_id: cmp_100
     result_status: success
     count: 1
+    output:
+      exceeds_channel_cap: true
+      eligible: false
   tags: []
   evidence_config: {}
 - schema_version: '1.0'
@@ -100,6 +103,9 @@ metadata:
     scopes:
     - campaign:read
     customer_id: adv_500
+    expected_output:
+      exceeds_channel_cap: true
+      eligible: false
   - tool: add_campaign_note
     arguments:
       campaign_id: cmp_100

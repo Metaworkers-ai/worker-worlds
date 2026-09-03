@@ -10,7 +10,7 @@ trigger:
   type: campaign_analysis_request
   actor:
     customer_id: adv_500
-  content: 'Confirm whether the advertiser has any campaigns still in draft, on an advertiser whose only campaign is already under compliance review.
+  content: 'Confirm whether the advertiser has any campaigns still in draft, on an advertiser whose primary campaign is already under compliance review while a related campaign remains in draft.
 
     Use the available world tools and complete the task now in the listed order.
 
@@ -57,6 +57,9 @@ assertions:
       status: draft
     result_status: success
     count: 1
+    output:
+      campaigns.0.id: cmp_101
+      campaigns.0.status: draft
   tags: []
   evidence_config: {}
 tags:
@@ -83,4 +86,7 @@ metadata:
     scopes:
     - campaign:read
     customer_id: adv_500
+    expected_output:
+      campaigns.0.id: cmp_101
+      campaigns.0.status: draft
   provenance: release-reviewed-matrix-v1

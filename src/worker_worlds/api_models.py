@@ -96,7 +96,7 @@ class AgentSummary(ApiModel):
     ready: bool
     missing_requirements: tuple[str, ...] = ()
     deterministic_test_infrastructure: bool = False
-    supported_domain_ids: tuple[str, ...] = ("commerce", "insurance")
+    supported_domain_ids: tuple[str, ...] = ("commerce", "insurance", "marketing")
 
 
 class AgentListResponse(ApiModel):
@@ -112,7 +112,7 @@ class CreateRunRequest(ApiModel):
     scenario_id: str = Field(min_length=1, max_length=200)
     worker: Literal["stub", "langgraph-fake", "openai-agents-fake"] = "stub"
     agent_id: str | None = Field(default=None, min_length=1, max_length=200)
-    world: Literal["stub", "postgres", "supply-chain", "insurance"] = "postgres"
+    world: Literal["stub", "postgres", "supply-chain", "insurance", "marketing"] = "postgres"
     domain_id: str | None = Field(default=None, min_length=1, max_length=100)
     role_id: str | None = Field(default=None, min_length=1, max_length=100)
     suite_id: str | None = Field(default=None, min_length=1, max_length=200)
@@ -126,7 +126,7 @@ class CreateSuiteJobRequest(ApiModel):
     role_id: str = Field(min_length=1, max_length=100)
     suite_id: str = Field(min_length=1, max_length=200)
     agent_id: str = Field(min_length=1, max_length=200)
-    world: Literal["stub", "postgres", "supply-chain", "insurance"] = "postgres"
+    world: Literal["stub", "postgres", "supply-chain", "insurance", "marketing"] = "postgres"
     concurrency: int = Field(default=4, ge=1, le=16)
     scenario_ids: tuple[str, ...] = Field(default=(), max_length=200)
     seed: int | None = Field(default=None, ge=0)

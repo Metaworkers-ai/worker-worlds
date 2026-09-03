@@ -4,7 +4,7 @@ world:
   schema_version: '1.0'
   name: postgres-marketing
   version: '1.0'
-  seed: 107
+  seed: 1407
 trigger:
   schema_version: '1.0'
   type: campaign_analysis_request

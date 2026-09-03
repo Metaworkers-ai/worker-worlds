@@ -47,7 +47,7 @@ class ReportingConfig(ConfigModel):
 class ExecutionConfig(ConfigModel):
     """Bounded suite execution settings."""
 
-    world: Literal["stub", "postgres", "supply-chain", "insurance"] = "stub"
+    world: Literal["stub", "postgres", "supply-chain", "insurance", "marketing"] = "stub"
     worker: str = "stub"
     scenario_locations: tuple[str, ...] = ("examples/scenarios",)
     repetitions: int = Field(default=1, gt=0, le=100)

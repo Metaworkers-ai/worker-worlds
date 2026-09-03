@@ -294,6 +294,8 @@ def _validate_world_selection(domain_id: str, role_id: str, world: str) -> None:
     allowed = (
         {"insurance"}
         if domain_id == "insurance"
+        else {"marketing"}
+        if domain_id == "marketing"
         else {"supply-chain"}
         if role_id == "supply-chain-analyst"
         else {"postgres", "stub"}
